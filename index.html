@@ -8,7 +8,7 @@
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
         :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
-        body { background-color: var(--bg-gray); padding-bottom: 50px; }
+        body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
         .container { max-width: 600px; margin: auto; padding: 20px; }
         .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--u-pink); padding-bottom: 15px; }
@@ -20,8 +20,7 @@
         .address-search { cursor: pointer; background-color: #fffafc !important; border: 1px solid var(--u-pink); }
         .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
         .btn-next { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
-        .reason-group { background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
-        /* 필수 항목 강조 */
+        .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
         .required-star { color: var(--u-pink); margin-left: 3px; }
     </style>
 </head>
@@ -54,11 +53,12 @@
                 <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
             </div>
             <div class="mb-3">
-                <label class="form-label">생년월일/법인번호<span class="required-star">*</span></label>
+                <label class="form-label">법인등록번호(생년월일)<span class="required-star">*</span></label>
                 <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
             </div>
+            
             <div class="mb-1">
-                <label class="form-label">가입 주소<span class="required-star">*</span></label>
+                <label class="form-label">주소<span class="required-star">*</span></label>
                 <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
             </div>
             <div class="mb-3">
@@ -67,7 +67,7 @@
 
             <div class="section-title">요금 확인 사항</div>
             <div class="notice-box mb-3">
-                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다. [cite: 502]
+                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="payConfirm">
@@ -93,60 +93,90 @@
                 </div>
             </div>
             
-            <label class="form-label">해지 상품 (최소 하나 선택)<span class="required-star">*</span></label>
+            <label class="form-label">해지 상품 (중복 선택 가능)<span class="required-star">*</span></label>
             <div class="row g-2 mb-3 px-2">
-                <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
-                <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
-                <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV</div>
+                <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷 [cite: 29]</div>
+                <div class="col-4"><input type="checkbox" name="product" value="TV"> TV [cite: 30, 93]</div>
+                <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV [cite: 94]</div>
                 <div class="col-4"><input type="checkbox" name="product" value="전화"> 전화</div>
                 <div class="col-12"><input type="checkbox" name="product" value="전회선"> <b>전회선 해지</b></div>
             </div>
 
-            <div class="section-title">해지 사유 (최소 하나 선택)<span class="required-star">*</span></div>
+            <div class="section-title">해지 사유 (필수 체크)<span class="required-star">*</span></div>
+            
             <div class="mb-3 reason-group">
-                <label class="form-label text-primary">● 고객사유</label>
+                <label class="form-label text-primary">● 고객사유 [cite: 103]</label>
                 <div class="row g-2 small ps-1">
-                    <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="업무종료"> 업무종료</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="사무소폐쇄"> 사무소 폐쇄/통합</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="사용저조"> 사용저조</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="비용절감"> 비용절감</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="기타"> 기타</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업 [cite: 96]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="업무종료"> 업무종료 [cite: 99]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="사무소폐쇄"> 사무소 폐쇄/통합 [cite: 100]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="사용저조"> 사용저조 [cite: 102]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="비용절감"> 비용절감 [cite: 104]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="회선고도화"> 회선고도화 [cite: 106]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="이용계획취소"> 이용계획 취소 [cite: 108]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="기타"> 기타 [cite: 110]</div>
                 </div>
             </div>
+
+            <div class="mb-3 reason-group">
+                <label class="form-label text-danger">● 서비스 불만 [cite: 121]</label>
+                <div class="row g-2 small ps-1">
+                    <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발 [cite: 114]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="장애처리불만"> 장애처리 불만 [cite: 116]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="속도불만"> 속도불만 [cite: 118]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="불안정성"> 불안정성 [cite: 120]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="비용부담"> 비용부담 [cite: 123]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="개통지연"> 개통지연 [cite: 124]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="기술지원불만"> 기술지원불만 [cite: 126]</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="영업관리불만"> 영업관리불만 [cite: 128]</div>
+                </div>
+            </div>
+
+            <div class="mb-3 reason-group">
+                <label class="form-label text-success">● 타사전환 [cite: 135]</label>
+                <div class="row g-2 small ps-1">
+                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT [cite: 136]</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB [cite: 137]</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타 [cite: 138]</div>
+                </div>
+            </div>
+
             <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
         </form>
     </div>
 </div>
 
 <script>
+    // 오늘 날짜 자동 입력 [cite: 16-18]
     document.getElementById('todayDate').value = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
 
+    // 주소 검색 함수
     function execDaumPostcode(mainAddrId, detailAddrId) {
         new daum.Postcode({
             oncomplete: function(data) {
-                document.getElementById(mainAddrId).value = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                document.getElementById(mainAddrId).value = addr;
                 document.getElementById(detailAddrId).focus();
             }
         }).open();
     }
 
+    // 유효성 검사 및 페이지 이동
     function validateAndNext() {
-        const fields = [
+        const textFields = [
             { id: 'custName', name: '고객명' },
-            { id: 'custTel', name: '연락처' },
+            { id: 'custTel', name: '가입자 연락처' },
             { id: 'bizNum', name: '사업자등록번호' },
             { id: 'bizReg', name: '생년월일/법인번호' },
             { id: 'custAddr', name: '가입 주소' },
             { id: 'custDetail', name: '가입 상세주소' },
             { id: 'returnAddr', name: '장비 회수 주소' },
             { id: 'returnDetail', name: '회수 상세주소' },
-            { id: 'returnPerson', name: '회수 담당자' },
-            { id: 'returnTel', name: '회수 연락처' }
+            { id: 'returnPerson', name: '회수 담당자 성함' },
+            { id: 'returnTel', name: '회수 담당자 연락처' }
         ];
 
-        // 1. 텍스트 입력 확인
-        for (let field of fields) {
+        for (let field of textFields) {
             const el = document.getElementById(field.id);
             if (!el.value.trim()) {
                 alert(`${field.name}을(를) 입력해 주세요.`);
@@ -155,28 +185,23 @@
             }
         }
 
-        // 2. 요금 확인 체크박스
         if (!document.getElementById('payConfirm').checked) {
             alert("요금 확인 사항에 동의해 주세요.");
             return;
         }
 
-        // 3. 해지 상품 선택 확인
-        const products = document.querySelectorAll('input[name="product"]:checked');
-        if (products.length === 0) {
+        if (document.querySelectorAll('input[name="product"]:checked').length === 0) {
             alert("해지하실 상품을 하나 이상 선택해 주세요.");
             return;
         }
 
-        // 4. 해지 사유 선택 확인
-        const reasons = document.querySelectorAll('input[name="reason"]:checked');
-        if (reasons.length === 0) {
+        if (document.querySelectorAll('input[name="reason"]:checked').length === 0) {
             alert("해지 사유를 하나 이상 선택해 주세요.");
             return;
         }
 
-        alert("모든 항목이 확인되었습니다. 2페이지로 이동합니다.");
-        // 여기서 다음 페이지 로직 실행
+        alert("1페이지 작성이 완료되었습니다. 2페이지로 이동합니다.");
+        // 다음 페이지 로직 추가 가능
     }
 </script>
 </body>
