@@ -3,111 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>U+ 우리가게패키지 온라인 신청서</title>
+    <title>SOHO 온라인 신청서 (서명포함)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
-        :root { --u-pink: #e6007e; --bg-gray: #f2f2f2; }
-        body { background-color: var(--bg-gray); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; }
-        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
-        .form-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .logo-area { text-align: center; margin-bottom: 25px; }
-        .logo-area h2 { color: var(--u-pink); font-weight: 800; font-size: 1.5rem; margin-bottom: 5px; }
-        .section-header { font-size: 1.1rem; font-weight: 700; color: #333; margin: 25px 0 15px; border-bottom: 2px solid var(--u-pink); padding-bottom: 5px; }
-        .form-label { font-weight: 600; font-size: 0.95rem; color: #444; }
-        .form-control, .form-select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px !important; /* 모바일 자동확대 방지 */ }
-        .form-check-label { font-size: 0.95rem; }
-        .notice-box { background: #fff9fb; border: 1px solid #fce4ec; border-radius: 8px; padding: 15px; font-size: 0.85rem; color: #666; }
-        .btn-submit { background-color: var(--u-pink); border: none; border-radius: 8px; padding: 16px; font-weight: 700; font-size: 1.1rem; transition: 0.3s; }
-        .btn-submit:active { transform: scale(0.98); background-color: #c4006b; }
+        body { background-color: #f5f5f5; font-family: sans-serif; padding: 10px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #e6007e; text-align: center; font-weight: bold; margin-bottom: 20px; }
+        .section { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .label { font-weight: bold; font-size: 0.9rem; color: #333; display: block; margin-bottom: 8px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; font-size: 16px; }
+        
+        /* 서명 영역 스타일 */
+        .signature-wrapper { background: #fff; border: 1px solid #ccc; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; }
+        canvas { width: 100%; height: 100%; cursor: crosshair; }
+        .sig-btn-group { text-align: right; margin-top: 5px; }
+        .btn-clear { font-size: 0.8rem; padding: 2px 10px; border: 1px solid #ccc; background: #eee; border-radius: 4px; }
+        
+        .btn-submit { background: #e6007e; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="form-card">
-        <div class="logo-area">
-            <h2>LGU+ 우리가게패키지</h2>
-            <p class="text-muted small">가입 / 변경 / 해지 신청서</p>
+    <h2>온라인 신청서</h2>
+    
+    <form id="applyForm">
+        <div class="section">
+            <span class="label">고객명 (법인명)</span>
+            <input type="text" id="userName" placeholder="성함 입력" required>
+            
+            <span class="label">연락처</span>
+            <input type="tel" id="userPhone" placeholder="010-0000-0000" required>
         </div>
 
-        <form action="https://formspree.io/f/your-id-here" method="POST">
-            
-            <div class="section-header">기본 정보 선택</div>
-            <div class="mb-3">
-                <label class="form-label">업무 구분 [cite: 23, 25]</label>
-                <select name="업무구분" class="form-select" required>
-                    <option value="신규가입">신규가입 [cite: 24]</option>
-                    <option value="변경">변경 [cite: 24]</option>
-                    <option value="해지" selected>해지 [cite: 25]</option>
-                    <option value="재가입">재가입 [cite: 26]</option>
-                </select>
-            </div>
+        <div class="section">
+            <span class="label">해지/신청 내용</span>
+            <textarea rows="3" placeholder="내용을 입력해주세요"></textarea>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">업종 구분 [cite: 10]</label>
-                <div class="row g-2">
-                    <div class="col-6"><input type="radio" name="업종" value="요식" class="form-check-input"> 요식 [cite: 12]</div>
-                    <div class="col-6"><input type="radio" name="업종" value="유통" class="form-check-input"> 유통 [cite: 11]</div>
-                    <div class="col-6"><input type="radio" name="업종" value="미용" class="form-check-input"> 미용 [cite: 14]</div>
-                    <div class="col-6"><input type="radio" name="업종" value="기타" class="form-check-input"> 기타 업종 [cite: 21]</div>
-                </div>
+        <div class="section">
+            <span class="label">신청인 서명</span>
+            <div class="signature-wrapper">
+                <canvas id="signature-pad"></canvas>
             </div>
+            <div class="sig-btn-group">
+                <button type="button" class="btn-clear" id="clear">지우기</button>
+            </div>
+            <p style="font-size: 0.75rem; color: #999; margin-top: 10px;">
+                ※ 위 사각형 안에 손가락이나 펜으로 서명해 주세요.
+            </p>
+        </div>
 
-            <div class="section-header">가입자 정보 [cite: 87]</div>
-            <div class="mb-3">
-                <label class="form-label">고객명 (법인/대표자명) [cite: 32, 34]</label>
-                <input type="text" name="고객명" class="form-control" placeholder="성함을 입력하세요" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">연락처 [cite: 33, 49]</label>
-                <input type="tel" name="연락처" class="form-control" placeholder="010-0000-0000" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">설치 및 장비회수 주소 [cite: 88]</label>
-                <textarea name="주소" class="form-control" rows="2" placeholder="정확한 주소를 입력하세요"></textarea>
-            </div>
+        <div class="section" style="font-size: 0.8rem; color: #666;">
+            <label><input type="checkbox" style="width: auto; margin-right: 5px;" required> 위 신청 내용을 확인하였으며 서명합니다.</label>
+        </div>
 
-            <div class="section-header">해지 사유 (필수체크) [cite: 95]</div>
-            <div class="mb-3">
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" name="해지사유" value="폐업" id="reason1">
-                    <label class="form-check-label" for="reason1">폐업 [cite: 96]</label>
-                </div>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" name="해지사유" value="업무종료" id="reason2">
-                    <label class="form-check-label" for="reason2">업무종료 [cite: 99]</label>
-                </div>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" name="해지사유" value="비용절감" id="reason3">
-                    <label class="form-check-label" for="reason3">비용절감 [cite: 104]</label>
-                </div>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" name="해지사유" value="타사전환" id="reason4">
-                    <label class="form-check-label" for="reason4">타사 전환 (타사 영업권유 등) [cite: 133, 135]</label>
-                </div>
-            </div>
-
-            <div class="section-header">철거비 및 안내 동의 [cite: 243, 360]</div>
-            <div class="notice-box mb-3">
-                <p class="mb-1"><strong>장비 철거 안내 (부가세 포함) [cite: 473]</strong></p>
-                - 실내 카메라: 22,000원 [cite: 475, 505]<br>
-                - 실외 카메라: 27,500원 [cite: 475, 505]<br>
-                - 장비 회수 미완료 시 분실 변상금이 발생할 수 있습니다. [cite: 499, 500]
-            </div>
-            <div class="form-check mb-4">
-                <input class="form-check-input" type="checkbox" name="동의여부" id="agree" required>
-                <label class="form-check-label fw-bold" for="agree">
-                    내용을 확인하였으며 동의합니다. [cite: 344, 350]
-                </label>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-submit w-100">신청서 제출 완료</button>
-        </form>
-    </div>
-    <div class="text-center mt-3 mb-5 text-muted small">
-        © LGU+ 우리가게패키지 접수처
-    </div>
+        <button type="submit" class="btn-submit">신청 완료</button>
+    </form>
 </div>
+
+<script>
+    // 서명 패드 초기화
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)'
+    });
+
+    // 화면 크기에 맞게 캔버스 크기 조정
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    // 지우기 버튼 기능
+    document.getElementById('clear').addEventListener('click', function () {
+        signaturePad.clear();
+    });
+
+    // 제출 시 동작
+    document.getElementById('applyForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        
+        if (signaturePad.isEmpty()) {
+            alert("서명을 해주세요.");
+        } else {
+            // 서명 데이터를 이미지(PNG)로 추출
+            const signatureData = signaturePad.toDataURL(); 
+            console.log("서명 이미지 데이터:", signatureData);
+            
+            alert("신청서가 성공적으로 작성되었습니다. (테스트 모드)");
+        }
+    });
+</script>
 
 </body>
 </html>
