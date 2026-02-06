@@ -21,6 +21,8 @@
         .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
         .btn-next { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
         .reason-group { background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
+        /* 필수 항목 강조 */
+        .required-star { color: var(--u-pink); margin-left: 3px; }
     </style>
 </head>
 <body>
@@ -40,52 +42,58 @@
 
             <div class="section-title">가입자 정보</div>
             <div class="mb-3">
-                <label class="form-label">고객명 (법인명/대표자이름)</label>
-                <input type="text" class="form-control" placeholder="성함을 입력하세요" required>
+                <label class="form-label">고객명 (법인명/대표자이름)<span class="required-star">*</span></label>
+                <input type="text" id="custName" class="form-control" placeholder="성함을 입력하세요">
             </div>
             <div class="mb-3">
-                <label class="form-label">연락처</label>
-                <input type="tel" class="form-control" placeholder="010-0000-0000" required>
+                <label class="form-label">연락처<span class="required-star">*</span></label>
+                <input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000">
             </div>
             <div class="mb-3">
-                <label class="form-label">사업자등록번호</label>
-                <input type="text" class="form-control" placeholder="000-00-00000">
+                <label class="form-label">사업자등록번호<span class="required-star">*</span></label>
+                <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
             </div>
             <div class="mb-3">
-                <label class="form-label">생년월일</label>
-                <input type="text" class="form-control" placeholder="6자리 또는 법인번호">
+                <label class="form-label">생년월일/법인번호<span class="required-star">*</span></label>
+                <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
+            </div>
+            <div class="mb-1">
+                <label class="form-label">가입 주소<span class="required-star">*</span></label>
+                <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
             </div>
             <div class="mb-3">
-                <label class="form-label">주소</label>
-                <input type="text" id="cust-addr" class="form-control address-search" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('cust-addr')">
+                <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
             </div>
 
             <div class="section-title">요금 확인 사항</div>
             <div class="notice-box mb-3">
-                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
+                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다. [cite: 502]
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="payConfirm" required>
-                <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.</label>
+                <input class="form-check-input" type="checkbox" id="payConfirm">
+                <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
             </div>
 
             <div class="section-title">설치정보 및 장비회수</div>
+            <div class="mb-1">
+                <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
+                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
+            </div>
             <div class="mb-3">
-                <label class="form-label">장비 회수 요청 주소</label>
-                <input type="text" id="return-addr" class="form-control address-search" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('return-addr')">
+                <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
             </div>
             <div class="row g-2 mb-3">
                 <div class="col-6">
-                    <label class="form-label">회수시 연락드릴 담당자 성함</label>
-                    <input type="text" class="form-control">
+                    <label class="form-label">회수 담당자 성함<span class="required-star">*</span></label>
+                    <input type="text" id="returnPerson" class="form-control">
                 </div>
                 <div class="col-6">
-                    <label class="form-label">연락처</label>
-                    <input type="tel" class="form-control">
+                    <label class="form-label">연락처<span class="required-star">*</span></label>
+                    <input type="tel" id="returnTel" class="form-control">
                 </div>
             </div>
             
-            <label class="form-label">해지 상품 (중복 선택 가능)</label>
+            <label class="form-label">해지 상품 (최소 하나 선택)<span class="required-star">*</span></label>
             <div class="row g-2 mb-3 px-2">
                 <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
                 <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
@@ -94,8 +102,7 @@
                 <div class="col-12"><input type="checkbox" name="product" value="전회선"> <b>전회선 해지</b></div>
             </div>
 
-            <div class="section-title">해지 사유 (필수 체크)</div>
-            
+            <div class="section-title">해지 사유 (최소 하나 선택)<span class="required-star">*</span></div>
             <div class="mb-3 reason-group">
                 <label class="form-label text-primary">● 고객사유</label>
                 <div class="row g-2 small ps-1">
@@ -104,59 +111,73 @@
                     <div class="col-6"><input type="checkbox" name="reason" value="사무소폐쇄"> 사무소 폐쇄/통합</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="사용저조"> 사용저조</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="비용절감"> 비용절감</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="회선고도화"> 회선고도화</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="이용계획취소"> 이용계획 취소</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="기타"> 기타</div>
                 </div>
             </div>
-
-            <div class="mb-3 reason-group">
-                <label class="form-label text-danger">● 서비스 불만</label>
-                <div class="row g-2 small ps-1">
-                    <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="장애처리불만"> 장애처리 불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="속도불만"> 속도불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="불안정성"> 불안정성</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="비용부담"> 비용부담</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="개통지연"> 개통지연</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="기술지원불만"> 기술지원불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="영업관리불만"> 영업관리불만</div>
-                </div>
-            </div>
-
-            <div class="mb-3 reason-group">
-                <label class="form-label text-success">● 타사전환</label>
-                <div class="row g-2 small ps-1">
-                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
-                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
-                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타</div>
-                </div>
-            </div>
-
-            <button type="button" class="btn-next" onclick="alert('1페이지 작성이 완료되었습니다. 2페이지로 넘어갑니다.')">다음 페이지로 (2/6)</button>
+            <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
         </form>
     </div>
 </div>
 
 <script>
-    // 오늘 날짜 자동 입력
-    const today = new Date();
-    const dateStr = today.getFullYear() + "년 " + (today.getMonth() + 1) + "월 " + today.getDate() + "일";
-    document.getElementById('todayDate').value = dateStr;
+    document.getElementById('todayDate').value = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
 
-    // 주소 검색 공통 함수
-    function execDaumPostcode(elementId) {
+    function execDaumPostcode(mainAddrId, detailAddrId) {
         new daum.Postcode({
             oncomplete: function(data) {
-                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-                const target = document.getElementById(elementId);
-                target.value = addr;
-                target.readOnly = false;
-                target.focus();
+                document.getElementById(mainAddrId).value = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                document.getElementById(detailAddrId).focus();
             }
         }).open();
     }
-</script>
 
+    function validateAndNext() {
+        const fields = [
+            { id: 'custName', name: '고객명' },
+            { id: 'custTel', name: '연락처' },
+            { id: 'bizNum', name: '사업자등록번호' },
+            { id: 'bizReg', name: '생년월일/법인번호' },
+            { id: 'custAddr', name: '가입 주소' },
+            { id: 'custDetail', name: '가입 상세주소' },
+            { id: 'returnAddr', name: '장비 회수 주소' },
+            { id: 'returnDetail', name: '회수 상세주소' },
+            { id: 'returnPerson', name: '회수 담당자' },
+            { id: 'returnTel', name: '회수 연락처' }
+        ];
+
+        // 1. 텍스트 입력 확인
+        for (let field of fields) {
+            const el = document.getElementById(field.id);
+            if (!el.value.trim()) {
+                alert(`${field.name}을(를) 입력해 주세요.`);
+                el.focus();
+                return;
+            }
+        }
+
+        // 2. 요금 확인 체크박스
+        if (!document.getElementById('payConfirm').checked) {
+            alert("요금 확인 사항에 동의해 주세요.");
+            return;
+        }
+
+        // 3. 해지 상품 선택 확인
+        const products = document.querySelectorAll('input[name="product"]:checked');
+        if (products.length === 0) {
+            alert("해지하실 상품을 하나 이상 선택해 주세요.");
+            return;
+        }
+
+        // 4. 해지 사유 선택 확인
+        const reasons = document.querySelectorAll('input[name="reason"]:checked');
+        if (reasons.length === 0) {
+            alert("해지 사유를 하나 이상 선택해 주세요.");
+            return;
+        }
+
+        alert("모든 항목이 확인되었습니다. 2페이지로 이동합니다.");
+        // 여기서 다음 페이지 로직 실행
+    }
+</script>
 </body>
 </html>
