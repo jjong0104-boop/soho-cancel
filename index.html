@@ -6,7 +6,6 @@
     <title>U+우리가게패키지 해지신청서</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
         :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
         body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
@@ -19,15 +18,10 @@
         .form-label { font-weight: 600; font-size: 0.9rem; color: #555; }
         .form-control { padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
         .address-search { cursor: pointer; background-color: #fffafc !important; border: 1px solid var(--u-pink); }
-        .notice-box, .agreement-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
-        .agreement-box { color: #333; line-height: 1.7; text-align: justify; margin-bottom: 20px; }
-        .btn-next, .btn-submit { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
+        .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
+        .btn-next { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
         .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
         .required-star { color: var(--u-pink); margin-left: 3px; }
-        .signature-wrapper { background: #fff; border: 2px solid #ddd; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; margin-bottom: 10px; }
-        canvas { width: 100%; height: 100%; cursor: crosshair; }
-        .btn-clear { font-size: 0.85rem; padding: 5px 15px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 4px; color: #666; }
-        .page-hidden { display: none; }
         .cctv-special-box { border: 2px solid var(--u-pink); background-color: #fffafc; display: none; }
     </style>
 </head>
@@ -55,7 +49,7 @@
                 <label class="form-label">고객명 (법인명/대표자이름)<span class="required-star">*</span></label>
                 <input type="text" id="custName" class="form-control" placeholder="성함을 입력하세요">
             </div>
-            <div class="mb-3">
+            <div class="mb-3 text-start">
                 <label class="form-label">연락처<span class="required-star">*</span></label>
                 <input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000">
             </div>
@@ -63,12 +57,44 @@
                 <label class="form-label">사업자등록번호<span class="required-star">*</span></label>
                 <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
             </div>
+            <div class="mb-3">
+                <label class="form-label">법인등록번호(생년월일)<span class="required-star">*</span></label>
+                <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
+            </div>
             <div class="mb-1">
                 <label class="form-label">주소<span class="required-star">*</span></label>
                 <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
             </div>
             <div class="mb-3">
                 <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
+            </div>
+
+            <div class="section-title">설치정보 및 장비회수</div>
+            <div class="mb-1">
+                <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
+                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
+            </div>
+            <div class="mb-3">
+                <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label">회수 담당자 성함<span class="required-star">*</span></label>
+                    <input type="text" id="returnPerson" class="form-control">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">연락처<span class="required-star">*</span></label>
+                    <input type="tel" id="returnTel" class="form-control">
+                </div>
+            </div>
+
+            <div class="section-title">요금 확인 사항</div>
+            <div class="notice-box mb-3">
+                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
+            </div>
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" id="payConfirm">
+                <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
             </div>
 
             <div class="section-title">해지 상품 선택</div>
@@ -82,17 +108,17 @@
 
             <div id="cctvNoticeArea" class="notice-box mb-3 cctv-special-box">
                 <p class="fw-bold text-danger mb-3">[CCTV 해지 시 필수 체크]</p>
-                <div class="form-check mb-2">
+                <div class="form-check mb-2 text-start">
                     <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청">
                     <label class="form-check-label small fw-bold" for="cctvRequest">
                         CCTV 철거를 요청합니다. (약정 만료 후 해지 시 철거비는 청구되지 않습니다. 약정 도중 철거 요청 시 철거비 청구)
                     </label>
                 </div>
-                <div class="form-check mb-3">
+                <div class="form-check mb-3 text-start">
                     <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료">
                     <label class="form-check-label small fw-bold" for="cctvDone">CCTV가 이미 철거되어 있습니다.</label>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive mb-3">
                     <table class="table table-sm table-bordered text-center small mb-0 bg-white">
                         <thead class="table-light"><tr><th colspan="2">CCTV 철거비용 (부가세 포함, 단위: 원)</th></tr></thead>
                         <tbody>
@@ -101,20 +127,106 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="form-check border-top pt-2">
+                    <input class="form-check-input" type="checkbox" id="cctvConfirmCheck">
+                    <label class="form-check-label fw-bold" for="cctvConfirmCheck">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
+                </div>
             </div>
 
-            <div class="section-title">해지 사유</div>
+            <div class="section-title">해지 사유 (필수 체크)</div>
             <div class="mb-3 reason-group">
+                <label class="form-label text-primary small">● 고객사유</label>
                 <div class="row g-2 small ps-1">
                     <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="업무종료"> 업무종료</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="사무소폐쇄"> 사무소 폐쇄/통합</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="사용저조"> 사용저조</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="기타"> 기타</div>
+                </div>
+            </div>
+
+            <div class="mb-3 reason-group">
+                <label class="form-label text-danger small">● 서비스 불만</label>
+                <div class="row g-2 small ps-1">
+                    <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="속도불만"> 속도불만</div>
+                </div>
+            </div>
+
+            <div class="mb-3 reason-group">
+                <label class="form-label text-success small">● 타사전환</label>
+                <div class="row g-2 small ps-1">
+                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
                 </div>
             </div>
 
             <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
         </form>
     </div>
+</div>
+
+<script>
+    // 오늘 날짜 및 URL 파라미터 로딩
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('todayDate').value = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        const urlParams = new URLSearchParams(window.location.search);
+        const billNo = urlParams.get('bill');
+        if (billNo) document.getElementById('billNumber').value = billNo;
+    });
+
+    // CCTV 안내 토글
+    function toggleCCTVNotice() {
+        const isChecked = document.getElementById('chkCCTV').checked;
+        document.getElementById('cctvNoticeArea').style.display = isChecked ? 'block' : 'none';
+    }
+
+    // 주소 검색 함수
+    function execDaumPostcode(mainAddrId, detailAddrId) {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                document.getElementById(mainAddrId).value = addr;
+                document.getElementById(detailAddrId).focus();
+            }
+        }).open();
+    }
+
+    // 유효성 검사 로직
+    function validateAndNext() {
+        const textFields = [
+            { id: 'custName', name: '고객명' },
+            { id: 'custTel', name: '가입자 연락처' },
+            { id: 'bizNum', name: '사업자등록번호' },
+            { id: 'bizReg', name: '생년월일/법인번호' },
+            { id: 'custAddr', name: '가입 주소' },
+            { id: 'returnAddr', name: '장비 회수 주소' },
+            { id: 'returnPerson', name: '회수 담당자 성함' },
+            { id: 'returnTel', name: '회수 담당자 연락처' }
+        ];
+
+        for (let field of textFields) {
+            const el = document.getElementById(field.id);
+            if (!el.value.trim()) { alert(`${field.name}을(를) 입력해 주세요.`); el.focus(); return; }
+        }
+
+        if (!document.getElementById('payConfirm').checked) { alert("요금 확인 사항에 동의해 주세요."); return; }
+
+        if (document.querySelectorAll('input[name="product"]:checked').length === 0) { alert("해지하실 상품을 선택해 주세요."); return; }
+
+        // CCTV 체크 시 전용 유효성 검사
+        if (document.getElementById('chkCCTV').checked) {
+            if (!document.querySelector('input[name="cctvStatus"]:checked')) { alert("CCTV 철거 여부를 선택해 주세요."); return; }
+            if (!document.getElementById('cctvConfirmCheck').checked) { alert("CCTV 해지 확인 사항에 체크해 주세요."); return; }
+        }
+
+        if (document.querySelectorAll('input[name="reason"]:checked').length === 0) { alert("해지 사유를 선택해 주세요."); return; }
+
+        alert("1페이지 작성이 완료되었습니다. 2페이지로 이동합니다.");
+    }
+</script>
+</body>
+</html>
 
     <div id="divPage2" class="form-card page-hidden">
         <div class="header">
