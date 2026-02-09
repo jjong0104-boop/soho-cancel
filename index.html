@@ -24,13 +24,9 @@
         .btn-next, .btn-submit { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
         .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
         .required-star { color: var(--u-pink); margin-left: 3px; }
-        
-        /* 서명 패드 스타일 */
         .signature-wrapper { background: #fff; border: 2px solid #ddd; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; margin-bottom: 10px; }
         canvas { width: 100%; height: 100%; cursor: crosshair; }
         .btn-clear { font-size: 0.85rem; padding: 5px 15px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 4px; color: #666; }
-
-        /* 페이지 숨김 처리용 클래스 */
         .page-hidden { display: none; }
     </style>
 </head>
@@ -193,10 +189,18 @@
 </div>
 
 <script>
-    [cite_start]// 오늘 날짜 설정 [cite: 16-18, 366-369]
-    const today = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
-    document.getElementById('todayDate').value = today;
-    document.getElementById('applyDate').value = today;
+    // 오늘 날짜 설정 함수 
+    function setTodayDate() {
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        const todayDateEl = document.getElementById('todayDate');
+        const applyDateEl = document.getElementById('applyDate');
+        
+        if(todayDateEl) todayDateEl.value = todayStr;
+        if(applyDateEl) applyDateEl.value = todayStr;
+    }
+
+    // 페이지 로드 시 날짜 즉시 설정
+    window.addEventListener('DOMContentLoaded', setTodayDate);
 
     // 주소 검색 기능
     function execDaumPostcode(mainAddrId, detailAddrId) {
@@ -209,7 +213,7 @@
         }).open();
     }
 
-    // 1페이지 유효성 검사 및 2페이지 전환
+    // 1페이지 유효성 검사 및 전환
     function validateAndNext() {
         const textFields = [
             { id: 'custName', name: '고객명' },
@@ -248,11 +252,11 @@
             return;
         }
 
-        // 1페이지 숨기고 2페이지 표시
+        // 화면 전환
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
         window.scrollTo(0,0);
-        resizeCanvas(); // 서명 패드 크기 재설정
+        resizeCanvas();
     }
 
     function prevPage() {
@@ -261,7 +265,7 @@
         window.scrollTo(0,0);
     }
 
-    // 서명 패드 설정
+    // 서명 패드
     const canvas = document.getElementById('signature-pad');
     const signaturePad = new SignaturePad(canvas, {
         backgroundColor: 'rgb(255, 255, 255)',
@@ -293,7 +297,7 @@
             alert("서명을 완료해 주세요.");
             return;
         }
-        alert(name + " 님의 신청서 작성이 완료되었습니다. 개인정보 활용동의서로 넘어갑니다.");
+        alert(name + " 님의 신청서 작성이 완료되었습니다. 개인정보 활용동의서로 이동합니다.");
     }
 </script>
 </body>
