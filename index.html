@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -11,7 +12,7 @@
         :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
         body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
         .container { max-width: 600px; margin: auto; padding: 20px; }
-        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--u-pink); padding-bottom: 15px; }
         .header h2 { color: var(--u-pink); font-weight: bold; font-size: 1.6rem; }
         .section-title { font-size: 1.1rem; font-weight: bold; color: #333; margin: 25px 0 15px; display: flex; align-items: center; }
@@ -27,8 +28,7 @@
         .signature-wrapper { background: #fff; border: 2px solid #ddd; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; margin-bottom: 10px; }
         canvas { width: 100%; height: 100%; cursor: crosshair; }
         .btn-clear { font-size: 0.85rem; padding: 5px 15px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 4px; color: #666; }
-        /* 페이지 숨김 처리 핵심 클래스 */
-        .page-hidden { display: none !important; }
+        .page-hidden { display: none; }
     </style>
 </head>
 <body>
@@ -42,9 +42,35 @@
 
         <form id="formPage1">
             <div class="mb-4">
-                <label class="form-label">청구서 번호</label>
-                <input type="text" id="billNumber" class="form-control bg-light" placeholder="링크 확인 중..." readonly>
-            </div>
+    <label class="form-label">청구서 번호</label>
+    <input type="text" id="billNumber" class="form-control bg-light" placeholder="데이터 로딩 중..." readonly>
+</div>
+
+<script>
+    // 페이지 로드 시 실행
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. 오늘 날짜 설정 로직 (모든 페이지 공통)
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        if(document.getElementById('todayDate')) document.getElementById('todayDate').value = todayStr;
+        if(document.getElementById('applyDate')) document.getElementById('applyDate').value = todayStr;
+
+        // 2. 주소창 URL에서 bill 파라미터 직접 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        const billNo = urlParams.get('bill'); // URL의 ?bill= 뒤에 오는 값을 가져옴
+        
+        const billInput = document.getElementById('billNumber');
+        if (billInput) {
+            if (billNo) {
+                // 파라미터가 있으면 해당 번호 입력
+                billInput.value = billNo;
+            } else {
+                // 파라미터가 없으면 경고 문구 표시
+                billInput.value = "번호 없음 (링크를 확인해주세요)";
+            }
+        }
+    });
+</script>
+</script>
             <div class="mb-4">
                 <label class="form-label">신청접수일</label>
                 <input type="text" id="todayDate" class="form-control bg-light" readonly>
@@ -55,82 +81,70 @@
                 <label class="form-label">고객명 (법인명/대표자이름)<span class="required-star">*</span></label>
                 <input type="text" id="custName" class="form-control" placeholder="성함을 입력하세요">
             </div>
-            <div class="mb-3 text-start">
+            <div class="mb-3">
                 <label class="form-label">연락처<span class="required-star">*</span></label>
                 <input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000">
             </div>
-            <div class="mb-3 text-start">
+            <div class="mb-3">
                 <label class="form-label">사업자등록번호<span class="required-star">*</span></label>
                 <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
             </div>
-            <div class="mb-3 text-start">
+            <div class="mb-3">
                 <label class="form-label">법인등록번호(생년월일)<span class="required-star">*</span></label>
                 <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
             </div>
-            <div class="mb-1 text-start">
+            
+            <div class="mb-1">
                 <label class="form-label">주소<span class="required-star">*</span></label>
                 <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
+            </div>
+            <div class="mb-3">
                 <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
             </div>
 
-            <div class="section-title">장비 회수 정보</div>
-            <div class="mb-1 text-start">
-                <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
-                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
-                <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
-            </div>
-            <div class="row g-2 mb-3 text-start">
-                <div class="col-6">
-                    <label class="form-label">회수 담당자<span class="required-star">*</span></label>
-                    <input type="text" id="returnPerson" class="form-control">
-                </div>
-                <div class="col-6">
-                    <label class="form-label">회수 연락처<span class="required-star">*</span></label>
-                    <input type="tel" id="returnTel" class="form-control">
-                </div>
-            </div>
-
             <div class="section-title">요금 확인 사항</div>
-            <div class="notice-box mb-3 text-start">
+            <div class="notice-box mb-3">
                 통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
             </div>
-            <div class="form-check mb-4 text-start">
+            <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="payConfirm">
                 <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
             </div>
 
-            <div class="section-title">해지 상품 선택</div>
-            <div class="row g-2 mb-3 px-2 text-start">
+            <div class="section-title">설치정보 및 장비회수</div>
+            <div class="mb-1">
+                <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
+                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
+            </div>
+            <div class="mb-3">
+                <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label">회수 담당자 성함<span class="required-star">*</span></label>
+                    <input type="text" id="returnPerson" class="form-control">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">연락처<span class="required-star">*</span></label>
+                    <input type="tel" id="returnTel" class="form-control">
+                </div>
+            </div>
+            
+            <label class="form-label">해지 상품 (중복 선택 가능)<span class="required-star">*</span></label>
+            <div class="row g-2 mb-3 px-2">
                 <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
                 <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
-                <div class="col-4"><input type="checkbox" name="product" value="CCTV" id="chkCCTV" onchange="toggleCCTVNotice()"> CCTV</div>
+                <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV</div>
                 <div class="col-4"><input type="checkbox" name="product" value="전화"> 전화</div>
                 <div class="col-12"><input type="checkbox" name="product" value="전회선"> <b>전회선 해지</b></div>
             </div>
 
-            <div id="cctvNoticeArea" class="notice-box mb-3" style="display:none; border:2px solid var(--u-pink);">
-                <p class="fw-bold text-danger mb-3">[CCTV 해지 시 필수 체크]</p>
-                <div class="form-check mb-2 text-start">
-                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청">
-                    <label class="form-check-label small fw-bold" for="cctvRequest">
-                        CCTV 철거를 요청합니다. (약정 도중 철거 요청 시 철거비 청구됨에 동의함)
-                    </label>
-                </div>
-                <div class="form-check mb-3 text-start">
-                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료">
-                    <label class="form-check-label small fw-bold" for="cctvDone">CCTV가 이미 철거되어 있습니다.</label>
-                </div>
-                <div class="form-check border-top pt-2 text-start">
-                    <input class="form-check-input" type="checkbox" id="cctvConfirmCheck">
-                    <label class="form-check-label fw-bold" for="cctvConfirmCheck">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
-                </div>
-            </div>
-
-            <div class="section-title">해지 사유</div>
-            <div class="mb-3 reason-group text-start">
-                <label class="form-label text-primary small">● 고객사유</label>
+            <div class="section-title">해지 사유 (필수 체크)<span class="required-star">*</span></div>
+            
+            <div class="mb-3 reason-group">
+                <label class="form-label text-primary">● 고객사유 </label>
                 <div class="row g-2 small ps-1">
-                   <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
+                    <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="업무종료"> 업무종료</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="사무소폐쇄"> 사무소 폐쇄/통합</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="사용저조"> 사용저조</div>
@@ -138,8 +152,10 @@
                     <div class="col-6"><input type="checkbox" name="reason" value="회선고도화"> 회선고도화</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="이용계획취소"> 이용계획 취소</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="기타"> 기타</div>
+                </div>
+            </div>
 
-                       <div class="mb-3 reason-group">
+            <div class="mb-3 reason-group">
                 <label class="form-label text-danger">● 서비스 불만 </label>
                 <div class="row g-2 small ps-1">
                     <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발</div>
@@ -156,13 +172,9 @@
             <div class="mb-3 reason-group">
                 <label class="form-label text-success">● 타사전환 </label>
                 <div class="row g-2 small ps-1">
-                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT </div>
-                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB </div>
-                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타 </div>
-                </div>
-            </div>
-
-
+                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타</div>
                 </div>
             </div>
 
@@ -170,7 +182,108 @@
         </form>
     </div>
 
-     // 화면 전환
+    <div id="divPage2" class="form-card page-hidden">
+        <div class="header">
+            <h2>U+우리가게패키지 해지신청서</h2>
+            <p class="text-muted small mb-0">온라인 신청 프로세스 (2/6)</p>
+        </div>
+
+        <div class="section-title">안내 및 동의</div>
+        <div class="agreement-box">
+            본 신청서는 본인(가입자, 예금주/카드주)이 직접 작성하였음을 확인하며, 별지를 포함한 신청서에 기재된 서비스 신청고객에게 적용되는 모든 사항(단말기 할부판매 및 임대약정, 결함서비스 요금, 일부 해지 시 처리방법, 변경 및 해지조건, 해지시 할인반환금 등)의 주요내용에 대한 안내를 받았으며, 본인은 (주)LG유플러스의 개인정보 취급방침과 신청하는 상품의 이용약관에 동의합니다. 본인은 가입신청서 내용에 대해 충분히 설명 듣고 그 내용을 이해하였으며, 위와 같은 내용으로 계약을 체결합니다. 
+        </div>
+
+        <form id="formPage2">
+            <div class="mb-3">
+                <label class="form-label">신청일</label>
+                <input type="text" id="applyDate" class="form-control bg-light" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">신청인 (가입자/대리인 성함)<span class="required-star">*</span></label>
+                <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
+            </div>
+
+            <div class="section-title">서명<span class="required-star">*</span></div>
+            <div class="signature-wrapper">
+                <canvas id="signature-pad"></canvas>
+            </div>
+            <div class="text-end">
+                <button type="button" class="btn-clear" onclick="clearSignature()">다시 쓰기</button>
+            </div>
+            <p class="text-muted small mt-2">※ 위 사각형 안에 손가락이나 펜으로 직접 서명해 주세요. </p>
+
+            <button type="button" class="btn-submit" onclick="submitFinal()">최종 제출하기</button>
+            <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage()">이전 페이지로</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 오늘 날짜 설정 함수 
+    function setTodayDate() {
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        const todayDateEl = document.getElementById('todayDate');
+        const applyDateEl = document.getElementById('applyDate');
+        
+        if(todayDateEl) todayDateEl.value = todayStr;
+        if(applyDateEl) applyDateEl.value = todayStr;
+    }
+
+    // 페이지 로드 시 날짜 즉시 설정
+    window.addEventListener('DOMContentLoaded', setTodayDate);
+
+    // 주소 검색 기능
+    function execDaumPostcode(mainAddrId, detailAddrId) {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                document.getElementById(mainAddrId).value = addr;
+                document.getElementById(detailAddrId).focus();
+            }
+        }).open();
+    }
+
+    // 1페이지 유효성 검사 및 전환
+    function validateAndNext() {
+        const textFields = [
+            { id: 'custName', name: '고객명' },
+            { id: 'custTel', name: '가입자 연락처' },
+            { id: 'bizNum', name: '사업자등록번호' },
+            { id: 'bizReg', name: '생년월일/법인번호' },
+            { id: 'custAddr', name: '가입 주소' },
+            { id: 'custDetail', name: '가입 상세주소' },
+            { id: 'returnAddr', name: '장비 회수 주소' },
+            { id: 'returnDetail', name: '회수 상세주소' },
+            { id: 'returnPerson', name: '회수 담당자 성함' },
+            { id: 'returnTel', name: '회수 담당자 연락처' }
+        ];
+
+        for (let field of textFields) {
+            const el = document.getElementById(field.id);
+            if (!el.value.trim()) {
+                alert(`${field.name}을(를) 입력해 주세요.`);
+                el.focus();
+                return;
+            }
+        }
+
+        if (!document.getElementById('payConfirm').checked) {
+            alert("요금 확인 사항에 동의해 주세요.");
+            return;
+        }
+
+        if (document.querySelectorAll('input[name="product"]:checked').length === 0) {
+            alert("해지하실 상품을 하나 이상 선택해 주세요.");
+            return;
+        }
+
+        if (document.querySelectorAll('input[name="reason"]:checked').length === 0) {
+            alert("해지 사유를 하나 이상 선택해 주세요.");
+            return;
+        }
+
+        // 화면 전환
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
         window.scrollTo(0,0);
