@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -11,15 +12,14 @@
         :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
         body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
         .container { max-width: 600px; margin: auto; padding: 20px; }
-        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--u-pink); padding-bottom: 15px; }
         .header h2 { color: var(--u-pink); font-weight: bold; font-size: 1.6rem; }
         .section-title { font-size: 1.1rem; font-weight: bold; color: #333; margin: 25px 0 15px; display: flex; align-items: center; }
         .section-title::before { content: ""; width: 4px; height: 18px; background: var(--u-pink); margin-right: 10px; border-radius: 2px; }
         .form-label { font-weight: 600; font-size: 0.9rem; color: #555; }
         .form-control { padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
-        /* 주소창 클릭 유도 스타일 */
-        .address-search { cursor: pointer !important; background-color: #fffafc !important; border: 1px solid var(--u-pink); caret-color: transparent; }
+        .address-search { cursor: pointer; background-color: #fffafc !important; border: 1px solid var(--u-pink); }
         .notice-box, .agreement-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
         .agreement-box { color: #333; line-height: 1.7; text-align: justify; margin-bottom: 20px; }
         .btn-next, .btn-submit { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
@@ -28,8 +28,7 @@
         .signature-wrapper { background: #fff; border: 2px solid #ddd; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; margin-bottom: 10px; }
         canvas { width: 100%; height: 100%; cursor: crosshair; }
         .btn-clear { font-size: 0.85rem; padding: 5px 15px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 4px; color: #666; }
-        /* 페이지 숨김 확실히 처리 */
-        .page-hidden { display: none !important; }
+        .page-hidden { display: none; }
     </style>
 </head>
 <body>
@@ -43,46 +42,84 @@
 
         <form id="formPage1">
             <div class="mb-4">
-                <label class="form-label">청구서 번호</label>
-                <input type="text" id="billNumber" class="form-control bg-light" readonly>
-            </div>
+    <label class="form-label">청구서 번호</label>
+    <input type="text" id="billNumber" class="form-control bg-light" placeholder="데이터 로딩 중..." readonly>
+</div>
+
+<script>
+    // 페이지 로드 시 실행
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. 오늘 날짜 설정 로직 (모든 페이지 공통)
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        if(document.getElementById('todayDate')) document.getElementById('todayDate').value = todayStr;
+        if(document.getElementById('applyDate')) document.getElementById('applyDate').value = todayStr;
+
+        // 2. 주소창 URL에서 bill 파라미터 직접 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        const billNo = urlParams.get('bill'); // URL의 ?bill= 뒤에 오는 값을 가져옴
+        
+        const billInput = document.getElementById('billNumber');
+        if (billInput) {
+            if (billNo) {
+                // 파라미터가 있으면 해당 번호 입력
+                billInput.value = billNo;
+            } else {
+                // 파라미터가 없으면 경고 문구 표시
+                billInput.value = "번호 없음 (링크를 확인해주세요)";
+            }
+        }
+    });
+</script>
+</script>
             <div class="mb-4">
                 <label class="form-label">신청접수일</label>
                 <input type="text" id="todayDate" class="form-control bg-light" readonly>
             </div>
 
             <div class="section-title">가입자 정보</div>
-            <div class="mb-3 text-start">
+            <div class="mb-3">
                 <label class="form-label">고객명 (법인명/대표자이름)<span class="required-star">*</span></label>
                 <input type="text" id="custName" class="form-control" placeholder="성함을 입력하세요">
             </div>
-            <div class="mb-3 text-start">
+            <div class="mb-3">
                 <label class="form-label">연락처<span class="required-star">*</span></label>
                 <input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000">
             </div>
-            <div class="mb-3 text-start">
+            <div class="mb-3">
                 <label class="form-label">사업자등록번호<span class="required-star">*</span></label>
                 <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
             </div>
-            <div class="mb-3 text-start">
-                <label class="form-label">생년월일<span class="required-star">*</span></label>
-                <input type="text" id="bizReg" class="form-control" placeholder="6자리">
+            <div class="mb-3">
+                <label class="form-label">법인등록번호(생년월일)<span class="required-star">*</span></label>
+                <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
             </div>
             
-            <div class="mb-1 text-start">
-                <label class="form-label">가입 주소<span class="required-star">*</span></label>
-                <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="이곳을 클릭하여 주소 검색" onfocus="this.blur()" onclick="execDaumPostcode('custAddr', 'custDetail')">
+            <div class="mb-1">
+                <label class="form-label">주소<span class="required-star">*</span></label>
+                <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
+            </div>
+            <div class="mb-3">
                 <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
             </div>
 
+            <div class="section-title">요금 확인 사항</div>
+            <div class="notice-box mb-3">
+                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="payConfirm">
+                <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
+            </div>
+
             <div class="section-title">설치정보 및 장비회수</div>
-            <div class="mb-1 text-start">
+            <div class="mb-1">
                 <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
-                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="이곳을 클릭하여 주소 검색" onfocus="this.blur()" onclick="execDaumPostcode('returnAddr', 'returnDetail')">
+                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
+            </div>
+            <div class="mb-3">
                 <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
             </div>
-            
-            <div class="row g-2 mb-3 text-start">
+            <div class="row g-2 mb-3">
                 <div class="col-6">
                     <label class="form-label">회수 담당자 성함<span class="required-star">*</span></label>
                     <input type="text" id="returnPerson" class="form-control">
@@ -92,18 +129,9 @@
                     <input type="tel" id="returnTel" class="form-control">
                 </div>
             </div>
-
-            <div class="section-title">요금 확인 사항</div>
-            <div class="notice-box mb-3 text-start small">
-                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
-            </div>
-            <div class="form-check mb-4 text-start">
-                <input class="form-check-input" type="checkbox" id="payConfirm">
-                <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
-            </div>
-
-            <div class="section-title">해지 상품 선택</div>
-            <div class="row g-2 mb-3 px-2 text-start">
+            
+            <label class="form-label">해지 상품 (중복 선택 가능)<span class="required-star">*</span></label>
+            <div class="row g-2 mb-3 px-2">
                 <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
                 <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
                 <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV</div>
@@ -111,8 +139,9 @@
                 <div class="col-12"><input type="checkbox" name="product" value="전회선"> <b>전회선 해지</b></div>
             </div>
 
-            <div class="section-title">해지 사유 (필수 체크)</div>
-                <div class="mb-3 reason-group">
+            <div class="section-title">해지 사유 (필수 체크)<span class="required-star">*</span></div>
+            
+            <div class="mb-3 reason-group">
                 <label class="form-label text-primary">● 고객사유 </label>
                 <div class="row g-2 small ps-1">
                     <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
@@ -143,12 +172,11 @@
             <div class="mb-3 reason-group">
                 <label class="form-label text-success">● 타사전환 </label>
                 <div class="row g-2 small ps-1">
-                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT </div>
-                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB </div>
-                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타 </div>
+                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
+                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타</div>
                 </div>
             </div>
-
 
             <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
         </form>
@@ -159,23 +187,161 @@
             <h2>U+우리가게패키지 해지신청서</h2>
             <p class="text-muted small mb-0">온라인 신청 프로세스 (2/6)</p>
         </div>
+
         <div class="section-title">안내 및 동의</div>
-        <div class="agreement-box small">본 신청서는 본인이 직접 작성하였음을 확인하며... 이용약관에 동의합니다.</div>
+        <div class="agreement-box">
+            본 신청서는 본인(가입자, 예금주/카드주)이 직접 작성하였음을 확인하며, 별지를 포함한 신청서에 기재된 서비스 신청고객에게 적용되는 모든 사항(단말기 할부판매 및 임대약정, 결함서비스 요금, 일부 해지 시 처리방법, 변경 및 해지조건, 해지시 할인반환금 등)의 주요내용에 대한 안내를 받았으며, 본인은 (주)LG유플러스의 개인정보 취급방침과 신청하는 상품의 이용약관에 동의합니다. 본인은 가입신청서 내용에 대해 충분히 설명 듣고 그 내용을 이해하였으며, 위와 같은 내용으로 계약을 체결합니다. 
+        </div>
+
         <form id="formPage2">
-            <div class="mb-3"><label class="form-label">신청일</label><input type="text" id="applyDate" class="form-control bg-light" readonly></div>
-            <div class="mb-3"><label class="form-label">신청인 (성함)<span class="required-star">*</span></label><input type="text" id="signerName" class="form-control"></div>
+            <div class="mb-3">
+                <label class="form-label">신청일</label>
+                <input type="text" id="applyDate" class="form-control bg-light" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">신청인 (가입자/대리인 성함)<span class="required-star">*</span></label>
+                <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
+            </div>
+
             <div class="section-title">서명<span class="required-star">*</span></div>
-            <div class="signature-wrapper"><canvas id="signature-pad"></canvas></div>
-            <div class="text-end mb-2"><button type="button" class="btn-clear" onclick="clearSignature()">다시 쓰기</button></div>
-            <button type="button" class="btn-submit" onclick="submitFinal()">다음으로 이동</button>
-            <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(2, 1)">이전 페이지로</button>
+            <div class="signature-wrapper">
+                <canvas id="signature-pad"></canvas>
+            </div>
+            <div class="text-end">
+                <button type="button" class="btn-clear" onclick="clearSignature()">다시 쓰기</button>
+            </div>
+            <p class="text-muted small mt-2">※ 위 사각형 안에 손가락이나 펜으로 직접 서명해 주세요. </p>
+
+            <button type="button" class="btn-submit" onclick="submitFinal()">최종 제출하기</button>
+            <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage()">이전 페이지로</button>
         </form>
     </div>
+</div>
 
-    <div id="divPage3" class="form-card page-hidden">
-        <div class="header"><h2>해지신청서</h2><p class="text-muted small">온라인 신청 (3/6)</p></div>
-        <div class="section-title">개인정보 활용 동의</div>
-         <p class="text-muted small mb-4">※ 각 항목의 상세 내용을 확인하신 후 동의해 주세요.</p>
+<script>
+    // 오늘 날짜 설정 함수 
+    function setTodayDate() {
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        const todayDateEl = document.getElementById('todayDate');
+        const applyDateEl = document.getElementById('applyDate');
+        
+        if(todayDateEl) todayDateEl.value = todayStr;
+        if(applyDateEl) applyDateEl.value = todayStr;
+    }
+
+    // 페이지 로드 시 날짜 즉시 설정
+    window.addEventListener('DOMContentLoaded', setTodayDate);
+
+    // 주소 검색 기능
+    function execDaumPostcode(mainAddrId, detailAddrId) {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                document.getElementById(mainAddrId).value = addr;
+                document.getElementById(detailAddrId).focus();
+            }
+        }).open();
+    }
+
+    // 1페이지 유효성 검사 및 전환
+    function validateAndNext() {
+        const textFields = [
+            { id: 'custName', name: '고객명' },
+            { id: 'custTel', name: '가입자 연락처' },
+            { id: 'bizNum', name: '사업자등록번호' },
+            { id: 'bizReg', name: '생년월일/법인번호' },
+            { id: 'custAddr', name: '가입 주소' },
+            { id: 'custDetail', name: '가입 상세주소' },
+            { id: 'returnAddr', name: '장비 회수 주소' },
+            { id: 'returnDetail', name: '회수 상세주소' },
+            { id: 'returnPerson', name: '회수 담당자 성함' },
+            { id: 'returnTel', name: '회수 담당자 연락처' }
+        ];
+
+        for (let field of textFields) {
+            const el = document.getElementById(field.id);
+            if (!el.value.trim()) {
+                alert(`${field.name}을(를) 입력해 주세요.`);
+                el.focus();
+                return;
+            }
+        }
+
+        if (!document.getElementById('payConfirm').checked) {
+            alert("요금 확인 사항에 동의해 주세요.");
+            return;
+        }
+
+        if (document.querySelectorAll('input[name="product"]:checked').length === 0) {
+            alert("해지하실 상품을 하나 이상 선택해 주세요.");
+            return;
+        }
+
+        if (document.querySelectorAll('input[name="reason"]:checked').length === 0) {
+            alert("해지 사유를 하나 이상 선택해 주세요.");
+            return;
+        }
+
+        // 화면 전환
+        document.getElementById('divPage1').classList.add('page-hidden');
+        document.getElementById('divPage2').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+        resizeCanvas();
+    }
+
+    function prevPage() {
+        document.getElementById('divPage2').classList.add('page-hidden');
+        document.getElementById('divPage1').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+    }
+
+    // 서명 패드
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    
+    function clearSignature() {
+        signaturePad.clear();
+    }
+
+    function submitFinal() {
+        const name = document.getElementById('signerName').value.trim();
+        if (!name) {
+            alert("신청인 성함을 입력해 주세요.");
+            document.getElementById('signerName').focus();
+            return;
+        }
+        if (signaturePad.isEmpty()) {
+            alert("서명을 완료해 주세요.");
+            return;
+        }
+        alert(name + " 님의 신청서 작성이 완료되었습니다. 개인정보 활용동의서로 이동합니다.");
+    }
+</script>
+</body>
+</html>
+
+<div id="divPage3" class="form-card page-hidden">
+    <div class="header">
+        <h2>U+우리가게패키지 해지신청서</h2>
+        <p class="text-muted small mb-0">온라인 신청 프로세스 (3/6)</p>
+    </div>
+
+    <div class="section-title">개인정보 활용 동의</div>
+    <p class="text-muted small mb-4">※ 각 항목의 상세 내용을 확인하신 후 동의해 주세요.</p>
 
     <div id="agreementArea">
         <div class="mb-4 pb-3 border-bottom">
@@ -250,192 +416,200 @@
         상기 체크한 항목에 대해 충분한 설명을 듣고 이해하며 동의합니다.
     </div>
 
-
-        <div class="mb-3"><label class="form-label">최종 신청인 (성함) *</label><input type="text" id="finalSignerName" class="form-control"></div>
-        <div class="section-title">최종 서명 *</div>
-        <div class="signature-wrapper"><canvas id="final-signature-pad"></canvas></div>
-        <div class="text-end mb-4"><button type="button" class="btn-clear" onclick="clearFinalSignature()">다시 쓰기</button></div>
-        <button type="button" class="btn-submit" onclick="submitToCCTVPage()">다음으로 이동</button>
-        <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(3, 2)">이전 페이지로</button>
+    <div class="mb-3">
+        <label class="form-label">신청인 (성함) *</label>
+        <input type="text" id="finalSignerName" class="form-control" placeholder="성함을 다시 한번 입력하세요">
     </div>
 
-<div id="divPage4" class="form-card page-hidden">
-        <div class="header">
-            <h2>U+우리가게패키지 해지신청서</h2>
-            <p class="text-muted small mb-0">온라인 신청 프로세스 (4/6)</p>
-        </div>
-
-        <div class="section-title">CCTV 해지 시 필수 체크</div>
-        
-        <form id="formPage4">
-            <div class="mb-4 text-start">
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료" onchange="toggleCCTVRequired()">
-                    <label class="form-check-label fw-bold" for="cctvDone">CCTV 철거가 되어 있습니다.</label>
-                </div>
-
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVRequired()">
-                    <label class="form-check-label fw-bold" for="cctvRequest">CCTV 철거를 요청합니다.</label>
-                </div>
-                <p class="text-muted small ps-4 mb-3">
-                    ※ 약정 만료 후 해지 시 철거비는 청구되지 않습니다.<br>
-                    ※ 약정 도중 철거 요청 시 철거비 청구 및 신규설치비 반환금이 발생합니다.
-                </p>
-
-                <div class="form-check mb-3 pt-2 border-top">
-                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" checked onchange="toggleCCTVRequired()">
-                    <label class="form-check-label fw-bold text-primary" for="cctvNone">해당 사항 없습니다. (CCTV 미이용자)</label>
-                </div>
-            </div>
-
-            <div id="cctvPriceTable" class="table-responsive mb-4" style="opacity: 0.5; transition: 0.3s;">
-                <table class="table table-sm table-bordered text-center small mb-0 bg-white">
-                    <thead class="table-light">
-                        <tr><th colspan="2">약정 도중 해지 시 발생 비용 (대당, 부가세 포함)</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="bg-light w-50">신규설치비 반환금</td>
-                            <td class="text-start ps-3">실내 - 94,600원<br>실외 - 126,500원</td>
-                        </tr>
-                        <tr>
-                            <td class="bg-light">철거비</td>
-                            <td class="text-start ps-3">실내 - 22,000원<br>실외 - 27,500원</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="cctvConfirmBox" class="notice-box mb-4" style="display: none;">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="cctvFinalConfirm">
-                    <label class="form-check-label fw-bold" for="cctvFinalConfirm">위 내용을 확인하였습니다. *</label>
-                </div>
-            </div>
-
-            <button type="button" class="btn-submit" onclick="submitFinalToGAS()">최종 신청서 제출하기</button>
-            <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(4, 3)">이전 페이지로</button>
-        </form>
+    <div class="section-title">서명 *</div>
+    <div class="signature-wrapper mb-2">
+        <canvas id="final-signature-pad"></canvas>
     </div>
-</div> <script>
-    // 1. 페이지 로드 시 오늘 날짜 및 URL 파라미터(bill) 자동 로딩
-    window.addEventListener('DOMContentLoaded', () => {
-        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
-        if(document.getElementById('todayDate')) document.getElementById('todayDate').value = todayStr;
-        if(document.getElementById('applyDate')) document.getElementById('applyDate').value = todayStr;
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const billNo = urlParams.get('bill');
-        if (billNo) document.getElementById('billNumber').value = billNo;
-    });
+    <div class="text-end mb-4">
+        <button type="button" class="btn-clear" onclick="clearFinalSignature()">다시 쓰기</button>
+    </div>
 
-    // 2. 다음 주소 API 호출 함수
-    function execDaumPostcode(mainAddrId, detailAddrId) {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-                document.getElementById(mainAddrId).value = addr;
-                document.getElementById(detailAddrId).focus();
-            }
-        }).open();
-    }
+    <button type="button" class="btn-submit" onclick="submitFinalApplication()">최종 신청서 제출하기</button>
+    <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevToPage2()">이전 페이지로</button>
+</div>
 
-    // 3. 서명 패드 초기화 및 페이지 이동 로직
-    const canvas = document.getElementById('signature-pad');
-    const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
+<script>
+    // 3페이지 전용 서명 패드 설정
     let finalSignaturePad;
-
-    function resizeCanvas(targetCanvas, pad) {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        targetCanvas.width = targetCanvas.offsetWidth * ratio;
-        targetCanvas.height = targetCanvas.offsetHeight * ratio;
-        targetCanvas.getContext("2d").scale(ratio, ratio);
-        pad.clear();
-    }
-
-    function validateAndNext() { 
-        document.getElementById('divPage1').classList.add('page-hidden');
-        document.getElementById('divPage2').classList.remove('page-hidden');
-        window.scrollTo(0,0);
-        resizeCanvas(canvas, signaturePad);
-    }
-
-    function submitFinal() { 
-        if(!document.getElementById('signerName').value || signaturePad.isEmpty()) { alert("성함과 서명을 확인해주세요."); return; }
+    
+    // 페이지 전환 시 서명 패드 활성화
+    function submitFinal() {
+        const name = document.getElementById('signerName').value.trim();
+        if (!name) { alert("신청인 성함을 입력해 주세요."); return; }
+        if (signaturePad.isEmpty()) { alert("서명을 완료해 주세요."); return; }
+        
         document.getElementById('divPage2').classList.add('page-hidden');
         document.getElementById('divPage3').classList.remove('page-hidden');
         window.scrollTo(0,0);
+        
+        // 3페이지 서명 패드 초기화
         const finalCanvas = document.getElementById('final-signature-pad');
         finalSignaturePad = new SignaturePad(finalCanvas, { backgroundColor: 'rgb(255, 255, 255)' });
-        resizeCanvas(finalCanvas, finalSignaturePad);
+        
+        // 캔버스 크기 조정
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        finalCanvas.width = finalCanvas.offsetWidth * ratio;
+        finalCanvas.height = finalCanvas.offsetHeight * ratio;
+        finalCanvas.getContext("2d").scale(ratio, ratio);
     }
 
-    function submitToCCTVPage() { 
-        if(!document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) { alert("최종 성함과 서명을 확인해주세요."); return; }
-        document.getElementById('divPage3').classList.add('page-hidden');
-        document.getElementById('divPage4').classList.remove('page-hidden');
-        window.scrollTo(0,0);
+    function clearFinalSignature() {
+        finalSignaturePad.clear();
     }
 
-    function toggleCCTVRequired() {
+    function submitFinalApplication() {
+        const requiredChecks = document.querySelectorAll('.required-check');
+        let allChecked = true;
+        requiredChecks.forEach(cb => { if(!cb.checked) allChecked = false; });
+
+        if(!allChecked) {
+            alert("모든 필수 동의 항목에 체크해 주세요.");
+            return;
+        }
+
+        const name = document.getElementById('finalSignerName').value.trim();
+        if(!name) {
+            alert("최종 신청인 성함을 입력해 주세요.");
+            return;
+        }
+
+        if(finalSignaturePad.isEmpty()) {
+            alert("최종 서명을 완료해 주세요.");
+            return;
+        }
+
+        alert(name + " 님, 감사합니다. 다음으로 이동합니다.");
+    }
+</script>
+
+<div id="divPage4" class="form-card page-hidden">
+    <div class="header">
+        <h2>U+우리가게패키지 해지신청서</h2>
+        <p class="text-muted small mb-0">온라인 신청 프로세스 (4/6)</p>
+    </div>
+
+    <div class="section-title">CCTV 해지 시 필수 체크</div>
+    
+    <form id="formPage4">
+        <div class="mb-4">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료">
+                <label class="form-check-label fw-bold" for="cctvDone">
+                    CCTV 철거가 되어 있습니다.
+                </label>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청">
+                <label class="form-check-label fw-bold" for="cctvRequest">
+                    CCTV 철거를 요청합니다.
+                </label>
+            </div>
+            <div class="form-check mb-3 pt-2 border-top">
+                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()">
+                <label class="form-check-label fw-bold text-primary" for="cctvNone">
+                    CCTV 서비스 이용자가 아니므로 해당 사항 없습니다.
+                </label>
+            </div>
+            
+            <p id="cctvSmallNotice" class="text-muted small ps-4 mb-3">
+                ※ 약정 만료 후 해지 시 철거비는 청구되지 않습니다. <br>
+                ※ 약정 도중 철거 요청 시 철거비 청구 및 신규설치비 반환금이 발생합니다.
+            </p>
+        </div>
+
+        <div id="cctvPriceTable" class="table-responsive mb-4">
+            <table class="table table-sm table-bordered text-center small mb-0 bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th colspan="2">약정 도중 해지 시 발생 비용 (대당, 부가세 포함)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bg-light w-50">신규설치비 반환금</td>
+                        <td class="text-start ps-3">실내 - 94,600원 <br> 실외 - 126,500원</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-light">철거비</td>
+                        <td class="text-start ps-3">실내 - 22,000원 <br> 실외 - 27,500원</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="cctvConfirmBox" class="notice-box mb-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cctvFinalConfirm">
+                <label class="form-check-label fw-bold" for="cctvFinalConfirm">
+                    위 내용을 확인하였습니다. <span class="required-star">*</span>
+                </label>
+            </div>
+        </div>
+
+        <button type="button" class="btn-submit" onclick="validatePage4()">다음 페이지로 (5/6)</button>
+        <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevToPage3()">이전 페이지로</button>
+    </form>
+</div>
+
+<script>
+    /* CCTV 해당 없음 선택 시 UI 제어 */
+    function toggleCCTVTable() {
         const isNone = document.getElementById('cctvNone').checked;
-        document.getElementById('cctvPriceTable').style.opacity = isNone ? '0.5' : '1';
-        document.getElementById('cctvConfirmBox').style.display = isNone ? 'none' : 'block';
+        const table = document.getElementById('cctvPriceTable');
+        const confirmBox = document.getElementById('cctvConfirmBox');
+        const smallNotice = document.getElementById('cctvSmallNotice');
+        
+        if (isNone) {
+            table.style.opacity = '0.5'; // 비활성화 느낌
+            confirmBox.style.display = 'none'; // 확인 체크박스 숨김
+            smallNotice.style.display = 'none';
+        } else {
+            table.style.opacity = '1';
+            confirmBox.style.display = 'block';
+            smallNotice.style.display = 'block';
+        }
     }
 
-   function submitFinalToGAS() {
-    const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
-    if (selectedStatus.value !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) {
-        alert("확인 사항에 체크해 주세요."); return;
-    }
+    /* 4페이지 유효성 검사 수정 */
+    function validatePage4() {
+        const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
+        
+        if (!selectedStatus) {
+            alert("CCTV 관련 상태를 선택해 주세요.");
+            return;
+        }
 
-    // 1. 제출 데이터 준비
+        // '해당없음'이 아닐 때만 확인 체크박스 검사
+        if (selectedStatus.value !== "해당없음") {
+            if (!document.getElementById('cctvFinalConfirm').checked) {
+                alert("CCTV 해지 확인 사항에 체크해 주세요.");
+                return;
+            }
+        }
+
+        alert("확인이 완료되었습니다. 5페이지로 이동합니다.");
+        // 여기서 5페이지 div를 열어주는 코드를 추가하면 됩니다.
+    }
+</script>
+
+function submitFinalApplication() {
+    // 서명 데이터를 이미지(Base64)로 변환
+    const signatureData = finalSignaturePad.toDataURL(); 
     const allData = {
         billNumber: document.getElementById('billNumber').value,
         custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value,
-        cctvStatus: selectedStatus.value,
-        applyDate: new Date().toLocaleString('ko-KR')
+        signature: signatureData, // 서명 이미지 포함
+        // ... 나머지 데이터들
     };
 
-    // 2. 구글 시트로 데이터 전송 (백그라운드에서 실행)
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbylhtbMF8MwrpvYKuJuzomRhw4m4hdExxw6qmIt5XjBGYrsTrT3eMITD6c_OKLLRnPF/exec';
-    fetch(GAS_URL, {
+    // 구글 앱스 스크립트로 전송
+    fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
         method: 'POST',
-        mode: 'no-cors',
         body: JSON.stringify(allData)
-    });
-
-    // 3. [핵심] 전송 결과와 상관없이 즉시 완료 화면 생성 및 표시
-    const resultHtml = `
-        <div class="form-card">
-            <div class="header">
-                <h2 style="color:#e6007e;">신청 접수 완료</h2>
-                <p>내용을 확인하신 후 화면을 캡처하거나 인쇄해 주세요.</p>
-            </div>
-            <div style="text-align:left; line-height:2; border:1px solid #eee; padding:20px; border-radius:10px;">
-                <p><b>청구서번호:</b> ${allData.billNumber}</p>
-                <p><b>고객명:</b> ${allData.custName}</p>
-                <p><b>연락처:</b> ${allData.custTel}</p>
-                <p><b>CCTV상태:</b> ${allData.cctvStatus}</p>
-                <p><b>신청일시:</b> ${allData.applyDate}</p>
-            </div>
-            <button onclick="window.print()" class="btn-submit">이 화면 인쇄/캡처하기</button>
-            <button onclick="location.reload()" class="btn-next mt-2 bg-secondary">처음으로 돌아가기</button>
-        </div>
-    `;
-
-    // 현재 페이지 내용을 지우고 결과 화면으로 교체
-    document.querySelector('.container').innerHTML = resultHtml;
-    window.scrollTo(0,0);
+    }).then(res => alert('신청서가 PDF로 변환되어 카톡으로 발송됩니다!'));
 }
-
-    function prevPage(curr, prev) {
-        document.getElementById(`divPage${curr}`).classList.add('page-hidden');
-        document.getElementById(`divPage${prev}`).classList.remove('page-hidden');
-        window.scrollTo(0,0);
-    }
-</script>
-</body>
-</html>
