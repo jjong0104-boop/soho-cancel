@@ -42,8 +42,35 @@
         <form id="formPage1">
             <div class="mb-4">
     <label class="form-label">청구서 번호</label>
-    <input type="text" id="billNumber" class="form-control bg-light" placeholder="데이터를 불러오는 중입니다..." readonly>
+    <input type="text" id="billNumber" class="form-control bg-light" placeholder="데이터 로딩 중..." readonly>
 </div>
+
+<script>
+    // 페이지 로드 시 실행
+    window.addEventListener('DOMContentLoaded', () => {
+        // 오늘 날짜 설정 로직
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        document.getElementById('todayDate').value = todayStr;
+        document.getElementById('applyDate').value = todayStr;
+
+        // 구글 시트에서 청구서 번호 가져오기
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwRPHXR5yHm9H11WiUGJQSKJnpMCgzz44kPHXLeag2d_b_-Zl_JPqET_xEk_dPSu0dV/exec";
+
+        fetch(GAS_URL)
+            .then(response => response.json())
+            .then(data => {
+                if (data.billNumber) {
+                    document.getElementById('billNumber').value = data.billNumber;
+                } else {
+                    document.getElementById('billNumber').value = "등록된 번호 없음";
+                }
+            })
+            .catch(error => {
+                console.error("데이터 불러오기 실패:", error);
+                document.getElementById('billNumber').value = "불러오기 실패";
+            });
+    });
+</script>
             <div class="mb-4">
                 <label class="form-label">신청접수일</label>
                 <input type="text" id="todayDate" class="form-control bg-light" readonly>
