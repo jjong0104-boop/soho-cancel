@@ -462,6 +462,7 @@
         finalSignaturePad.clear();
     }
 
+    /* 3페이지에서 4페이지로 이동하는 로직 추가 */
     function submitFinalApplication() {
         const requiredChecks = document.querySelectorAll('.required-check');
         let allChecked = true;
@@ -483,99 +484,13 @@
             return;
         }
 
-        alert(name + " 님, 감사합니다. 다음으로 이동합니다.");
-    }
-</script>
-
-<div id="divPage4" class="form-card page-hidden">
-    <div class="header">
-        <h2>U+우리가게패키지 해지신청서</h2>
-        <p class="text-muted small mb-0">온라인 신청 프로세스 (4/6)</p>
-    </div>
-
-    <div class="section-title">CCTV 해지 시 필수 체크</div>
-    
-    <form id="formPage4">
-        <div class="mb-4">
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료">
-                <label class="form-check-label fw-bold" for="cctvDone">
-                    CCTV 철거가 되어 있습니다.
-                </label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청">
-                <label class="form-check-label fw-bold" for="cctvRequest">
-                    CCTV 철거를 요청합니다.
-                </label>
-            </div>
-            <div class="form-check mb-3 pt-2 border-top">
-                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()">
-                <label class="form-check-label fw-bold text-primary" for="cctvNone">
-                    CCTV 서비스 이용자가 아니므로 해당 사항 없습니다.
-                </label>
-            </div>
-            
-            <p id="cctvSmallNotice" class="text-muted small ps-4 mb-3">
-                ※ 약정 만료 후 해지 시 철거비는 청구되지 않습니다. <br>
-                ※ 약정 도중 철거 요청 시 철거비 청구 및 신규설치비 반환금이 발생합니다.
-            </p>
-        </div>
-
-        <div id="cctvPriceTable" class="table-responsive mb-4">
-            <table class="table table-sm table-bordered text-center small mb-0 bg-white">
-                <thead class="table-light">
-                    <tr>
-                        <th colspan="2">약정 도중 해지 시 발생 비용 (대당, 부가세 포함)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="bg-light w-50">신규설치비 반환금</td>
-                        <td class="text-start ps-3">실내 - 94,600원 <br> 실외 - 126,500원</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light">철거비</td>
-                        <td class="text-start ps-3">실내 - 22,000원 <br> 실외 - 27,500원</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="cctvConfirmBox" class="notice-box mb-4">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cctvFinalConfirm">
-                <label class="form-check-label fw-bold" for="cctvFinalConfirm">
-                    위 내용을 확인하였습니다. <span class="required-star">*</span>
-                </label>
-            </div>
-        </div>
-
-        <button type="button" class="btn-submit" onclick="validatePage4()">다음 페이지로 (5/6)</button>
-        <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevToPage3()">이전 페이지로</button>
-    </form>
-</div>
-
-<script>
-    /* CCTV 해당 없음 선택 시 UI 제어 */
-    function toggleCCTVTable() {
-        const isNone = document.getElementById('cctvNone').checked;
-        const table = document.getElementById('cctvPriceTable');
-        const confirmBox = document.getElementById('cctvConfirmBox');
-        const smallNotice = document.getElementById('cctvSmallNotice');
-        
-        if (isNone) {
-            table.style.opacity = '0.5'; // 비활성화 느낌
-            confirmBox.style.display = 'none'; // 확인 체크박스 숨김
-            smallNotice.style.display = 'none';
-        } else {
-            table.style.opacity = '1';
-            confirmBox.style.display = 'block';
-            smallNotice.style.display = 'block';
-        }
+        // 4페이지(CCTV)로 화면 전환
+        document.getElementById('divPage3').classList.add('page-hidden');
+        document.getElementById('divPage4').classList.remove('page-hidden');
+        window.scrollTo(0,0);
     }
 
-    /* 4페이지 유효성 검사 수정 */
+    /* 4페이지에서 최종적으로 구글 시트로 전송하는 함수 */
     function validatePage4() {
         const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
         
@@ -584,7 +499,6 @@
             return;
         }
 
-        // '해당없음'이 아닐 때만 확인 체크박스 검사
         if (selectedStatus.value !== "해당없음") {
             if (!document.getElementById('cctvFinalConfirm').checked) {
                 alert("CCTV 해지 확인 사항에 체크해 주세요.");
@@ -592,66 +506,57 @@
             }
         }
 
-        alert("확인이 완료되었습니다. 5페이지로 이동합니다.");
-        // 여기서 5페이지 div를 열어주는 코드를 추가하면 됩니다.
+        // --- 여기서부터 진짜 전송 시작 ---
+        const billNumber = document.getElementById('billNumber').value;
+        const custName = document.getElementById('custName').value;
+        const custTel = document.getElementById('custTel').value;
+        const bizNum = document.getElementById('bizNum').value;
+        const custAddr = document.getElementById('custAddr').value;
+        const custDetail = document.getElementById('custDetail').value;
+        
+        const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(el => el.value).join(', ');
+        const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(el => el.value).join(', ');
+        const cctvStatus = selectedStatus.value;
+        const signatureData = finalSignaturePad.toDataURL(); 
+
+        const allData = {
+            billNumber: billNumber,
+            custName: custName,
+            custTel: custTel,
+            bizNum: bizNum,
+            custAddr: custAddr,
+            custDetail: custDetail,
+            products: products,
+            reasons: reasons,
+            cctvStatus: cctvStatus,
+            signature: signatureData
+        };
+
+        alert("신청서를 최종 제출합니다. 잠시만 기다려 주세요...");
+
+        fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
+            method: 'POST',
+            body: JSON.stringify(allData)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.result === "success") {
+                alert('성공적으로 접수되었습니다. 감사합니다!');
+                // 필요시 완료 페이지로 이동
+                location.reload(); 
+            } else {
+                alert('오류 발생: ' + res.message);
+            }
+        })
+        .catch(err => {
+            alert('전송 실패. 인터넷 연결을 확인해 주세요.');
+            console.error(err);
+        });
+    }
+
+    function prevToPage3() {
+        document.getElementById('divPage4').classList.add('page-hidden');
+        document.getElementById('divPage3').classList.remove('page-hidden');
+        window.scrollTo(0,0);
     }
 </script>
-
-function submitFinalApplication() {
-    // 1. 데이터 수집
-    const billNumber = document.getElementById('billNumber').value;
-    const custName = document.getElementById('custName').value;
-    const custTel = document.getElementById('custTel').value;
-    const bizNum = document.getElementById('bizNum').value;
-    const custAddr = document.getElementById('custAddr').value;
-    const custDetail = document.getElementById('custDetail').value;
-    
-    // 선택된 상품 및 사유 (배열로 수집 후 문자열 변환)
-    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(el => el.value).join(', ');
-    const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(el => el.value).join(', ');
-    
-    // CCTV 상태
-    const cctvStatus = document.querySelector('input[name="cctvStatus"]:checked')?.value || "해당없음";
-
-    // 2. 최종 서명 이미지 (3페이지 캔버스 데이터)
-    if(finalSignaturePad.isEmpty()) {
-        alert("최종 서명을 완료해 주세요.");
-        return;
-    }
-    const signatureData = finalSignaturePad.toDataURL(); 
-
-    // 전송할 객체 생성
-    const allData = {
-        billNumber: billNumber,
-        custName: custName,
-        custTel: custTel,
-        bizNum: bizNum,
-        custAddr: custAddr,
-        custDetail: custDetail,
-        products: products,
-        reasons: reasons,
-        cctvStatus: cctvStatus,
-        signature: signatureData
-    };
-
-    alert("신청서를 제출합니다. 잠시만 기다려 주세요...");
-
-    // 3. 구글 스크립트로 전송 (본인의 배포 URL로 수정 필요)
-    fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
-        method: 'POST',
-        body: JSON.stringify(allData)
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.result === "success") {
-            alert('성공적으로 접수되었습니다.');
-            // 작성이 완료되면 안내 페이지로 이동하거나 창을 닫을 수 있습니다.
-        } else {
-            alert('오류 발생: ' + res.message);
-        }
-    })
-    .catch(err => {
-        alert('데이터 전송에 실패했습니다. 네트워크 상태를 확인해 주세요.');
-        console.error(err);
-    });
-}
