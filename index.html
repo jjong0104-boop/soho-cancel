@@ -486,3 +486,111 @@
         alert(name + " 님, 감사합니다. 다음으로 이동합니다.");
     }
 </script>
+
+<div id="divPage4" class="form-card page-hidden">
+        <div class="header">
+            <h2>U+우리가게패키지 해지신청서</h2>
+            <p class="text-muted small mb-0">온라인 신청 프로세스 (4/6)</p>
+        </div>
+
+        <div class="section-title">CCTV 해지 시 필수 체크</div>
+        
+        <form id="formPage4">
+            <div class="mb-4">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료">
+                    <label class="form-check-label fw-bold" for="cctvDone">
+                        CCTV 철거가 되어 있습니다.
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청">
+                    <label class="form-check-label fw-bold" for="cctvRequest">
+                        CCTV 철거를 요청합니다.
+                    </label>
+                </div>
+                <p class="text-muted small ps-4 mb-3">
+                    ※ 약정 만료 후 해지 시 철거비는 청구되지 않습니다. <br>
+                    ※ 약정 도중 철거 요청 시 철거비 청구 및 신규설치비 반환금이 발생합니다.
+                </p>
+            </div>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-sm table-bordered text-center small mb-0 bg-white">
+                    <thead class="table-light">
+                        <tr>
+                            <th colspan="2">약정 도중 해지 시 발생 비용 (대당, 부가세 포함)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="bg-light w-50">신규설치비 반환금</td>
+                            <td class="text-start ps-3">실내 - 94,600원 <br> 실외 - 126,500원</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light">철거비</td>
+                            <td class="text-start ps-3">실내 - 22,000원 <br> 실외 - 27,500원</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="notice-box mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="cctvFinalConfirm">
+                    <label class="form-check-label fw-bold" for="cctvFinalConfirm">
+                        위 내용을 확인하였습니다. <span class="required-star">*</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="btn-submit" onclick="validatePage4()">다음 페이지로 (5/6)</button>
+            <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevToPage3()">이전 페이지로</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    /* 3페이지 최종 제출 함수 수정: 4페이지로 이동 */
+    function submitFinalApplication() {
+        const requiredChecks = document.querySelectorAll('.required-check');
+        let allChecked = true;
+        requiredChecks.forEach(cb => { if(!cb.checked) allChecked = false; });
+
+        if(!allChecked) { alert("모든 필수 동의 항목에 체크해 주세요."); return; }
+        const name = document.getElementById('finalSignerName').value.trim();
+        if(!name) { alert("최종 신청인 성함을 입력해 주세요."); return; }
+        if(finalSignaturePad.isEmpty()) { alert("최종 서명을 완료해 주세요."); return; }
+
+        // 4페이지로 이동
+        document.getElementById('divPage3').classList.add('page-hidden');
+        document.getElementById('divPage4').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+    }
+
+    /* 4페이지 유효성 검사 */
+    function validatePage4() {
+        if (!document.querySelector('input[name="cctvStatus"]:checked')) {
+            alert("CCTV 철거 상태를 선택해 주세요.");
+            return;
+        }
+        if (!document.getElementById('cctvFinalConfirm').checked) {
+            alert("내용 확인 체크박스에 동의해 주세요.");
+            return;
+        }
+        alert("CCTV 확인이 완료되었습니다. 다음 페이지로 이동합니다.");
+        // 여기에 5페이지 이동 로직 추가 (필요 시)
+    }
+
+    function prevToPage3() {
+        document.getElementById('divPage4').classList.add('page-hidden');
+        document.getElementById('divPage3').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+    }
+    
+    function prevToPage2() {
+        document.getElementById('divPage3').classList.add('page-hidden');
+        document.getElementById('divPage2').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+    }
+</script>
