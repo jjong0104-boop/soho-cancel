@@ -170,171 +170,206 @@
         </form>
     </div>
 
-    <div id="divPage2" class="form-card page-hidden">
-        <div class="header">
-            <h2>U+우리가게패키지 해지신청서</h2>
-            <p class="text-muted small mb-0">온라인 신청 프로세스 (2/6)</p>
-        </div>
-        <div class="section-title">안내 및 동의</div>
-        <div class="agreement-box small text-start">
-            본 신청서는 본인이 직접 작성하였음을 확인하며... 위와 같은 내용으로 계약을 체결합니다.
-        </div>
-        <form id="formPage2">
-            <div class="mb-3 text-start">
-                <label class="form-label">신청일</label>
-                <input type="text" id="applyDate" class="form-control bg-light" readonly>
-            </div>
-            <div class="mb-3 text-start">
-                <label class="form-label">신청인 (성함)<span class="required-star">*</span></label>
-                <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
-            </div>
-            <div class="section-title">서명<span class="required-star">*</span></div>
-            <div class="signature-wrapper"><canvas id="signature-pad"></canvas></div>
-            <div class="text-end mb-2"><button type="button" class="btn-clear" onclick="clearSignature()">다시 쓰기</button></div>
-            
-            <button type="button" class="btn-submit" onclick="submitFinal()">최종 제출하기</button>
-            <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage()">이전 페이지로</button>
-        </form>
-    </div>
-
-    <div id="divPage3" class="form-card page-hidden">
-        <div class="header">
-            <h2>U+우리가게패키지 해지신청서</h2>
-            <p class="text-muted small mb-0">온라인 신청 프로세스 (3/6)</p>
-        </div>
-        <div class="section-title">개인정보 활용 동의</div>
-        <div id="agreementArea">
-            <div class="mb-4 pb-3 border-bottom text-center">
-                <img src="개활용1.jpg" class="img-fluid rounded border mb-2" alt="약관1">
-                <div class="form-check d-flex justify-content-end">
-                    <input class="form-check-input me-2 required-check" type="checkbox" id="check1">
-                    <label class="form-check-label fw-bold" for="check1">동의함</label>
-                </div>
-            </div>
-        </div>
-        <div class="notice-box mb-4 text-dark fw-bold text-start" style="background-color: #f8f9fa;">
-            상기 체크한 항목에 대해 충분한 설명을 듣고 이해하며 동의합니다.
-        </div>
-        <div class="mb-3 text-start">
-            <label class="form-label">신청인 (성함) *</label>
-            <input type="text" id="finalSignerName" class="form-control">
-        </div>
-        <div class="section-title">최종 서명 *</div>
-        <div class="signature-wrapper mb-2"><canvas id="final-signature-pad"></canvas></div>
-        <div class="text-end mb-4"><button type="button" class="btn-clear" onclick="clearFinalSignature()">다시 쓰기</button></div>
-        <button type="button" class="btn-submit" onclick="submitFinalApplication()">최종 신청서 제출하기</button>
-    </div>
-</div>
-
-<script>
-    // 오늘 날짜 및 URL 파라미터 처리
-    window.addEventListener('DOMContentLoaded', () => {
-        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
-        document.getElementById('todayDate').value = todayStr;
-        document.getElementById('applyDate').value = todayStr;
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const billNo = urlParams.get('bill');
-        if (billNo) document.getElementById('billNumber').value = billNo;
-    });
-
-    // CCTV 토글 함수
-    function toggleCCTVNotice() {
-        const isChecked = document.getElementById('chkCCTV').checked;
-        document.getElementById('cctvNoticeArea').style.display = isChecked ? 'block' : 'none';
-    }
-
-    // 주소 검색 함수
-    function execDaumPostcode(mainAddrId, detailAddrId) {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-                document.getElementById(mainAddrId).value = addr;
-                document.getElementById(detailAddrId).focus();
-            }
-        }).open();
-    }
-
-    // 서명 패드 설정
-    const canvas = document.getElementById('signature-pad');
-    const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
-    let finalSignaturePad;
-
-    function resizeCanvas(targetCanvas, pad) {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        targetCanvas.width = targetCanvas.offsetWidth * ratio;
-        targetCanvas.height = targetCanvas.offsetHeight * ratio;
-        targetCanvas.getContext("2d").scale(ratio, ratio);
-        pad.clear();
-    }
-
-    // 1페이지 -> 2페이지 전환
-    function validateAndNext() {
-        const textFields = [
-            { id: 'custName', name: '고객명' },
-            { id: 'custTel', name: '연락처' },
-            { id: 'bizNum', name: '사업자번호' },
-            { id: 'bizReg', name: '생년월일/법인번호' },
-            { id: 'custAddr', name: '주소' },
-            { id: 'returnAddr', name: '회수 주소' },
-            { id: 'returnPerson', name: '회수 담당자' },
-            { id: 'returnTel', name: '회수 연락처' }
-        ];
-
-        for (let field of textFields) {
-            const el = document.getElementById(field.id);
-            if (!el.value.trim()) { alert(`${field.name}을(를) 입력해 주세요.`); el.focus(); return; }
-        }
-
-        if (!document.getElementById('payConfirm').checked) { alert("요금 확인 사항에 동의해 주세요."); return; }
-        if (document.querySelectorAll('input[name="product"]:checked').length === 0) { alert("상품을 선택해 주세요."); return; }
-
-        if (document.getElementById('chkCCTV').checked) {
-            if (!document.querySelector('input[name="cctvStatus"]:checked')) { alert("CCTV 철거 관련 사항을 선택해 주세요."); return; }
-            if (!document.getElementById('cctvConfirmCheck').checked) { alert("CCTV 확인 체크를 완료해 주세요."); return; }
-        }
-
-        // 페이지 전환
+     // 화면 전환
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
-        window.scrollTo(0, 0);
-        resizeCanvas(canvas, signaturePad);
+        window.scrollTo(0,0);
+        resizeCanvas();
     }
 
-    // 2페이지 -> 3페이지 전환
-    function submitFinal() {
-        const name = document.getElementById('signerName').value.trim();
-        if (!name || signaturePad.isEmpty()) { alert("성함 입력과 서명을 완료해 주세요."); return; }
-        
-        document.getElementById('divPage2').classList.add('page-hidden');
-        document.getElementById('divPage3').classList.remove('page-hidden');
-        window.scrollTo(0, 0);
-
-        const finalCanvas = document.getElementById('final-signature-pad');
-        finalSignaturePad = new SignaturePad(finalCanvas, { backgroundColor: 'rgb(255, 255, 255)' });
-        resizeCanvas(finalCanvas, finalSignaturePad);
-    }
-
-    // 이전 페이지로 가기
     function prevPage() {
         document.getElementById('divPage2').classList.add('page-hidden');
         document.getElementById('divPage1').classList.remove('page-hidden');
-        window.scrollTo(0, 0);
+        window.scrollTo(0,0);
     }
 
-    function clearSignature() { signaturePad.clear(); }
-    function clearFinalSignature() { finalSignaturePad.clear(); }
+    // 서명 패드
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    
+    function clearSignature() {
+        signaturePad.clear();
+    }
+
+    function submitFinal() {
+        const name = document.getElementById('signerName').value.trim();
+        if (!name) {
+            alert("신청인 성함을 입력해 주세요.");
+            document.getElementById('signerName').focus();
+            return;
+        }
+        if (signaturePad.isEmpty()) {
+            alert("서명을 완료해 주세요.");
+            return;
+        }
+        alert(name + " 님의 신청서 작성이 완료되었습니다. 개인정보 활용동의서로 이동합니다.");
+    }
+</script>
+</body>
+</html>
+
+<div id="divPage3" class="form-card page-hidden">
+    <div class="header">
+        <h2>U+우리가게패키지 해지신청서</h2>
+        <p class="text-muted small mb-0">온라인 신청 프로세스 (3/6)</p>
+    </div>
+
+    <div class="section-title">개인정보 활용 동의</div>
+    <p class="text-muted small mb-4">※ 각 항목의 상세 내용을 확인하신 후 동의해 주세요.</p>
+
+    <div id="agreementArea">
+        <div class="mb-4 pb-3 border-bottom">
+            <img src="개활용1.jpg" class="img-fluid rounded border mb-2" alt="고유식별 정보 수집 동의">
+            <div class="form-check d-flex justify-content-end">
+                <input class="form-check-input me-2 required-check" type="checkbox" id="check1">
+                <label class="form-check-label fw-bold" for="check1">동의함</label>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3 border-bottom">
+            <img src="개활용2.jpg" class="img-fluid rounded border mb-2" alt="개인정보 수집 동의">
+            <div class="form-check d-flex justify-content-end">
+                <input class="form-check-input me-2 required-check" type="checkbox" id="check2">
+                <label class="form-check-label fw-bold" for="check2">동의함</label>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3 border-bottom">
+            <img src="개활용3.jpg" class="img-fluid rounded border mb-2" alt="위치정보 수집 동의">
+            <div class="form-check d-flex justify-content-end">
+                <input class="form-check-input me-2 required-check" type="checkbox" id="check3">
+                <label class="form-check-label fw-bold" for="check3">동의함</label>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3 border-bottom">
+            <img src="개활용4.jpg" class="img-fluid rounded border mb-2" alt="제3자 제공 동의">
+            <div class="form-check d-flex justify-content-end">
+                <input class="form-check-input me-2 required-check" type="checkbox" id="check4">
+                <label class="form-check-label fw-bold" for="check4">동의함</label>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3 border-bottom">
+            <img src="개활용5.jpg" class="img-fluid rounded border mb-2" alt="신용정보 조회 동의">
+            <div class="form-check d-flex justify-content-end">
+                <input class="form-check-input me-2 required-check" type="checkbox" id="check5">
+                <label class="form-check-label fw-bold" for="check5">동의함</label>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3 border-bottom">
+            <img src="개활용6.jpg" class="img-fluid rounded border mb-2" alt="취급위탁 동의">
+            <div class="form-check d-flex justify-content-end">
+                <input class="form-check-input me-2 required-check" type="checkbox" id="check6">
+                <label class="form-check-label fw-bold" for="check6">동의함</label>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3">
+            <img src="개활용7.jpg" class="img-fluid rounded border mb-1" alt="광고 정보 제공">
+            <img src="개활용8.jpg" class="img-fluid rounded border mb-2" alt="광고 정보 처리위탁">
+            <div class="row g-2 px-1">
+                <div class="col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="marketing" id="m_agree" value="동의">
+                        <label class="form-check-label" for="m_agree">동의</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="marketing" id="m_disagree" value="미동의" checked>
+                        <label class="form-check-label" for="m_disagree">미동의</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notice-box mb-4 text-dark fw-bold" style="background-color: #f8f9fa;">
+        상기 체크한 항목에 대해 충분한 설명을 듣고 이해하며 동의합니다.
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">신청인 (성함) *</label>
+        <input type="text" id="finalSignerName" class="form-control" placeholder="성함을 다시 한번 입력하세요">
+    </div>
+
+    <div class="section-title">서명 *</div>
+    <div class="signature-wrapper mb-2">
+        <canvas id="final-signature-pad"></canvas>
+    </div>
+    <div class="text-end mb-4">
+        <button type="button" class="btn-clear" onclick="clearFinalSignature()">다시 쓰기</button>
+    </div>
+
+    <button type="button" class="btn-submit" onclick="submitFinalApplication()">최종 신청서 제출하기</button>
+    <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevToPage2()">이전 페이지로</button>
+</div>
+
+<script>
+    // 3페이지 전용 서명 패드 설정
+    let finalSignaturePad;
+    
+    // 페이지 전환 시 서명 패드 활성화
+    function submitFinal() {
+        const name = document.getElementById('signerName').value.trim();
+        if (!name) { alert("신청인 성함을 입력해 주세요."); return; }
+        if (signaturePad.isEmpty()) { alert("서명을 완료해 주세요."); return; }
+        
+        document.getElementById('divPage2').classList.add('page-hidden');
+        document.getElementById('divPage3').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+        
+        // 3페이지 서명 패드 초기화
+        const finalCanvas = document.getElementById('final-signature-pad');
+        finalSignaturePad = new SignaturePad(finalCanvas, { backgroundColor: 'rgb(255, 255, 255)' });
+        
+        // 캔버스 크기 조정
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        finalCanvas.width = finalCanvas.offsetWidth * ratio;
+        finalCanvas.height = finalCanvas.offsetHeight * ratio;
+        finalCanvas.getContext("2d").scale(ratio, ratio);
+    }
+
+    function clearFinalSignature() {
+        finalSignaturePad.clear();
+    }
 
     function submitFinalApplication() {
         const requiredChecks = document.querySelectorAll('.required-check');
         let allChecked = true;
         requiredChecks.forEach(cb => { if(!cb.checked) allChecked = false; });
-        if(!allChecked || !document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) {
-            alert("모든 필수 항목 체크와 최종 서명을 완료해 주세요.");
+
+        if(!allChecked) {
+            alert("모든 필수 동의 항목에 체크해 주세요.");
             return;
         }
-        alert("모든 신청서 작성이 완료되었습니다.");
+
+        const name = document.getElementById('finalSignerName').value.trim();
+        if(!name) {
+            alert("최종 신청인 성함을 입력해 주세요.");
+            return;
+        }
+
+        if(finalSignaturePad.isEmpty()) {
+            alert("최종 서명을 완료해 주세요.");
+            return;
+        }
+
+        alert(name + " 님, 감사합니다. 다음으로 이동합니다.");
     }
 </script>
-</body>
-</html>
