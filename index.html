@@ -66,17 +66,25 @@
                 <label class="form-label">생년월일<span class="required-star">*</span></label>
                 <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
             </div>
-            <div class="mb-1">
+                   <div class="mb-1">
                 <label class="form-label">주소<span class="required-star">*</span></label>
                 <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
+            </div>
+            <div class="mb-3">
                 <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
             </div>
 
+
+
             <div class="section-title">설치정보 및 장비회수</div>
-            <div class="mb-1">
+               <div class="mb-1">
                 <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
                 <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
             </div>
+            <div class="mb-3">
+                <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
+            </div>
+
 
             <div class="row g-2 mb-3 text-start">
                 <div class="col-6">
