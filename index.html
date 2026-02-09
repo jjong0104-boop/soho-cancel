@@ -206,3 +206,126 @@
 </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>U+우리가게패키지 해지신청서 (2/6)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
+        body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--u-pink); padding-bottom: 15px; }
+        .header h2 { color: var(--u-pink); font-weight: bold; font-size: 1.6rem; }
+        .section-title { font-size: 1.1rem; font-weight: bold; color: #333; margin: 25px 0 15px; display: flex; align-items: center; }
+        .section-title::before { content: ""; width: 4px; height: 18px; background: var(--u-pink); margin-right: 10px; border-radius: 2px; }
+        
+        /* 안내문 박스 스타일 */
+        .agreement-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 20px; font-size: 0.95rem; color: #333; line-height: 1.7; text-align: justify; margin-bottom: 20px; }
+        
+        .form-label { font-weight: 600; font-size: 0.9rem; color: #555; }
+        .form-control { padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
+        
+        /* 서명 패드 스타일 */
+        .signature-wrapper { background: #fff; border: 2px solid #ddd; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; margin-bottom: 10px; }
+        canvas { width: 100%; height: 100%; cursor: crosshair; }
+        .btn-clear { font-size: 0.85rem; padding: 5px 15px; border: 1px solid #ccc; background: #f8f8f8; border-radius: 4px; color: #666; }
+        
+        .btn-submit { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
+        .required-star { color: var(--u-pink); margin-left: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-card">
+        <div class="header">
+            <h2>U+우리가게패키지 해지신청서</h2>
+            <p class="text-muted small mb-0">온라인 신청 프로세스 (2/6)</p>
+        </div>
+
+        <div class="section-title">안내 및 동의</div>
+        <div class="agreement-box">
+            본 신청서는 본인(가입자, 예금주/카드주)이 직접 작성하였음을 확인하며, 별지를 포함한 신청서에 기재된 서비스 신청고객에게 적용되는 모든 사항(단말기 할부판매 및 임대약정, 결함서비스 요금, 일부 해지 시 처리방법, 변경 및 해지조건, 해지시 할인반환금 등)의 주요내용에 대한 안내를 받았으며, 본인은 (주)LG유플러스의 개인정보 취급방침과 신청하는 상품의 이용약관에 동의합니다. 본인은 가입신청서 내용에 대해 충분히 설명 듣고 그 내용을 이해하였으며, 위와 같은 내용으로 계약을 체결합니다. 
+        </div>
+
+        <form id="formPage2">
+            <div class="mb-3">
+                <label class="form-label">신청일</label>
+                <input type="text" id="applyDate" class="form-control bg-light" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">신청인 (가입자/대리인 성함)<span class="required-star">*</span></label>
+                <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
+            </div>
+
+            <div class="section-title">서명<span class="required-star">*</span></div>
+            <div class="signature-wrapper">
+                <canvas id="signature-pad"></canvas>
+            </div>
+            <div class="text-end">
+                <button type="button" class="btn-clear" onclick="clearSignature()">다시 쓰기</button>
+            </div>
+            <p class="text-muted small mt-2">※ 위 사각형 안에 손가락이나 펜으로 직접 서명해 주세요. </p>
+
+            <button type="button" class="btn-submit" onclick="submitFinal()">최종 제출하기</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 1. 오늘 날짜 자동 입력 
+    document.getElementById('applyDate').value = new Date().toLocaleDateString('ko-KR', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    // 2. 서명 패드 초기화 
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+
+    // 캔버스 크기 조정
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // 지우기 기능
+    function clearSignature() {
+        signaturePad.clear();
+    }
+
+    // 제출 및 유효성 검사
+    function submitFinal() {
+        const name = document.getElementById('signerName').value.trim();
+        
+        if (!name) {
+            alert("신청인 성함을 입력해 주세요.");
+            document.getElementById('signerName').focus();
+            return;
+        }
+
+        if (signaturePad.isEmpty()) {
+            alert("서명을 완료해 주세요.");
+            return;
+        }
+
+        alert(name + " 님의 신청서가 성공적으로 작성되었습니다. 개인정보 활용동의서로 이동합니다.");
+    }
+</script>
+
+</body>
+</html>
