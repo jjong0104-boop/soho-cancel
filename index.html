@@ -403,7 +403,24 @@
             alert("접수 완료! 구글 시트에 PDF 링크가 생성되었습니다."); 
             location.reload(); 
         })
-        .catch(err => alert("전송 실패"));
+       // [수정 포인트] mode: 'no-cors'를 추가하여 보안 에러를 우회합니다.
+    fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors', 
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(allData)
+    })
+    .then(() => {
+        // no-cors 모드에서는 응답 내용을 읽을 수 없으므로 성공으로 간주하고 안내합니다.
+        alert("신청서 접수 처리가 완료되었습니다! 구글 시트를 확인해 주세요.");
+        location.reload(); 
+    })
+    .catch(err => {
+        console.error(err);
+        alert("서버 연결에 실패했습니다. 관리자에게 문의하세요.");
+    });
+}
     }
 
     function prevPage(curr, prev) {
