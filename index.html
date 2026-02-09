@@ -598,18 +598,60 @@
 </script>
 
 function submitFinalApplication() {
-    // 서명 데이터를 이미지(Base64)로 변환
+    // 1. 데이터 수집
+    const billNumber = document.getElementById('billNumber').value;
+    const custName = document.getElementById('custName').value;
+    const custTel = document.getElementById('custTel').value;
+    const bizNum = document.getElementById('bizNum').value;
+    const custAddr = document.getElementById('custAddr').value;
+    const custDetail = document.getElementById('custDetail').value;
+    
+    // 선택된 상품 및 사유 (배열로 수집 후 문자열 변환)
+    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(el => el.value).join(', ');
+    const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(el => el.value).join(', ');
+    
+    // CCTV 상태
+    const cctvStatus = document.querySelector('input[name="cctvStatus"]:checked')?.value || "해당없음";
+
+    // 2. 최종 서명 이미지 (3페이지 캔버스 데이터)
+    if(finalSignaturePad.isEmpty()) {
+        alert("최종 서명을 완료해 주세요.");
+        return;
+    }
     const signatureData = finalSignaturePad.toDataURL(); 
+
+    // 전송할 객체 생성
     const allData = {
-        billNumber: document.getElementById('billNumber').value,
-        custName: document.getElementById('custName').value,
-        signature: signatureData, // 서명 이미지 포함
-        // ... 나머지 데이터들
+        billNumber: billNumber,
+        custName: custName,
+        custTel: custTel,
+        bizNum: bizNum,
+        custAddr: custAddr,
+        custDetail: custDetail,
+        products: products,
+        reasons: reasons,
+        cctvStatus: cctvStatus,
+        signature: signatureData
     };
 
-    // 구글 앱스 스크립트로 전송
+    alert("신청서를 제출합니다. 잠시만 기다려 주세요...");
+
+    // 3. 구글 스크립트로 전송 (본인의 배포 URL로 수정 필요)
     fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
         method: 'POST',
         body: JSON.stringify(allData)
-    }).then(res => alert('신청서가 PDF로 변환되어 카톡으로 발송됩니다!'));
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.result === "success") {
+            alert('성공적으로 접수되었습니다.');
+            // 작성이 완료되면 안내 페이지로 이동하거나 창을 닫을 수 있습니다.
+        } else {
+            alert('오류 발생: ' + res.message);
+        }
+    })
+    .catch(err => {
+        alert('데이터 전송에 실패했습니다. 네트워크 상태를 확인해 주세요.');
+        console.error(err);
+    });
 }
