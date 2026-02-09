@@ -329,7 +329,7 @@
         if (billNo) document.getElementById('billNumber').value = billNo;
     });
 
-    // 2. 주소 검색 함수 (클릭 문제 해결됨)
+    // 2. 주소 검색 함수
     function execDaumPostcode(mainAddrId, detailAddrId) {
         new daum.Postcode({
             oncomplete: function(data) {
@@ -340,7 +340,7 @@
         }).open();
     }
 
-    // 3. 서명 패드 및 페이지 전환 핵심 함수 (★반드시 필요)
+    // 3. 서명 패드 및 페이지 전환
     const canvas = document.getElementById('signature-pad');
     const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
     let finalSignaturePad;
@@ -353,14 +353,14 @@
         pad.clear();
     }
 
-    function validateAndNext() { // 1 -> 2
+    function validateAndNext() { 
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
         window.scrollTo(0,0);
         resizeCanvas(canvas, signaturePad);
     }
 
-    function submitFinal() { // 2 -> 3
+    function submitFinal() { 
         document.getElementById('divPage2').classList.add('page-hidden');
         document.getElementById('divPage3').classList.remove('page-hidden');
         window.scrollTo(0,0);
@@ -369,26 +369,29 @@
         resizeCanvas(finalCanvas, finalSignaturePad);
     }
 
-    function submitToCCTVPage() { // 3 -> 4
+    function submitToCCTVPage() { 
         document.getElementById('divPage3').classList.add('page-hidden');
         document.getElementById('divPage4').classList.remove('page-hidden');
         window.scrollTo(0,0);
     }
 
-    // 4. CCTV 및 데이터 전송 로직
     function toggleCCTVRequired() {
         const isNone = document.getElementById('cctvNone').checked;
         document.getElementById('cctvPriceTable').style.opacity = isNone ? '0.5' : '1';
         document.getElementById('cctvConfirmBox').style.display = isNone ? 'none' : 'block';
     }
 
+    // 4. 데이터 전송 (URL 및 보안설정 통합본)
     function submitFinalToGAS() {
         const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
         if (selectedStatus.value !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) {
-            alert("확인 사항에 체크해 주세요."); return;
+            alert("확인 사항에 체크해 주세요."); 
+            return;
         }
 
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec';
+        // 사장님이 새로 발급받으신 주소입니다.
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwyD8CoQwJMxgmbYUcoQXTJVoq-RK0N3rc-fEl7Xz0AT0hm7pC0-UJTQpAtru6zqNr1/exec';
+        
         const allData = {
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
@@ -398,29 +401,23 @@
         };
 
         alert("신청서를 제출합니다. 잠시만 기다려 주세요...");
-        fetch(https://script.google.com/macros/s/AKfycbwyD8CoQwJMxgmbYUcoQXTJVoq-RK0N3rc-fEl7Xz0AT0hm7pC0-UJTQpAtru6zqNr1/exec, { method: 'POST', body: JSON.stringify(allData) })
-        .then(res => { 
-            alert("접수 완료! 구글 시트에 PDF 링크가 생성되었습니다."); 
+
+        fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors', // 보안 에러 우회
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(allData)
+        })
+        .then(() => {
+            // no-cors 특성상 성공 여부를 읽지 못하므로 알림 후 페이지 초기화
+            alert("신청서 접수가 완료되었습니다! 구글 시트를 확인해 주세요.");
             location.reload(); 
         })
-       // [수정 포인트] mode: 'no-cors'를 추가하여 보안 에러를 우회합니다.
-    fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors', 
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(allData)
-    })
-    .then(() => {
-        // no-cors 모드에서는 응답 내용을 읽을 수 없으므로 성공으로 간주하고 안내합니다.
-        alert("신청서 접수 처리가 완료되었습니다! 구글 시트를 확인해 주세요.");
-        location.reload(); 
-    })
-    .catch(err => {
-        console.error(err);
-        alert("서버 연결에 실패했습니다. 관리자에게 문의하세요.");
-    });
-}
+        .catch(err => {
+            console.error(err);
+            alert("서버 연결에 실패했습니다. 인터넷 연결을 확인하거나 관리자에게 문의하세요.");
+        });
     }
 
     function prevPage(curr, prev) {
