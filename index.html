@@ -48,28 +48,27 @@
 <script>
     // 페이지 로드 시 실행
     window.addEventListener('DOMContentLoaded', () => {
-        // 오늘 날짜 설정 로직
+        // 1. 오늘 날짜 설정 로직 (모든 페이지 공통)
         const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
-        document.getElementById('todayDate').value = todayStr;
-        document.getElementById('applyDate').value = todayStr;
+        if(document.getElementById('todayDate')) document.getElementById('todayDate').value = todayStr;
+        if(document.getElementById('applyDate')) document.getElementById('applyDate').value = todayStr;
 
-        // 구글 시트에서 청구서 번호 가져오기
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwRPHXR5yHm9H11WiUGJQSKJnpMCgzz44kPHXLeag2d_b_-Zl_JPqET_xEk_dPSu0dV/exec";
-
-        fetch(GAS_URL)
-            .then(response => response.json())
-            .then(data => {
-                if (data.billNumber) {
-                    document.getElementById('billNumber').value = data.billNumber;
-                } else {
-                    document.getElementById('billNumber').value = "등록된 번호 없음";
-                }
-            })
-            .catch(error => {
-                console.error("데이터 불러오기 실패:", error);
-                document.getElementById('billNumber').value = "불러오기 실패";
-            });
+        // 2. 주소창 URL에서 bill 파라미터 직접 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        const billNo = urlParams.get('bill'); // URL의 ?bill= 뒤에 오는 값을 가져옴
+        
+        const billInput = document.getElementById('billNumber');
+        if (billInput) {
+            if (billNo) {
+                // 파라미터가 있으면 해당 번호 입력
+                billInput.value = billNo;
+            } else {
+                // 파라미터가 없으면 경고 문구 표시
+                billInput.value = "번호 없음 (링크를 확인해주세요)";
+            }
+        }
     });
+</script>
 </script>
             <div class="mb-4">
                 <label class="form-label">신청접수일</label>
