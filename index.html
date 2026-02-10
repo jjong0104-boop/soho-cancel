@@ -104,12 +104,12 @@
     <div id="divPage5" class="form-card page-hidden">
         <div class="header"><h2>신청 내용 최종 확인</h2></div>
         <table class="table table-bordered small">
-            <tr><td class="bg-light w-25">신청일</td><td id="display_todayDate"></td></tr>
-            <tr><td class="bg-light">고객명</td><td id="display_custName"></td></tr>
-            <tr><td class="bg-light">사업자/생년월일</td><td id="display_bizInfo"></td></tr>
-            <tr><td class="bg-light">설치주소</td><td id="display_custAddr"></td></tr>
-            <tr><td class="bg-light">회수주소</td><td id="display_returnAddr"></td></tr>
-        </table>
+    <tr><td class="bg-light w-25">신청일</td><td id="display_todayDate"></td></tr>
+    <tr><td class="bg-light">고객명</td><td id="display_custName"></td></tr>
+    <tr><td class="bg-light text-primary">연락처</td><td id="display_custTel"></td></tr> <tr><td class="bg-light">사업자/생년월일</td><td id="display_bizInfo"></td></tr>
+    <tr><td class="bg-light">설치주소</td><td id="display_custAddr"></td></tr>
+    <tr><td class="bg-light">회수주소</td><td id="display_returnAddr"></td></tr>
+</table>
         <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
     </div>
 </div>
@@ -166,30 +166,66 @@
     }
 
     function goToPage5() {
-        if(document.getElementById('cctvRequest').checked && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크박스에 동의해 주세요."); return; }
-        document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
-        document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-        document.getElementById('display_bizInfo').innerText = document.getElementById('bizNum').value + " / " + document.getElementById('bizReg').value;
-        document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
-        document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
-        document.getElementById('divPage4').classList.add('page-hidden');
-        document.getElementById('divPage5').classList.remove('page-hidden');
+    // CCTV 유효성 검사 (해당없음 아닐 때 체크박스 확인)
+    const cctvStatus = document.querySelector('input[name="cctvStatus"]:checked').value;
+    if(cctvStatus !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
+        alert("CCTV 비용 확인 체크박스에 동의해 주세요."); 
+        return; 
     }
 
-    function finalSubmitToGAS() {
-        alert("제출 중입니다...");
-        const allData = {
-            submitDate: document.getElementById('todayDate').value,
-            custName: document.getElementById('custName').value,
-            bizNum: document.getElementById('bizNum').value,
-            bizReg: document.getElementById('bizReg').value,
-            custAddr: document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || ""),
-            signature: finalSignaturePad.toDataURL()
-        };
-        fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
-        .then(r => r.json()).then(res => { if(res.result === "success") { alert('성공적으로 접수되었습니다!'); location.reload(); } });
-    }
+    // 데이터 화면 표시
+    document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
+    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
+    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value; // 연락처 연동
+    document.getElementById('display_bizInfo').innerText = document.getElementById('bizNum').value + " / " + document.getElementById('bizReg').value;
+    document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
+    document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
+    
+    document.getElementById('divPage4').classList.add('page-hidden');
+    document.getElementById('divPage5').classList.remove('page-hidden');
+}
 
+function finalSubmitToGAS() {
+    alert("신청서를 전송 중입니다. 잠시만 기다려주세요...");
+    
+    // 체크박스 데이터(상품/사유) 가져오기
+    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
+    const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(', ');
+    const telecom = document.querySelector('input[name="telecom"]:checked')?.value || "";
+
+    const allData = {
+        submitDate: document.getElementById('todayDate').value,
+        billNumber: document.getElementById('billNumber').value,
+        custName: document.getElementById('custName').value,
+        custTel: document.getElementById('custTel').value, // 누락된 연락처 추가
+        bizNum: document.getElementById('bizNum').value,
+        bizReg: document.getElementById('bizReg').value,
+        custAddr: document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || ""),
+        returnAddr: document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || ""),
+        products: products, // 상품 데이터 추가
+        reasons: reasons + (telecom ? " (타사전환: " + telecom + ")" : ""), // 사유 데이터 추가
+        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
+        signature: finalSignaturePad.toDataURL()
+    };
+
+    fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
+    .then(r => r.json())
+    .then(res => { 
+        if(res.result === "success") { 
+            alert('성공적으로 접수되었습니다!'); 
+            location.reload(); 
+        } else {
+            alert('오류가 발생했습니다. 다시 시도해주세요.');
+        }
+    })
+    .catch(err => alert("전송에 실패했습니다. 인터넷 연결을 확인해주세요."));
+}
+
+// CCTV 테이블 노출 제어 (철거완료/철거요청 둘 다 표 노출)
+function toggleCCTVTable() {
+    const status = document.querySelector('input[name="cctvStatus"]:checked').value;
+    document.getElementById('cctvPriceArea').style.display = (status === "해당없음") ? 'none' : 'block';
+}
     function resizeCanvas(canvas, pad) {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio;
