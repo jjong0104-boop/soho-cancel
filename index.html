@@ -302,6 +302,24 @@ function goToPage5() {
     // document.getElementById('divPage5').classList.remove('page-hidden'); // 5페이지 ID에 맞춰 수정
     alert("5페이지로 이동합니다."); // 실제 구현 시 5페이지 노출 코드로 대체
 }
+
+    // 가입자 정보를 회수 정보로 복사하는 함수
+function copyInstallInfo() {
+    const custName = document.getElementById('custName').value;
+    const custTel = document.getElementById('custTel').value;
+    const custAddr = document.getElementById('custAddr').value;
+    const custDetail = document.getElementById('custDetail').value;
+
+    if (!custName || !custTel || !custAddr) {
+        alert("가입자 정보를 먼저 입력해 주세요.");
+        return;
+    }
+
+    document.getElementById('returnPerson').value = custName;
+    document.getElementById('returnTel').value = custTel;
+    document.getElementById('returnAddr').value = custAddr;
+    document.getElementById('returnDetail').value = custDetail;
+}
     function validatePage4() {
         const cctv = document.querySelector('input[name="cctvStatus"]:checked').value;
         if(cctv !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("확인 체크박스를 눌러주세요."); return; }
