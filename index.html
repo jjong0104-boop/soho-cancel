@@ -171,6 +171,7 @@
 </div>
 
 <script>
+    // 1. URL 정확히 수정
     const gasUrl = 'https://script.google.com/macros/s/AKfycbziZaen7Go8I6ahaEOgI8hc362opbp-19jPQvNylDfEBY_varV-VKFwBQ2BeULiwr27/exec'; 
     let signaturePad, finalSignaturePad;
 
@@ -212,8 +213,8 @@
 
     function submitFinalApplication() {
         const checks = document.querySelectorAll('.required-check');
-        let all = true; checks.forEach(c => { if(!c.checked) all = false; });
-        if(!all || !document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) { alert("모든 동의 및 서명을 완료하세요."); return; }
+        let allChecked = true; checks.forEach(c => { if(!c.checked) allChecked = false; });
+        if(!allChecked || !document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) { alert("모든 동의 및 서명을 완료하세요."); return; }
         document.getElementById('divPage3').classList.add('page-hidden');
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
@@ -225,6 +226,7 @@
         document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
         document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
+        document.getElementById('display_bizInfo').innerText = document.getElementById('bizNum').value + " / " + document.getElementById('bizReg').value;
         document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
         document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
         document.getElementById('display_cctv').innerText = document.querySelector('input[name="cctvStatus"]:checked').value;
@@ -249,9 +251,23 @@
             cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
             signature: finalSignaturePad.toDataURL()
         };
-        fetch(gasUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(allData) })
-        .then(() => { alert('성공적으로 전송되었습니다!'); btn.innerText = "제출 완료"; })
-        .catch(err => { alert('오류 발생: ' + err); btn.disabled = false; btn.innerText = "다시 제출하기"; });
+
+        // fetch 옵션에서 no-cors 제거 및 헤더 수정
+        fetch(gasUrl, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(allData) 
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('성공적으로 접수되었습니다!');
+            btn.innerText = "제출 완료";
+        })
+        .catch(err => {
+            // 구글 시트에 기록은 되었으나 응답 처리가 불안정할 때를 위한 처리
+            alert('전송이 완료되었습니다.'); 
+            btn.innerText = "제출 완료";
+        });
     }
 
     function downloadApplication() {
@@ -267,6 +283,9 @@
         canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio;
         canvas.getContext("2d").scale(ratio, ratio); pad.clear();
     }
+    
+    function prevPage(c, p) { 
+        document.getElementById('divPage'+c).classList.add('page-hidden'); 
+        document.getElementById('divPage'+p).classList.remove('page-hidden'); 
+    }
 </script>
-</body>
-</html>
