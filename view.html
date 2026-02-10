@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>해지신청서 상세조회</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; padding: 30px; }
+        .view-card { background: white; max-width: 800px; margin: auto; padding: 40px; border: 1px solid #ddd; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .stamp { border: 2px solid red; color: red; display: inline-block; padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; float: right; }
+        .label { font-weight: bold; background: #f8f9fa; width: 150px; }
+        .signature-img { border: 1px solid #eee; max-width: 300px; }
+    </style>
+</head>
+<body>
+
+<div class="view-card" id="printArea">
+    <div class="stamp">완료</div>
+    <h2 class="text-center mb-5">U+우리가게패키지 해지신청서 (응답내용)</h2>
+    
+    <table class="table table-bordered">
+        <tr>
+            <td class="label">청구서 번호</td>
+            <td id="v-bill">로딩 중...</td>
+        </tr>
+        <tr>
+            <td class="label">고객명</td>
+            <td id="v-name">로딩 중...</td>
+        </tr>
+        <tr>
+            <td class="label">설치 주소</td>
+            <td id="v-addr">로딩 중...</td>
+        </tr>
+        <tr>
+            <td class="label">해지 상품</td>
+            <td id="v-products">로딩 중...</td>
+        </tr>
+        <tr>
+            <td class="label">해지 사유</td>
+            <td id="v-reasons">로딩 중...</td>
+        </tr>
+        <tr>
+            <td class="label">고객 서명</td>
+            <td><img id="v-sig" src="" class="signature-img" alt="서명"></td>
+        </tr>
+    </table>
+    
+    <div class="text-center mt-5 no-print">
+        <button class="btn btn-primary" onclick="window.print()">이 신청서 인쇄하기</button>
+    </div>
+</div>
+
+<script>
+    // 1. URL에서 bill 번호 추출
+    const params = new URLSearchParams(window.location.search);
+    const bill = params.get('bill');
+    
+    // 2. 사장님의 GAS 웹 앱 URL (여기에 본인의 배포 주소를 넣으세요)
+    const gasUrl = "여기에_사장님의_GAS_배포_URL을_넣으세요";
+
+    if (bill) {
+        fetch(`${gasUrl}?bill=${bill}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data) {
+                    document.getElementById('v-bill').innerText = data.billNumber;
+                    document.getElementById('v-name').innerText = data.custName;
+                    document.getElementById('v-addr').innerText = data.address;
+                    document.getElementById('v-products').innerText = data.products;
+                    document.getElementById('v-reasons').innerText = data.reasons;
+                    document.getElementById('v-sig').src = data.signature;
+                } else {
+                    alert("데이터를 찾을 수 없습니다.");
+                }
+            });
+    }
+</script>
+</body>
+</html>
