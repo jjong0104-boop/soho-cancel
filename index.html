@@ -47,6 +47,15 @@
         <div class="mb-1"><label class="form-label">설치 주소*</label><input type="text" id="custAddr" class="form-control address-search mb-2" readonly onclick="execDaumPostcode('custAddr', 'custDetail')"></div>
         <input type="text" id="custDetail" class="form-control mb-3" placeholder="상세주소">
 
+        <div class="section-title">
+            장비 회수 정보*
+            <button type="button" class="btn btn-outline-secondary btn-sm copy-btn" onclick="copyInstallInfo()">설치정보와 동일</button>
+        </div>
+        <div class="mb-3"><label class="form-label">회수 담당자*</label><input type="text" id="returnPerson" class="form-control" placeholder="성함"></div>
+        <div class="mb-3"><label class="form-label">회수 연락처*</label><input type="tel" id="returnTel" class="form-control" placeholder="010-0000-0000"></div>
+        <div class="mb-1"><label class="form-label">회수 주소*</label><input type="text" id="returnAddr" class="form-control address-search mb-2" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')" placeholder="클릭하여 주소 검색"></div>
+        <input type="text" id="returnDetail" class="form-control mb-3" placeholder="상세주소">
+
         <div class="section-title">해지 상품 (중복 가능)</div>
         <div class="row g-2 mb-3 px-2">
             <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
