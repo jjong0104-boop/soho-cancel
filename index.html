@@ -597,19 +597,39 @@
     }
 </script>
 
-function submitFinalApplication() {
-    // 서명 데이터를 이미지(Base64)로 변환
-    const signatureData = finalSignaturePad.toDataURL(); 
+// --- 실제 데이터 취합 및 전송 시작 ---
+    const signatureData = finalSignaturePad.toDataURL(); // 3페이지의 서명 가져오기
+    
     const allData = {
         billNumber: document.getElementById('billNumber').value,
         custName: document.getElementById('custName').value,
-        signature: signatureData, // 서명 이미지 포함
-        // ... 나머지 데이터들
+        custTel: document.getElementById('custTel').value,
+        bizNum: document.getElementById('bizNum').value,
+        bizReg: document.getElementById('bizReg').value,
+        custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
+        products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(el => el.value).join(', '),
+        reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(el => el.value).join(', '),
+        cctvStatus: selectedStatus.value,
+        signature: signatureData // 서명 이미지 포함
     };
 
-    // 구글 앱스 스크립트로 전송
+    alert("신청서를 최종 제출합니다. 잠시만 기다려 주세요...");
+
+    // 사장님의 GAS 주소로 전송
     fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
         method: 'POST',
         body: JSON.stringify(allData)
-    }).then(res => alert('신청서가 PDF로 변환되어 카톡으로 발송됩니다!'));
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.result === "success") {
+            alert('성공적으로 접수되었습니다. 시트에서 확인해 주세요!');
+            location.reload(); // 페이지 새로고침 (초기화)
+        } else {
+            alert('오류 발생: ' + res.message);
+        }
+    })
+    .catch(err => {
+        alert('전송 실패. 인터넷 연결을 확인해 주세요.');
+    });
 }
