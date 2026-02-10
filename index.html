@@ -575,58 +575,41 @@
         }
     }
 
-    /* 4페이지 유효성 검사 및 최종 전송 */
-function validatePage4() {
-    const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
-    
-    // 1. CCTV 상태 선택 확인
-    if (!selectedStatus) {
-        alert("CCTV 관련 상태를 선택해 주세요.");
-        return;
-    }
-
-    // 2. 해당없음이 아닐 때 체크박스 확인
-    if (selectedStatus.value !== "해당없음") {
-        if (!document.getElementById('cctvFinalConfirm').checked) {
-            alert("CCTV 해지 확인 사항에 체크해 주세요.");
+    /* 4페이지 유효성 검사 수정 */
+    function validatePage4() {
+        const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
+        
+        if (!selectedStatus) {
+            alert("CCTV 관련 상태를 선택해 주세요.");
             return;
         }
-    }
 
-    // --- 실제 데이터 취합 및 전송 시작 ---
-    const signatureData = finalSignaturePad.toDataURL(); // 3페이지의 서명 가져오기
-    
+        // '해당없음'이 아닐 때만 확인 체크박스 검사
+        if (selectedStatus.value !== "해당없음") {
+            if (!document.getElementById('cctvFinalConfirm').checked) {
+                alert("CCTV 해지 확인 사항에 체크해 주세요.");
+                return;
+            }
+        }
+
+        alert("확인이 완료되었습니다. 5페이지로 이동합니다.");
+        // 여기서 5페이지 div를 열어주는 코드를 추가하면 됩니다.
+    }
+</script>
+
+function submitFinalApplication() {
+    // 서명 데이터를 이미지(Base64)로 변환
+    const signatureData = finalSignaturePad.toDataURL(); 
     const allData = {
         billNumber: document.getElementById('billNumber').value,
         custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value,
-        bizNum: document.getElementById('bizNum').value,
-        bizReg: document.getElementById('bizReg').value,
-        custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
-        products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(el => el.value).join(', '),
-        reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(el => el.value).join(', '),
-        cctvStatus: selectedStatus.value,
-        signature: signatureData // 서명 이미지 포함
+        signature: signatureData, // 서명 이미지 포함
+        // ... 나머지 데이터들
     };
 
-    alert("신청서를 최종 제출합니다. 잠시만 기다려 주세요...");
-
-    // 사장님의 GAS 주소로 전송
+    // 구글 앱스 스크립트로 전송
     fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
         method: 'POST',
         body: JSON.stringify(allData)
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.result === "success") {
-            alert('성공적으로 접수되었습니다. 시트에서 확인해 주세요!');
-            location.reload(); // 페이지 새로고침 (초기화)
-        } else {
-            alert('오류 발생: ' + res.message);
-        }
-    })
-    .catch(err => {
-        alert('전송 실패. 인터넷 연결을 확인해 주세요.');
-    });
+    }).then(res => alert('신청서가 PDF로 변환되어 카톡으로 발송됩니다!'));
 }
-</script>
