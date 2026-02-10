@@ -11,7 +11,7 @@
         :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
         body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
         .container { max-width: 600px; margin: auto; padding: 20px; }
-        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .form-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--u-pink); padding-bottom: 15px; }
         .header h2 { color: var(--u-pink); font-weight: bold; font-size: 1.6rem; }
         .section-title { font-size: 1.1rem; font-weight: bold; color: #333; margin: 25px 0 15px; display: flex; align-items: center; }
@@ -36,111 +36,74 @@
     <div id="divPage1" class="form-card">
         <div class="header">
             <h2>U+우리가게패키지 해지신청서</h2>
-            <p class="text-muted small mb-0">온라인 신청 프로세스 (1/6)</p>
+            <p class="text-muted small mb-0">온라인 신청 프로세스 (1/4)</p>
         </div>
 
-        <form id="formPage1">
-            <div class="mb-4">
-    <label class="form-label">청구서 번호</label>
-    <input type="text" id="billNumber" class="form-control bg-light" placeholder="데이터 로딩 중..." readonly>
-</div>
+        <div class="mb-4">
+            <label class="form-label">청구서 번호</label>
+            <input type="text" id="billNumber" class="form-control bg-light" readonly>
+        </div>
+        <div class="mb-4">
+            <label class="form-label">신청접수일</label>
+            <input type="text" id="todayDate" class="form-control bg-light" readonly>
+        </div>
 
-<script>
-    // 페이지 로드 시 실행
-    window.addEventListener('DOMContentLoaded', () => {
-        // 1. 오늘 날짜 설정 로직 (모든 페이지 공통)
-        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
-        if(document.getElementById('todayDate')) document.getElementById('todayDate').value = todayStr;
-        if(document.getElementById('applyDate')) document.getElementById('applyDate').value = todayStr;
-
-        // 2. 주소창 URL에서 bill 파라미터 직접 읽기
-        const urlParams = new URLSearchParams(window.location.search);
-        const billNo = urlParams.get('bill'); // URL의 ?bill= 뒤에 오는 값을 가져옴
+        <div class="section-title">가입자 정보</div>
+        <div class="mb-3">
+            <label class="form-label">고객명 (법인명/대표자이름)*</label>
+            <input type="text" id="custName" class="form-control" placeholder="성함을 입력하세요">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">연락처*</label>
+            <input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">사업자등록번호*</label>
+            <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">법인등록번호(생년월일)*</label>
+            <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
+        </div>
         
-        const billInput = document.getElementById('billNumber');
-        if (billInput) {
-            if (billNo) {
-                // 파라미터가 있으면 해당 번호 입력
-                billInput.value = billNo;
-            } else {
-                // 파라미터가 없으면 경고 문구 표시
-                billInput.value = "번호 없음 (링크를 확인해주세요)";
-            }
-        }
-    });
-</script>
-            <div class="mb-4">
-                <label class="form-label">신청접수일</label>
-                <input type="text" id="todayDate" class="form-control bg-light" readonly>
-            </div>
+        <div class="mb-1">
+            <label class="form-label">주소*</label>
+            <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
+        </div>
+        <div class="mb-3">
+            <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
+        </div>
 
-            <div class="section-title">가입자 정보</div>
-            <div class="mb-3">
-                <label class="form-label">고객명 (법인명/대표자이름)<span class="required-star">*</span></label>
-                <input type="text" id="custName" class="form-control" placeholder="성함을 입력하세요">
+        <div class="section-title">설치정보 및 장비회수</div>
+        <div class="mb-1">
+            <label class="form-label">장비 회수 요청 주소*</label>
+            <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
+        </div>
+        <div class="mb-3">
+            <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <label class="form-label">회수 담당자 성함*</label>
+                <input type="text" id="returnPerson" class="form-control">
             </div>
-            <div class="mb-3">
-                <label class="form-label">연락처<span class="required-star">*</span></label>
-                <input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000">
+            <div class="col-6">
+                <label class="form-label">연락처*</label>
+                <input type="tel" id="returnTel" class="form-control">
             </div>
-            <div class="mb-3">
-                <label class="form-label">사업자등록번호<span class="required-star">*</span></label>
-                <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">법인등록번호(생년월일)<span class="required-star">*</span></label>
-                <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
-            </div>
-            
-            <div class="mb-1">
-                <label class="form-label">주소<span class="required-star">*</span></label>
-                <input type="text" id="custAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('custAddr', 'custDetail')">
-            </div>
-            <div class="mb-3">
-                <input type="text" id="custDetail" class="form-control" placeholder="상세주소 입력">
-            </div>
+        </div>
 
-            <div class="section-title">요금 확인 사항</div>
-            <div class="notice-box mb-3">
-                통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="payConfirm">
-                <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.<span class="required-star">*</span></label>
-            </div>
-
-            <div class="section-title">설치정보 및 장비회수</div>
-            <div class="mb-1">
-                <label class="form-label">장비 회수 요청 주소<span class="required-star">*</span></label>
-                <input type="text" id="returnAddr" class="form-control address-search mb-2" placeholder="클릭하여 주소 검색" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')">
-            </div>
-            <div class="mb-3">
-                <input type="text" id="returnDetail" class="form-control" placeholder="상세주소 입력">
-            </div>
-            <div class="row g-2 mb-3">
-                <div class="col-6">
-                    <label class="form-label">회수 담당자 성함<span class="required-star">*</span></label>
-                    <input type="text" id="returnPerson" class="form-control">
-                </div>
-                <div class="col-6">
-                    <label class="form-label">연락처<span class="required-star">*</span></label>
-                    <input type="tel" id="returnTel" class="form-control">
-                </div>
-            </div>
-            
-            <label class="form-label">해지 상품 (중복 선택 가능)<span class="required-star">*</span></label>
-            <div class="row g-2 mb-3 px-2">
-                <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
+        <div class="section-title">해지 상품 및 사유</div>
+        <div class="row g-2 mb-3 px-2">
+            <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
                 <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
                 <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV</div>
                 <div class="col-4"><input type="checkbox" name="product" value="전화"> 전화</div>
                 <div class="col-12"><input type="checkbox" name="product" value="전회선"> <b>전회선 해지</b></div>
-            </div>
 
-            <div class="section-title">해지 사유 (필수 체크)<span class="required-star">*</span></div>
-            
-            <div class="mb-3 reason-group">
-                <label class="form-label text-primary">● 고객사유 </label>
+        </div>
+        <div class="reason-group mb-3">
+           <label class="form-label text-primary">● 고객사유 </label>
                 <div class="row g-2 small ps-1">
                     <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
                     <div class="col-6"><input type="checkbox" name="reason" value="업무종료"> 업무종료</div>
@@ -176,17 +139,117 @@
                 </div>
             </div>
 
-            <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
-        </form>
-    </div>
-    
-<div id="divPage2" class="form-card page-hidden">
-        <div class="header"><h2>안내 및 동의</h2><p class="text-muted small">(2/4)</p></div>
-        <div class="agreement-box"> 본 신청서는 본인(가입자, 예금주/카드주)이 직접 작성하였음을 확인하며, 별지를 포함한 신청서에 기재된 서비스 신청고객에게 적용되는 모든 사항(단말기 할부판매 및 임대약정, 결함서비스 요금, 일부 해지 시 처리방법, 변경 및 해지조건, 해지시 할인반환금 등)의 주요내용에 대한 안내를 받았으며, 본인은 (주)LG유플러스의 개인정보 취급방침과 신청하는 상품의 이용약관에 동의합니다. 본인은 가입신청서 내용에 대해 충분히 설명 듣고 그 내용을 이해하였으며, 위와 같은 내용으로 계약을 체결합니다. 
+
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="payConfirm">
+            <label class="form-check-label fw-bold" for="payConfirm">요금 정산 안내를 확인하였습니다.*</label>
         </div>
-        <div class="mb-3"><label class="form-label">신청인 성함*</label><input type="text" id="signerName" class="form-control"></div>
-        <div class="signature-wrapper"><canvas id="signature-pad"></canvas></div>
-        <div class="text-end"><button type="button" class="btn-clear" onclick="signaturePad.clear()">다시 쓰기</button></div>
-        <button type="button" class="btn-next" onclick="submitFinal()">다음 단계로 (3/4)</button>
+
+        <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/4)</button>
+    </div>
+
+    <div id="divPage2" class="form-card page-hidden">
+        <div class="header">
+            <h2>안내 및 동의</h2>
+            <p class="text-muted small mb-0">(2/4)</p>
+        </div>
+        <div class="agreement-box">
+           본 신청서는 본인(가입자, 예금주/카드주)이 직접 작성하였음을 확인하며, 별지를 포함한 신청서에 기재된 서비스 신청고객에게 적용되는 모든 사항(단말기 할부판매 및 임대약정, 결함서비스 요금, 일부 해지 시 처리방법, 변경 및 해지조건, 해지시 할인반환금 등)의 주요내용에 대한 안내를 받았으며, 본인은 (주)LG유플러스의 개인정보 취급방침과 신청하는 상품의 이용약관에 동의합니다. 본인은 가입신청서 내용에 대해 충분히 설명 듣고 그 내용을 이해하였으며, 위와 같은 내용으로 계약을 체결합니다. 
+        </div>
+        <div class="mb-3">
+            <label class="form-label">신청인 (가입자/대리인 성함)*</label>
+            <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
+        </div>
+        <div class="section-title">서명*</div>
+        <div class="signature-wrapper">
+            <canvas id="signature-pad"></canvas>
+        </div>
+        <div class="text-end">
+            <button type="button" class="btn-clear" onclick="signaturePad.clear()">다시 쓰기</button>
+        </div>
+        <p class="text-muted small mt-2">※ 위 사각형 안에 직접 서명해 주세요.</p>
+
+        <button type="button" class="btn-submit" onclick="submitToPage3()">다음 단계로 (3/4)</button>
         <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(2, 1)">이전 페이지로</button>
     </div>
+</div>
+
+<script>
+    let signaturePad;
+
+    // 페이지 로드 시 초기 설정
+    window.addEventListener('DOMContentLoaded', () => {
+        // 날짜 설정
+        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
+        document.getElementById('todayDate').value = todayStr;
+
+        // URL 파라미터로 청구서 번호 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById('billNumber').value = urlParams.get('bill') || "번호 없음";
+
+        // 서명 패드 초기화
+        const canvas = document.getElementById('signature-pad');
+        signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
+    });
+
+    // [중요] 주소 검색 기능 (카카오)
+    function execDaumPostcode(mainAddrId, detailAddrId) {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                document.getElementById(mainAddrId).value = addr;
+                document.getElementById(detailAddrId).focus();
+            }
+        }).open();
+    }
+
+    // 1 -> 2페이지 전환 및 검사
+    function validateAndNext() {
+        const requiredIds = ['custName', 'custTel', 'bizNum', 'bizReg', 'custAddr', 'returnAddr'];
+        for (let id of requiredIds) {
+            if (!document.getElementById(id).value.trim()) {
+                alert("필수 정보를 모두 입력해 주세요.");
+                document.getElementById(id).focus();
+                return;
+            }
+        }
+        if (!document.getElementById('payConfirm').checked) {
+            alert("안내 사항에 동의해 주세요."); return;
+        }
+
+        document.getElementById('divPage1').classList.add('page-hidden');
+        document.getElementById('divPage2').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+        resizeCanvas();
+    }
+
+    // 2페이지 버튼 로직 (3페이지로 전환)
+    function submitToPage3() {
+        const name = document.getElementById('signerName').value.trim();
+        if (!name || signaturePad.isEmpty()) {
+            alert("성함 입력과 서명을 완료해 주세요."); return;
+        }
+        alert("3페이지(개인정보 동의)로 이동합니다.");
+        // 여기에 3페이지 divPage3 열어주는 로직을 계속 추가하시면 됩니다.
+    }
+
+    // 이전 페이지로 가기
+    function prevPage(curr, prev) {
+        document.getElementById('divPage' + curr).classList.add('page-hidden');
+        document.getElementById('divPage' + prev).classList.remove('page-hidden');
+        window.scrollTo(0,0);
+    }
+
+    // 서명 패드 크기 조절
+    function resizeCanvas() {
+        const canvas = document.getElementById('signature-pad');
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+</script>
+</body>
+</html>
