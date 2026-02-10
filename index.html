@@ -231,7 +231,7 @@
     function validatePage4AndGo() {
     const cctvStatus = document.querySelector('input[name="cctvStatus"]:checked').value;
     
-    // 로직: '해당없음'이 아니면서 '체크박스'를 안 눌렀을 때만 경고창
+    // 1. CCTV 철거 요청 시 체크박스 검사
     if (cctvStatus !== "해당없음") {
         if (!document.getElementById('cctvFinalConfirm').checked) {
             alert("CCTV 해지 비용 및 안내 사항 확인 체크박스에 동의해 주세요.");
@@ -239,7 +239,7 @@
         }
     }
 
-    // 데이터 화면 표시 (5페이지 요약표 매칭)
+    // 2. 5페이지에 데이터 뿌려주기
     document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
     document.getElementById('display_custName').innerText = document.getElementById('custName').value;
     document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
@@ -247,31 +247,18 @@
     document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
     document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
     
-    // 페이지 이동
+    // 3. 페이지 전환
     document.getElementById('divPage4').classList.add('page-hidden');
     document.getElementById('divPage5').classList.remove('page-hidden');
     window.scrollTo(0,0);
 }
 
-    // 데이터 화면 표시
-    document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
-    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value; // 연락처 연동
-    document.getElementById('display_bizInfo').innerText = document.getElementById('bizNum').value + " / " + document.getElementById('bizReg').value;
-    document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
-    document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
-    
-    document.getElementById('divPage4').classList.add('page-hidden');
-    document.getElementById('divPage5').classList.remove('page-hidden');
-}
-
 function finalSubmitToGAS() {
     alert("신청서를 전송 중입니다. 잠시만 기다려주세요...");
     
-    // 체크박스 데이터(상품/사유) 가져오기
+    // 체크박스/라디오 데이터 추출
     const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
     const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(', ');
-    const telecom = document.querySelector('input[name="telecom"]:checked')?.value || "";
 
     const allData = {
         submitDate: document.getElementById('todayDate').value,
@@ -282,12 +269,15 @@ function finalSubmitToGAS() {
         bizReg: document.getElementById('bizReg').value,
         custAddr: document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || ""),
         returnAddr: document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || ""),
-        // 추가된 동의 항목 값
+        
+        // ★ 이 부분을 아래처럼 수정 (7, 8번 선택값 가져오기)
         marketingAgree: "7번:" + document.querySelector('input[name="agree7"]:checked').value + 
                          ", 8번:" + document.querySelector('input[name="agree8"]:checked').value,
+        
         signature: finalSignaturePad.toDataURL()
     };
 
+    // fetch 호출... (기존과 동일)
     fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
     .then(r => r.json())
     .then(res => { 
@@ -295,10 +285,10 @@ function finalSubmitToGAS() {
             alert('성공적으로 접수되었습니다!'); 
             location.reload(); 
         } else {
-            alert('오류가 발생했습니다. 다시 시도해주세요.');
+            alert('오류가 발생했습니다.');
         }
     })
-    .catch(err => alert("전송에 실패했습니다. 인터넷 연결을 확인해주세요."));
+    .catch(err => alert("전송 실패"));
 }
 
 // CCTV 테이블 노출 제어 (철거완료/철거요청 둘 다 표 노출)
