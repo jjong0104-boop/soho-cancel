@@ -11,6 +11,8 @@
         .stamp { border: 2px solid red; color: red; display: inline-block; padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; float: right; }
         .label { font-weight: bold; background: #f8f9fa; width: 150px; }
         .signature-img { border: 1px solid #eee; max-width: 300px; }
+        @media print { .no-print { display: none !important; } }
+.no-print { transition: opacity 0.2s; } /* 옵션: 마우스 올릴 때 부드럽게 */
     </style>
 </head>
 <body>
