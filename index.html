@@ -224,16 +224,71 @@
         resizeCanvas();
     }
 
-    // 2페이지 버튼 로직 (3페이지로 전환)
+    let finalSignaturePad;
+
+    // [기존 함수 덮어쓰기] 2 -> 3페이지 전환
     function submitToPage3() {
-        const name = document.getElementById('signerName').value.trim();
-        if (!name || signaturePad.isEmpty()) {
+        if (!document.getElementById('signerName').value.trim() || signaturePad.isEmpty()) {
             alert("성함 입력과 서명을 완료해 주세요."); return;
         }
-        alert("3페이지(개인정보 동의)로 이동합니다.");
-        // 여기에 3페이지 divPage3 열어주는 로직을 계속 추가하시면 됩니다.
+        document.getElementById('divPage2').classList.add('page-hidden');
+        document.getElementById('divPage3').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+
+        const canvas2 = document.getElementById('final-signature-pad');
+        finalSignaturePad = new SignaturePad(canvas2, { backgroundColor: 'rgb(255, 255, 255)' });
+        resizeCanvas(canvas2, finalSignaturePad);
     }
 
+    // 3 -> 4페이지 전환
+    function submitFinalApplication() {
+        const checks = document.querySelectorAll('.required-check');
+        let all = true; checks.forEach(c => { if(!c.checked) all = false; });
+        if(!all || !document.getElementById('finalSignerName').value.trim() || finalSignaturePad.isEmpty()) {
+            alert("모든 필수 동의 체크와 최종 서명을 완료해 주세요."); return;
+        }
+        document.getElementById('divPage3').classList.add('page-hidden');
+        document.getElementById('divPage4').classList.remove('page-hidden');
+        window.scrollTo(0,0);
+    }
+
+    function toggleCCTVTable() {
+        document.getElementById('cctvConfirmBox').style.display = document.getElementById('cctvNone').checked ? 'none' : 'block';
+    }
+
+    // 최종 제출 발사대
+    function validatePage4() {
+        const cctv = document.querySelector('input[name="cctvStatus"]:checked').value;
+        if(cctv !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) {
+            alert("CCTV 확인 체크박스를 눌러주세요."); return;
+        }
+
+        const allData = {
+            billNumber: document.getElementById('billNumber').value,
+            custName: document.getElementById('custName').value,
+            custTel: document.getElementById('custTel').value,
+            bizNum: document.getElementById('bizNum').value,
+            bizReg: document.getElementById('bizReg').value,
+            custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
+            products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(','),
+            reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(','),
+            cctvStatus: cctv,
+            signature: finalSignaturePad.toDataURL()
+        };
+
+        alert("신청서를 최종 제출합니다. 잠시만 기다려주세요.");
+        
+        fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
+            method: 'POST',
+            body: JSON.stringify(allData)
+        })
+        .then(r => r.json()).then(res => {
+            if(res.result === "success") {
+                alert('성공적으로 접수되었습니다!');
+                location.reload();
+            }
+        }).catch(err => alert("전송 실패. 인터넷을 확인하세요."));
+    }
     // 이전 페이지로 가기
     function prevPage(curr, prev) {
         document.getElementById('divPage' + curr).classList.add('page-hidden');
@@ -253,3 +308,45 @@
 </script>
 </body>
 </html>
+
+<div id="divPage3" class="form-card page-hidden">
+        <div class="header">
+            <h2>개인정보 활용 동의</h2>
+            <p class="text-muted small mb-0">(3/4)</p>
+        </div>
+        <p class="text-muted small mb-4">※ 각 항목의 상세 내용을 확인하신 후 동의해 주세요.</p>
+
+        <div id="agreementArea">
+            <div class="mb-4 pb-3 border-bottom"><img src="개활용1.jpg" class="img-fluid mb-2"><div class="text-end"><input type="checkbox" class="required-check"> 동의함</div></div>
+            <div class="mb-4 pb-3 border-bottom"><img src="개활용2.jpg" class="img-fluid mb-2"><div class="text-end"><input type="checkbox" class="required-check"> 동의함</div></div>
+            <div class="mb-4 pb-3 border-bottom"><img src="개활용3.jpg" class="img-fluid mb-2"><div class="text-end"><input type="checkbox" class="required-check"> 동의함</div></div>
+            <div class="mb-4 pb-3 border-bottom"><img src="개활용4.jpg" class="img-fluid mb-2"><div class="text-end"><input type="checkbox" class="required-check"> 동의함</div></div>
+            <div class="mb-4 pb-3 border-bottom"><img src="개활용5.jpg" class="img-fluid mb-2"><div class="text-end"><input type="checkbox" class="required-check"> 동의함</div></div>
+            <div class="mb-4 pb-3 border-bottom"><img src="개활용6.jpg" class="img-fluid mb-2"><div class="text-end"><input type="checkbox" class="required-check"> 동의함</div></div>
+            <div class="mb-4 pb-3 border-bottom">
+                <img src="개활용7.jpg" class="img-fluid mb-1"><img src="개활용8.jpg" class="img-fluid mb-2">
+                <div class="row g-2 text-center"><div class="col-6"><input type="radio" name="marketing" value="동의"> 동의</div><div class="col-6"><input type="radio" name="marketing" value="미동의" checked> 미동의</div></div>
+            </div>
+        </div>
+
+        <div class="mb-3 mt-4"><label class="form-label">최종 확인자 성함*</label><input type="text" id="finalSignerName" class="form-control"></div>
+        <div class="section-title">최종 서명*</div>
+        <div class="signature-wrapper mb-2"><canvas id="final-signature-pad"></canvas></div>
+        <div class="text-end mb-4"><button type="button" class="btn-clear" onclick="finalSignaturePad.clear()">다시 쓰기</button></div>
+
+        <button type="button" class="btn-submit" onclick="submitFinalApplication()">다음 단계로 (4/4)</button>
+        <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(3, 2)">이전 페이지로</button>
+    </div>
+
+    <div id="divPage4" class="form-card page-hidden">
+        <div class="header"><h2>CCTV 해지 필수 체크</h2><p class="text-muted small">(4/4)</p></div>
+        <div class="mb-4">
+            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청"> 철거 요청</div>
+            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" checked onchange="toggleCCTVTable()"> 해당 사항 없음</div>
+        </div>
+        <div id="cctvConfirmBox" class="notice-box mb-4" style="display:none;">
+            <input type="checkbox" id="cctvFinalConfirm"> 비용 및 안내사항을 확인했습니다.*
+        </div>
+        <button type="button" class="btn-submit" onclick="validatePage4()">신청서 최종 제출하기</button>
+        <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(4, 3)">이전 페이지로</button>
+    </div>
