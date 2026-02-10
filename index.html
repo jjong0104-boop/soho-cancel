@@ -575,29 +575,25 @@
         }
     }
 
-    /* 4페이지 유효성 검사 수정 */
-    function validatePage4() {
-        const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
-        
-        if (!selectedStatus) {
-            alert("CCTV 관련 상태를 선택해 주세요.");
+    /* 4페이지 유효성 검사 및 최종 전송 */
+function validatePage4() {
+    const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
+    
+    // 1. CCTV 상태 선택 확인
+    if (!selectedStatus) {
+        alert("CCTV 관련 상태를 선택해 주세요.");
+        return;
+    }
+
+    // 2. 해당없음이 아닐 때 체크박스 확인
+    if (selectedStatus.value !== "해당없음") {
+        if (!document.getElementById('cctvFinalConfirm').checked) {
+            alert("CCTV 해지 확인 사항에 체크해 주세요.");
             return;
         }
-
-        // '해당없음'이 아닐 때만 확인 체크박스 검사
-        if (selectedStatus.value !== "해당없음") {
-            if (!document.getElementById('cctvFinalConfirm').checked) {
-                alert("CCTV 해지 확인 사항에 체크해 주세요.");
-                return;
-            }
-        }
-
-        alert("확인이 완료되었습니다. 5페이지로 이동합니다.");
-        // 여기서 5페이지 div를 열어주는 코드를 추가하면 됩니다.
     }
-</script>
 
-// --- 실제 데이터 취합 및 전송 시작 ---
+    // --- 실제 데이터 취합 및 전송 시작 ---
     const signatureData = finalSignaturePad.toDataURL(); // 3페이지의 서명 가져오기
     
     const allData = {
