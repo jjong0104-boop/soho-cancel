@@ -257,6 +257,16 @@ function goToPage5() {
     if (cctvStatus !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) {
         alert("CCTV 확인 체크박스에 체크해 주세요.");
         return;
+        <table class="table table-bordered">
+    <tr><td class="bg-light w-25">청구서 번호</td><td id="display_billNumber"></td></tr>
+    <tr><td class="bg-light">고객명</td><td id="display_custName"></td></tr>
+    
+    <tr><td class="bg-light">전화번호</td><td id="display_custTel"></td></tr>
+    
+    <tr><td class="bg-light">설치 주소</td><td id="display_custAddr"></td></tr>
+    <tr><td class="bg-light">해지 상품</td><td id="display_products"></td></tr>
+    <tr><td class="bg-light">해지 사유</td><td id="display_reasons"></td></tr>
+</table>
     }
 
     // --- [중요] 확인 페이지에 데이터 뿌려주는 구간 ---
@@ -274,7 +284,32 @@ function goToPage5() {
     window.scrollTo(0,0);
 }
     function prevPage(c, p) { document.getElementById('divPage'+c).classList.add('page-hidden'); document.getElementById('divPage'+p).classList.remove('page-hidden'); }
-
+<table class="table table-bordered">
+    <tr>
+        <td class="bg-light w-25">청구서 번호</td>
+        <td id="display_billNumber"></td>
+    </tr>
+    <tr>
+        <td class="bg-light">고객명</td>
+        <td id="display_custName"></td>
+    </tr>
+    <tr>
+        <td class="bg-light">전화번호</td>
+        <td id="display_custTel"></td>
+    </tr>
+    <tr>
+        <td class="bg-light">설치 주소</td>
+        <td id="display_custAddr"></td>
+    </tr>
+    <tr>
+        <td class="bg-light">해지 상품</td>
+        <td id="display_products"></td>
+    </tr>
+    <tr>
+        <td class="bg-light">해지 사유</td>
+        <td id="display_reasons"></td>
+    </tr>
+</table>
     function resizeCanvas(c, p) {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         c.width = c.offsetWidth * ratio; c.height = c.offsetHeight * ratio;
