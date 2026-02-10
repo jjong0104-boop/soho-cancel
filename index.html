@@ -90,7 +90,7 @@
                 <input type="text" id="bizNum" class="form-control" placeholder="000-00-00000">
             </div>
             <div class="mb-3">
-                <label class="form-label">생년월일<span class="required-star">*</span></label>
+                <label class="form-label">법인등록번호(생년월일)<span class="required-star">*</span></label>
                 <input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호">
             </div>
             
@@ -595,14 +595,21 @@
         alert("확인이 완료되었습니다. 5페이지로 이동합니다.");
         // 여기서 5페이지 div를 열어주는 코드를 추가하면 됩니다.
     }
-    function prevToPage3() {
-        document.getElementById('divPage4').classList.add('page-hidden');
-        document.getElementById('divPage3').classList.remove('page-hidden');
-    }
-
-    function resizeCanvas(c, p) {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        c.width = c.offsetWidth * ratio; c.height = c.offsetHeight * ratio;
-        c.getContext("2d").scale(ratio, ratio); p.clear();
-    }
 </script>
+
+function submitFinalApplication() {
+    // 서명 데이터를 이미지(Base64)로 변환
+    const signatureData = finalSignaturePad.toDataURL(); 
+    const allData = {
+        billNumber: document.getElementById('billNumber').value,
+        custName: document.getElementById('custName').value,
+        signature: signatureData, // 서명 이미지 포함
+        // ... 나머지 데이터들
+    };
+
+    // 구글 앱스 스크립트로 전송
+    fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
+        method: 'POST',
+        body: JSON.stringify(allData)
+    }).then(res => alert('신청서가 PDF로 변환되어 카톡으로 발송됩니다!'));
+}
