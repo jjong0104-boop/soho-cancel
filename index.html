@@ -216,13 +216,30 @@
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
 
-    function goToPage5() {
-    // CCTV 유효성 검사 (해당없음 아닐 때 체크박스 확인)
+    function validatePage4AndGo() {
     const cctvStatus = document.querySelector('input[name="cctvStatus"]:checked').value;
-    if(cctvStatus !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
-        alert("CCTV 비용 확인 체크박스에 동의해 주세요."); 
-        return; 
+    
+    // 로직: '해당없음'이 아니면서 '체크박스'를 안 눌렀을 때만 경고창
+    if (cctvStatus !== "해당없음") {
+        if (!document.getElementById('cctvFinalConfirm').checked) {
+            alert("CCTV 해지 비용 및 안내 사항 확인 체크박스에 동의해 주세요.");
+            return;
+        }
     }
+
+    // 데이터 화면 표시 (5페이지 요약표 매칭)
+    document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
+    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
+    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
+    document.getElementById('display_bizInfo').innerText = document.getElementById('bizNum').value + " / " + document.getElementById('bizReg').value;
+    document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
+    document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
+    
+    // 페이지 이동
+    document.getElementById('divPage4').classList.add('page-hidden');
+    document.getElementById('divPage5').classList.remove('page-hidden');
+    window.scrollTo(0,0);
+}
 
     // 데이터 화면 표시
     document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
