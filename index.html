@@ -598,17 +598,29 @@
 </script>
 
 <script>
-function submitFinalApplication() {
-    // 서명 데이터를 이미지(Base64)로 변환
-    const signatureData = finalSignaturePad.toDataURL(); 
+function validatePage4() {
+    const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
+    if (selectedStatus.value !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) {
+        alert("CCTV 확인 체크박스에 체크해 주세요.");
+        return;
+    }
+
+    const signatureData = finalSignaturePad.toDataURL(); // 서명 가져오기
     const allData = {
         billNumber: document.getElementById('billNumber').value,
         custName: document.getElementById('custName').value,
-        signature: signatureData, // 서명 이미지 포함
-        // ... 나머지 데이터들
+        custTel: document.getElementById('custTel').value,
+        bizNum: document.getElementById('bizNum').value,
+        bizReg: document.getElementById('bizReg').value,
+        custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
+        products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(el => el.value).join(', '),
+        reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(el => el.value).join(', '),
+        cctvStatus: selectedStatus.value,
+        signature: signatureData
     };
 
-    // 구글 앱스 스크립트로 전송
+    alert("신청서를 최종 제출합니다...");
+
     fetch('https://script.google.com/macros/s/AKfycbyeVsB2WffJFRm_Dr7XYWJXrJ7kI5-jBrXe97t_MZRnl12VfZCxRWPJJOmAwlFRsNcV/exec', {
         method: 'POST',
         body: JSON.stringify(allData)
@@ -618,7 +630,7 @@ function submitFinalApplication() {
         if(res.result === "success") {
             alert('성공적으로 접수되었습니다!');
             location.reload();
-}
-});
+        }
+    });
 }
 </script>
