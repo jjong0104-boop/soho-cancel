@@ -287,14 +287,26 @@
     }
 
     function goToPage5() {
-        document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-        document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
-        document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value;
-        document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value;
-        
-        document.getElementById('divPage4').classList.add('page-hidden');
-        document.getElementById('divPage5').classList.remove('page-hidden');
-    }
+    // 5페이지 테이블에 데이터 채우기 (누락된 부분 보강)
+    document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
+    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
+    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
+    document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
+    document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
+    
+    // 해지상품 선택값 가져오기
+    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
+    document.getElementById('display_products').innerText = products || "선택 없음";
+    
+    // CCTV 상태 가져오기
+    const cctvStatus = document.querySelector('input[name="cctvStatus"]:checked').value;
+    document.getElementById('display_cctv').innerText = cctvStatus;
+
+    // 페이지 전환
+    document.getElementById('divPage4').classList.add('page-hidden');
+    document.getElementById('divPage5').classList.remove('page-hidden');
+    window.scrollTo(0,0);
+}
 
     function finalSubmitToGAS() {
         const allData = {
