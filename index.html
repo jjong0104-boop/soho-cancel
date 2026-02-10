@@ -138,11 +138,15 @@
     <div id="divPage5" class="form-card page-hidden">
         <div class="header"><h2>신청 내용 최종 확인</h2></div>
         <table class="table table-bordered small">
-            <tr><td class="bg-light w-35 fw-bold">고객명</td><td id="display_custName"></td></tr>
-            <tr><td class="bg-light fw-bold">연락처</td><td id="display_custTel"></td></tr>
-            <tr><td class="bg-light fw-bold">설치주소</td><td id="display_custAddr"></td></tr>
-            <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
-        </table>
+    <tr><td class="bg-light w-35 fw-bold">청구번호</td><td id="display_billNumber" class="fw-bold text-danger"></td></tr>
+    <tr><td class="bg-light fw-bold">신청일</td><td id="display_todayDate"></td></tr>
+    <tr><td class="bg-light fw-bold">고객명</td><td id="display_custName"></td></tr>
+    <tr><td class="bg-light fw-bold text-primary">연락처</td><td id="display_custTel"></td></tr>
+    <tr><td class="bg-light fw-bold">설치주소</td><td id="display_custAddr"></td></tr>
+    <tr><td class="bg-light fw-bold">해지상품</td><td id="display_products" class="text-primary"></td></tr>
+    <tr><td class="bg-light fw-bold">해지사유</td><td id="display_reasons"></td></tr>
+    <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
+</table>
         <div class="notice-box mt-3 mb-3">최종 제출 후에는 수정이 불가능합니다.</div>
         <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
         <button type="button" class="btn-next mt-2 bg-secondary text-white" onclick="prevPage(5, 4)">이전으로 돌아가기</button>
@@ -190,19 +194,35 @@
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
 
-    function goToPage5() {
-        const status = document.querySelector('input[name="cctvStatus"]:checked').value;
-        if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크박스에 동의해주세요."); return; }
-
-        document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-        document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
-        document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value;
-        document.getElementById('display_cctv').innerText = status;
-
-        document.getElementById('divPage4').classList.add('page-hidden');
-        document.getElementById('divPage5').classList.remove('page-hidden');
-        window.scrollTo(0,0);
+  function goToPage5() {
+    const status = document.querySelector('input[name="cctvStatus"]:checked').value;
+    if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
+        alert("비용 확인 체크박스에 동의해주세요."); return; 
     }
+
+    // 1. 기본 정보 매칭
+    document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
+    document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
+    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
+    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
+    document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value;
+    
+    // 2. 해지 상품(체크박스) 가져오기
+    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
+    document.getElementById('display_products').innerText = products || "선택 없음";
+
+    // 3. 해지 사유(체크박스) 가져오기
+    const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(', ');
+    document.getElementById('display_reasons').innerText = reasons || "선택 없음";
+
+    // 4. CCTV 상태 매칭
+    document.getElementById('display_cctv').innerText = status;
+
+    // 페이지 전환
+    document.getElementById('divPage4').classList.add('page-hidden');
+    document.getElementById('divPage5').classList.remove('page-hidden');
+    window.scrollTo(0,0);
+}
 
     function finalSubmitToGAS() {
         const btn = event.target; btn.disabled = true; btn.innerText = "전송 중...";
