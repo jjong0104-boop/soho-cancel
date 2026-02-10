@@ -247,13 +247,13 @@
 </div>
 
 <script>
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbzlywINvLUbrDT6Javr6mmH2U5eALL2pqOUbcGL2HFO4gl3Uz2cQzgtX53EEjUhl1VX/exec';
-    let signaturePad, finalSignaturePad;
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbziZaen7Go8I6ahaEOgI8hc362opbp-19jPQvNylDfEBY_varV-VKFwBQ2BeULiwr27/exec';
+    let signaturePad;
 
     window.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         document.getElementById('billNumber').value = params.get('bill') || "번호 없음";
-        document.getElementById('todayDate').value = new Date().toLocaleDateString('ko-KR', {year:'numeric', month:'long', day:'numeric'});
+        document.getElementById('todayDate').value = new Date().toLocaleDateString();
         signaturePad = new SignaturePad(document.getElementById('signature-pad'), { backgroundColor: 'rgb(255, 255, 255)' });
     });
 
@@ -261,140 +261,42 @@
         new daum.Postcode({oncomplete: (data) => { document.getElementById(m).value = data.roadAddress; document.getElementById(d).focus(); }}).open();
     }
 
+    function copyInstallInfo() {
+        document.getElementById('returnPerson').value = document.getElementById('custName').value;
+        document.getElementById('returnTel').value = document.getElementById('custTel').value;
+        document.getElementById('returnAddr').value = document.getElementById('custAddr').value;
+        document.getElementById('returnDetail').value = document.getElementById('custDetail').value;
+    }
+
+    function toggleCCTVContent() {
+        const isNone = document.getElementById('cctvNone').checked;
+        document.getElementById('cctvPriceTable').style.display = isNone ? 'none' : 'block';
+    }
+
     function validateAndNext() {
-        if(!document.getElementById('custName').value || !document.getElementById('payConfirm').checked) { alert("필수 정보를 입력하고 안내에 동의해주세요."); return; }
+        if(!document.getElementById('custName').value) { alert("고객명을 입력하세요."); return; }
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
-        resizeCanvas(document.getElementById('signature-pad'), signaturePad);
+        resizeCanvas();
     }
 
     function submitToPage3() {
-        if(!document.getElementById('signerName').value || signaturePad.isEmpty()) { alert("성함과 서명을 완료하세요."); return; }
+        if(signaturePad.isEmpty()) { alert("서명을 완료하세요."); return; }
         document.getElementById('divPage2').classList.add('page-hidden');
-        document.getElementById('divPage3').classList.remove('page-hidden');
-        finalSignaturePad = new SignaturePad(document.getElementById('final-signature-pad'), { backgroundColor: 'rgb(255, 255, 255)' });
-        resizeCanvas(document.getElementById('final-signature-pad'), finalSignaturePad);
-    }
-
-    function submitFinalApplication() {
-        const checks = document.querySelectorAll('.required-check');
-        let allChecked = true; checks.forEach(c => { if(!c.checked) allChecked = false; });
-        if(!allChecked || !document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) { alert("모든 동의 항목 체크와 최종 서명을 완료해주세요."); return; }
-        document.getElementById('divPage3').classList.add('page-hidden');
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
 
-
-function toggleCCTVContent() {
-    const isNone = document.getElementById('cctvNone').checked;
-    const priceTable = document.getElementById('cctvPriceTable');
-    const confirmBox = document.getElementById('cctvConfirmBox');
-    const smallNotice = document.getElementById('cctvSmallNotice');
-
-    if (isNone) {
-        // '해당없음'일 경우 모든 안내와 체크박스를 숨김
-        priceTable.style.display = 'none';
-        confirmBox.style.display = 'none';
-        smallNotice.style.display = 'none';
-    } else {
-        // 그 외의 경우 안내 표와 체크박스를 보여줌
-        priceTable.style.display = 'block';
-        confirmBox.style.display = 'block';
-        smallNotice.style.display = 'block';
-    }
-}
-// 4페이지에서 5페이지로 넘어갈 때 데이터를 화면에 뿌려주는 로직
-function goToPage5() {
-    const selectedStatus = document.querySelector('input[name="cctvStatus"]:checked');
-    if (!selectedStatus) { alert("CCTV 관련 상태를 선택해 주세요."); return; }
-
-    if (selectedStatus.value !== "해당없음") {
-        if (!document.getElementById('cctvFinalConfirm').checked) {
-            alert("CCTV 해지 관련 확인 사항에 체크해 주세요."); return;
-        }
+    function goToPage5() {
+        document.getElementById('display_custName').innerText = document.getElementById('custName').value;
+        document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
+        document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value;
+        document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value;
+        
+        document.getElementById('divPage4').classList.add('page-hidden');
+        document.getElementById('divPage5').classList.remove('page-hidden');
     }
 
-    // 5페이지 테이블에 데이터 채우기
-    document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
-    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
-    document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value;
-    document.getElementById('display_products').innerText = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
-    document.getElementById('display_cctv').innerText = selectedStatus.value;
-
-    // 페이지 전환
-    document.getElementById('divPage4').classList.add('page-hidden');
-    document.getElementById('divPage5').classList.remove('page-hidden');
-    window.scrollTo(0,0);
-}
-
-// 구글 앱스 스크립트(GAS)로 최종 전송하는 함수
-function finalSubmitToGAS() {
-    if (!confirm("신청서를 최종 제출하시겠습니까?")) return;
-
-    const btn = event.target;
-    btn.disabled = true;
-    btn.innerText = "전송 중...";
-
-    const allData = {
-        billNumber: document.getElementById('billNumber').value,
-        submitDate: document.getElementById('todayDate').value,
-        custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value,
-        bizNum: document.getElementById('bizNum').value,
-        bizReg: document.getElementById('bizReg').value,
-        custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
-        returnPerson: document.getElementById('returnPerson').value,
-        returnTel: document.getElementById('returnTel').value,
-        returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
-        products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(','),
-        reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(','),
-        marketing: document.querySelector('input[name="marketing"]:checked').value,
-        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
-        signature: finalSignaturePad.toDataURL() // 최종 서명 데이터
-    };
-
-    fetch(gasUrl, {
-        method: 'POST',
-        body: JSON.stringify(allData)
-    })
-    .then(r => r.json())
-    .then(res => {
-        if(res.result === "success") {
-            alert('성공적으로 접수되었습니다!');
-            // 제출 완료 후 결과 페이지로 이동하거나 리로드
-            location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
-        } else {
-            alert('오류 발생: ' + res.message);
-            btn.disabled = false;
-            btn.innerText = "신청서 최종 제출하기";
-        }
-    })
-    .catch(err => {
-        alert("전송 실패. 인터넷 연결을 확인하세요.");
-        btn.disabled = false;
-        btn.innerText = "신청서 최종 제출하기";
-    });
-}
-    // 가입자 정보를 회수 정보로 복사하는 함수
-function copyInstallInfo() {
-    const custName = document.getElementById('custName').value;
-    const custTel = document.getElementById('custTel').value;
-    const custAddr = document.getElementById('custAddr').value;
-    const custDetail = document.getElementById('custDetail').value;
-
-    if (!custName || !custTel || !custAddr) {
-        alert("가입자 정보를 먼저 입력해 주세요.");
-        return;
-    }
-
-    document.getElementById('returnPerson').value = custName;
-    document.getElementById('returnTel').value = custTel;
-    document.getElementById('returnAddr').value = custAddr;
-    document.getElementById('returnDetail').value = custDetail;
-}
-         
-
+    function finalSubmitToGAS() {
         const allData = {
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
@@ -402,23 +304,27 @@ function copyInstallInfo() {
             bizNum: document.getElementById('bizNum').value,
             bizReg: document.getElementById('bizReg').value,
             custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
-            products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(','),
-            reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(','),
-            cctvStatus: cctv,
-            signature: finalSignaturePad.toDataURL()
+            returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
+            cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
+            signature: signaturePad.toDataURL()
         };
 
-        alert("신청서를 제출합니다. 잠시만 기다려주세요.");
         fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
-        .then(r => r.json()).then(res => { if(res.result === "success") { alert('성공적으로 접수되었습니다!'); location.reload(); } });
+        .then(r => r.json()).then(res => { 
+            if(res.result === "success") { 
+                alert('성공적으로 접수되었습니다!'); 
+                location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
+            } 
+        });
     }
 
-    function prevPage(c, p) { document.getElementById('divPage'+c).classList.add('page-hidden'); document.getElementById('divPage'+p).classList.remove('page-hidden'); }
-
-    function resizeCanvas(c, p) {
+    function resizeCanvas() {
+        const canvas = document.getElementById('signature-pad');
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        c.width = c.offsetWidth * ratio; c.height = c.offsetHeight * ratio;
-        c.getContext("2d").scale(ratio, ratio); p.clear();
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
     }
 </script>
 </body>
