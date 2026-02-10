@@ -207,7 +207,14 @@ function copyInstallInfo() {
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
         resizeCanvas();
-    }
+
+        // 2페이지의 신청일 칸에 1페이지 날짜를 복사
+    document.getElementById('applyDateDisplay').value = document.getElementById('todayDate').value;
+    
+    document.getElementById('divPage1').classList.add('page-hidden');
+    document.getElementById('divPage2').classList.remove('page-hidden');
+    resizeCanvas();
+}
 
     function submitToPage3() {
         document.getElementById('divPage2').classList.add('page-hidden');
