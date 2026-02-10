@@ -21,32 +21,34 @@
     <div class="stamp">완료</div>
     <h2 class="text-center mb-5">U+우리가게패키지 해지신청서 (응답내용)</h2>
     
-    <table class="table table-bordered">
-        <tr>
-            <td class="label">청구서 번호</td>
-            <td id="v-bill">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">고객명</td>
-            <td id="v-name">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">설치 주소</td>
-            <td id="v-addr">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">해지 상품</td>
-            <td id="v-products">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">해지 사유</td>
-            <td id="v-reasons">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">고객 서명</td>
-            <td><img id="v-sig" src="" class="signature-img" alt="서명"></td>
-        </tr>
-    </table>
+   <table class="table table-bordered">
+    <tr><td class="label">청구서 번호</td><td id="v-bill">로딩 중...</td></tr>
+    <tr><td class="label">고객명</td><td id="v-name">로딩 중...</td></tr>
+    <tr><td class="label">설치 주소</td><td id="v-addr">로딩 중...</td></tr>
+    <tr><td class="label">해지 상품</td><td id="v-products">로딩 중...</td></tr>
+    <tr><td class="label">해지 사유</td><td id="v-reasons">로딩 중...</td></tr>
+    
+    <tr>
+        <td class="label">CCTV 확인사항</td>
+        <td>
+            <div id="v-cctv" class="fw-bold mb-2">로딩 중...</div>
+            <div style="background: #fff; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px;">
+                <table class="table table-sm table-bordered text-center mb-0" style="font-size: 0.85rem;">
+                    <thead><tr class="table-light"><th colspan="2">약정 도중 해지 시 발생 비용 (부가세 포함)</th></tr></thead>
+                    <tbody>
+                        <tr><td class="bg-light w-50">신규설치비 반환금</td><td class="text-start ps-2">실내-94,600원 / 실외-126,500원</td></tr>
+                        <tr><td class="bg-light">철거비</td><td class="text-start ps-2">실내-22,000원 / 실외-27,500원</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">고객 서명</td>
+        <td><img id="v-sig" src="" class="signature-img" alt="서명을 불러오는 중입니다..."></td>
+    </tr>
+</table>
     
     <div class="text-center mt-5 no-print">
     <button class="btn btn-primary no-print me-2" onclick="window.print()">이 신청서 인쇄하기</button>
