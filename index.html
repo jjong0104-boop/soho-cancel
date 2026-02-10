@@ -145,6 +145,10 @@
     <div id="divPage4" class="form-card page-hidden">
         <div class="header"><h2>CCTV 해지 필수 체크</h2></div>
         <div class="mb-4">
+            <div class="form-check mb-3">
+        <input class="form-check-input" type="radio" name="cctvStatus" id="cctvAlready" value="철거완료" onchange="toggleCCTVTable()">
+        <label class="form-check-label fw-bold" for="cctvAlready">CCTV 철거가 되어 있습니다.</label>
+    </div>
             <div class="form-check mb-3"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()"><label class="form-check-label fw-bold">CCTV 철거를 요청합니다.</label></div>
             <div class="form-check mb-3 pt-2 border-top"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()" checked><label class="form-check-label fw-bold text-primary">CCTV 서비스 이용자가 아니므로 해당 사항 없습니다.</label></div>
         </div>
@@ -201,9 +205,10 @@
     }
 
     function toggleCCTVTable() {
-        document.getElementById('cctvPriceArea').style.display = document.getElementById('cctvRequest').checked ? 'block' : 'none';
-    }
-
+    const status = document.querySelector('input[name="cctvStatus"]:checked').value;
+    // '해당없음'이 아닐 때(철거완료 또는 철거요청) 표를 보여줍니다.
+    document.getElementById('cctvPriceArea').style.display = (status === "해당없음") ? 'none' : 'block';
+}
     function validateAndNext() {
         const req = ['custName', 'custTel', 'bizNum', 'bizReg', 'custAddr', 'returnPerson', 'returnTel', 'returnAddr'];
         for(let id of req) { if(!document.getElementById(id).value) { alert("필수 정보를 모두 입력하세요."); return; } }
