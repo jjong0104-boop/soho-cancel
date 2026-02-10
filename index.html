@@ -143,63 +143,51 @@
         <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(3, 2)">이전 페이지로</button>
     </div>
 
-    <div id="divPage4" class="form-card page-hidden">
+   <div id="divPage4" class="form-card page-hidden">
     <div class="header">
         <h2>U+우리가게패키지 해지신청서</h2>
-        <p class="text-muted small mb-0">온라인 신청 프로세스 (4/6)</p>
+        <p class="text-muted small mb-0">(4/6)</p>
     </div>
 
     <div class="section-title">CCTV 해지 시 필수 체크</div>
     
-    <form id="formPage4">
-        <div class="mb-4">
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료" onchange="toggleCCTVContent()">
-                <label class="form-check-label fw-bold" for="cctvDone">CCTV 철거가 되어 있습니다.</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVContent()">
-                <label class="form-check-label fw-bold" for="cctvRequest">CCTV 철거를 요청합니다.</label>
-            </div>
-            <div class="form-check mb-3 pt-2 border-top">
-                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVContent()" checked>
-                <label class="form-check-label fw-bold text-primary" for="cctvNone">CCTV 서비스 이용자가 아니므로 해당 사항 없습니다.</label>
-            </div>
-            
-            <p id="cctvSmallNotice" class="text-muted small ps-4 mb-3" style="display:none;">
-                ※ 약정 만료 후 해지 시 철거비는 청구되지 않습니다. <br>
-                ※ 약정 도중 철거 요청 시 철거비 청구 및 신규설치비 반환금이 발생합니다.
-            </p>
+    <div class="mb-4">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="cctvStatus" id="cctvDone" value="철거완료" onchange="toggleCCTVTable()">
+            <label class="form-check-label fw-bold" for="cctvDone">CCTV 철거가 되어 있습니다.</label>
         </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()">
+            <label class="form-check-label fw-bold" for="cctvRequest">CCTV 철거를 요청합니다.</label>
+        </div>
+        <div class="form-check mb-3 pt-2 border-top">
+            <input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()" checked>
+            <label class="form-check-label fw-bold text-primary" for="cctvNone">CCTV 서비스 이용자가 아니므로 해당 사항 없습니다.</label>
+        </div>
+    </div>
 
-        <div id="cctvPriceTable" class="table-responsive mb-4" style="display:none;">
+    <div id="cctvPriceArea" style="display:none;">
+        <div class="table-responsive mb-4">
             <table class="table table-sm table-bordered text-center small mb-0 bg-white">
                 <thead class="table-light">
                     <tr><th colspan="2">약정 도중 해지 시 발생 비용 (대당, 부가세 포함)</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="bg-light w-50">신규설치비 반환금</td>
-                        <td class="text-start ps-3">실내 - 94,600원 <br> 실외 - 126,500원</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light">철거비</td>
-                        <td class="text-start ps-3">실내 - 22,000원 <br> 실외 - 27,500원</td>
-                    </tr>
+                    <tr><td class="bg-light w-50">신규설치비 반환금</td><td class="text-start ps-3">실내-94,600원 / 실외-126,500원</td></tr>
+                    <tr><td class="bg-light">철거비</td><td class="text-start ps-3">실내-22,000원 / 실외-27,500원</td></tr>
                 </tbody>
             </table>
         </div>
-
-        <div id="cctvConfirmBox" class="notice-box mb-4" style="display:none;">
+        <div class="notice-box mb-4">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="cctvFinalConfirm">
-                <label class="form-check-label fw-bold" for="cctvFinalConfirm">위 내용을 확인하였습니다. <span class="required-star">*</span></label>
+                <label class="form-check-label fw-bold" for="cctvFinalConfirm">위 내용을 확인하였습니다. *</label>
             </div>
         </div>
+    </div>
 
-        <button type="button" class="btn-submit" onclick="goToPage5()">다음 페이지로 (5/6)</button>
-        <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(4, 3)">이전 페이지로</button>
-    </form>
+    <button type="button" class="btn-submit" onclick="goToPage5()">다음 페이지로 (5/6)</button>
+    <button type="button" class="btn-next mt-2 bg-secondary" onclick="prevPage(4, 3)">이전 페이지로</button>
 </div>
 
 <script>
