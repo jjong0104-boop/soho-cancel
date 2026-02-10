@@ -277,14 +277,14 @@ function finalSubmitToGAS() {
         submitDate: document.getElementById('todayDate').value,
         billNumber: document.getElementById('billNumber').value,
         custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value, // 누락된 연락처 추가
+        custTel: document.getElementById('custTel').value,
         bizNum: document.getElementById('bizNum').value,
         bizReg: document.getElementById('bizReg').value,
         custAddr: document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || ""),
         returnAddr: document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || ""),
-        products: products, // 상품 데이터 추가
-        reasons: reasons + (telecom ? " (타사전환: " + telecom + ")" : ""), // 사유 데이터 추가
-        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
+        // 추가된 동의 항목 값
+        marketingAgree: "7번:" + document.querySelector('input[name="agree7"]:checked').value + 
+                         ", 8번:" + document.querySelector('input[name="agree8"]:checked').value,
         signature: finalSignaturePad.toDataURL()
     };
 
