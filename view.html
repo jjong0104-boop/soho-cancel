@@ -9,7 +9,7 @@
         body { background: #f0f2f5; padding: 30px; }
         .view-card { background: white; max-width: 800px; margin: auto; padding: 40px; border: 1px solid #ddd; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         .stamp { border: 2px solid red; color: red; display: inline-block; padding: 5px 10px; transform: rotate(-15deg); font-weight: bold; float: right; }
-        .label { font-weight: bold; background: #f8f9fa; width: 150px; }
+        .label { font-weight: bold; background: #f8f9fa; width: 160px; vertical-align: middle; }
         .signature-img { border: 1px solid #eee; max-width: 400px; height: auto; min-height: 100px; background: #fff; }
         @media print { .no-print { display: none !important; } }
         .no-print { transition: opacity 0.2s; }
@@ -22,26 +22,13 @@
     <h2 class="text-center mb-5">U+우리가게패키지 해지신청서 (응답내용)</h2>
     
     <table class="table table-bordered">
-        <tr>
-            <td class="label">청구서 번호</td>
-            <td id="v-bill">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">고객명</td>
-            <td id="v-name">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">설치 주소</td>
-            <td id="v-addr">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">해지 상품</td>
-            <td id="v-products" class="fw-bold text-primary">로딩 중...</td>
-        </tr>
-        <tr>
-            <td class="label">해지 사유</td>
-            <td id="v-reasons">로딩 중...</td>
-        </tr>
+        <tr><td class="label">청구서 번호</td><td id="v-bill">로딩 중...</td></tr>
+        <tr><td class="label">고객명</td><td id="v-name">로딩 중...</td></tr>
+        <tr><td class="label">연락처</td><td id="v-tel" class="fw-bold text-primary">로딩 중...</td></tr>
+        <tr><td class="label">설치 주소</td><td id="v-addr">로딩 중...</td></tr>
+        <tr><td class="label">해지 상품</td><td id="v-products">로딩 중...</td></tr>
+        <tr><td class="label">해지 사유</td><td id="v-reasons">로딩 중...</td></tr>
+        <tr><td class="label">CCTV 상태</td><td id="v-cctv" class="fw-bold">로딩 중...</td></tr>
         <tr>
             <td class="label">고객 서명</td>
             <td>
@@ -61,22 +48,22 @@
     const params = new URLSearchParams(window.location.search);
     const bill = params.get('bill');
     
-    // 사장님의 최신 GAS 배포 URL (wu8z 버전으로 자동 연결됩니다)
-    const gasUrl = "https://script.google.com/macros/s/AKfycbzqt_3lX5BGkR_WgFBIRHjRjLcL2Jvn3kIXCuIHaVdv5bTTIEIbXndP7vzshk6td7S0/exec";
+    // 사장님의 최신 GAS 배포 URL
+    const gasUrl = "https://script.google.com/macros/s/AKfycby3vp6rLALsXUqoh3qwAE7GBaTkAHcwEAeVBmTFbnEj42frBV4F0ogc-Xn007fhwu8z/exec";
 
     if (bill) {
         fetch(`${gasUrl}?bill=${bill}`)
             .then(res => res.json())
             .then(data => {
                 if(data) {
-                    // 데이터 매칭 (Apps Script의 doGet에서 보낸 이름과 일치)
                     document.getElementById('v-bill').innerText = data.billNumber || "-";
                     document.getElementById('v-name').innerText = data.custName || "-";
+                    document.getElementById('v-tel').innerText = data.custTel || "-"; // 연락처 추가
                     document.getElementById('v-addr').innerText = data.address || "-";
                     document.getElementById('v-products').innerText = data.products || "-";
                     document.getElementById('v-reasons').innerText = data.reasons || "-";
+                    document.getElementById('v-cctv').innerText = data.cctvStatus || "-"; // CCTV 상태 추가
                     
-                    // 서명 처리
                     const sigImg = document.getElementById('v-sig');
                     const loadingMsg = document.getElementById('sig-loading');
                     
@@ -90,27 +77,18 @@
                         loadingMsg.innerText = "등록된 서명 데이터가 없습니다.";
                     }
                 } else {
-                    alert("해당 번호의 신청서 데이터를 찾을 수 없습니다.");
+                    alert("데이터를 찾을 수 없습니다.");
                 }
             })
-            .catch(err => {
-                console.error(err);
-                alert("데이터 로드 중 오류가 발생했습니다.");
-            });
+            .catch(err => alert("데이터 로드 오류"));
     }
 
 function downloadImage() {
     const target = document.getElementById("printArea");
-    
-    html2canvas(target, {
-        useCORS: true,
-        scale: 2
-    }).then(canvas => {
+    html2canvas(target, { useCORS: true, scale: 2 }).then(canvas => {
         const link = document.createElement('a');
         const name = document.getElementById('v-name').innerText;
-        const billNo = document.getElementById('v-bill').innerText;
-        
-        link.download = `해지신청서_${name}_${billNo}.png`;
+        link.download = `해지신청서_${name}_상세조회.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
     });
