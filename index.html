@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root { --u-pink: #e6007e; --bg-gray: #f8f9fa; }
         body { background-color: var(--bg-gray); padding-bottom: 50px; font-family: 'Pretendard', sans-serif; }
@@ -20,15 +19,13 @@
         .form-label { font-weight: 600; font-size: 0.9rem; color: #555; }
         .form-control { padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
         .address-search { cursor: pointer; background-color: #fffafc !important; border: 1px solid var(--u-pink); }
-        .btn-next, .btn-submit { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 10px; }
-        .btn-download { background: #333; color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 10px; }
+        .btn-next, .btn-submit { background: var(--u-pink); color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-top: 30px; }
         .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
         .signature-wrapper { background: #fff; border: 2px solid #ddd; border-radius: 8px; position: relative; width: 100%; height: 200px; touch-action: none; margin-bottom: 10px; }
         canvas { width: 100%; height: 100%; cursor: crosshair; }
         .page-hidden { display: none; }
         .copy-btn { font-size: 0.8rem; padding: 4px 10px; margin-left: 10px; border-radius: 6px; }
         .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
-        .required-star { color: var(--u-pink); margin-left: 3px; }
     </style>
 </head>
 <body>
@@ -42,14 +39,12 @@
         <div class="section-title">가입자 정보</div>
         <div class="mb-3"><label class="form-label">고객명*</label><input type="text" id="custName" class="form-control"></div>
         <div class="mb-3"><label class="form-label">연락처*</label><input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000"></div>
+        
         <div class="mb-3"><label class="form-label">사업자등록번호*</label><input type="text" id="bizNum" class="form-control" placeholder="000-00-00000"></div>
-        <div class="mb-3"><label class="form-label">생년월일 (또는 법인번호)*</label><input type="text" id="bizReg" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">생년월일 (또는 법인등록번호)*</label><input type="text" id="bizReg" class="form-control" placeholder="6자리 또는 법인번호 전체"></div>
+        
         <div class="mb-1"><label class="form-label">설치 주소*</label><input type="text" id="custAddr" class="form-control address-search mb-2" readonly onclick="execDaumPostcode('custAddr', 'custDetail')" placeholder="주소 검색"></div>
         <input type="text" id="custDetail" class="form-control mb-3" placeholder="상세주소">
-
-        <div class="section-title">요금 확인 사항</div>
-        <div class="notice-box mb-3 small">통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 다음 달 청구됩니다.</div>
-        <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="payConfirm"><label class="form-check-label fw-bold small" for="payConfirm">위 내용을 확인하였습니다.*</label></div>
 
         <div class="section-title">장비 회수 정보 <button type="button" class="btn btn-outline-primary copy-btn" onclick="copyInstallInfo()">설치정보와 동일</button></div>
         <div class="mb-3"><label class="form-label">회수 담당자*</label><input type="text" id="returnPerson" class="form-control"></div>
@@ -57,67 +52,20 @@
         <div class="mb-1"><label class="form-label">회수 주소*</label><input type="text" id="returnAddr" class="form-control address-search mb-2" readonly onclick="execDaumPostcode('returnAddr', 'returnDetail')" placeholder="주소 검색"></div>
         <input type="text" id="returnDetail" class="form-control mb-3" placeholder="상세주소">
 
-        <div class="section-title">해지 상품 및 사유*</div>
-        <div class="row g-2 mb-3 px-2 small">
-            <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
-            <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
-            <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV</div>
-            <div class="col-4"><input type="checkbox" name="product" value="전화"> 전화</div>
-            <div class="col-12"><input type="checkbox" name="product" value="전회선"> <b>전회선 해지</b></div>
-        </div>
-
-         <div class="mb-3 reason-group">
-                <label class="form-label text-primary">● 고객사유 </label>
-                <div class="row g-2 small ps-1">
-                    <div class="col-6"><input type="checkbox" name="reason" value="폐업"> 폐업</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="업무종료"> 업무종료</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="사무소폐쇄"> 사무소 폐쇄/통합</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="사용저조"> 사용저조</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="비용절감"> 비용절감</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="회선고도화"> 회선고도화</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="이용계획취소"> 이용계획 취소</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="기타"> 기타</div>
-                </div>
-            </div>
-
-            <div class="mb-3 reason-group">
-                <label class="form-label text-danger">● 서비스 불만 </label>
-                <div class="row g-2 small ps-1">
-                    <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="장애처리불만"> 장애처리 불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="속도불만"> 속도불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="불안정성"> 불안정성</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="비용부담"> 비용부담</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="개통지연"> 개통지연</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="기술지원불만"> 기술지원불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="영업관리불만"> 영업관리불만</div>
-                </div>
-            </div>
-
-            <div class="mb-3 reason-group">
-                <label class="form-label text-success">● 타사전환 </label>
-                <div class="row g-2 small ps-1">
-                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
-                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
-                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타</div>
-                </div>
-            </div>
-
-        <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/5)</button>
+        <button type="button" class="btn-next" onclick="validateAndNext()">다음 단계로 (2/5)</button>
     </div>
 
     <div id="divPage2" class="form-card page-hidden">
         <div class="header"><h2>안내 및 동의</h2></div>
-        <div class="agreement-box mb-3 small">본 신청서는 본인(가입자, 예금주/카드주)이 직접 작성하였음을 확인하며, 별지를 포함한 신청서에 기재된 서비스 신청고객에게 적용되는 모든 사항(단말기 할부판매 및 임대약정, 결함서비스 요금, 일부 해지 시 처리방법, 변경 및 해지조건, 해지시 할인반환금 등)의 주요내용에 대한 안내를 받았으며, 본인은 (주)LG유플러스의 개인정보 취급방침과 신청하는 상품의 이용약관에 동의합니다. 본인은 가입신청서 내용에 대해 충분히 설명 듣고 그 내용을 이해하였으며, 위와 같은 내용으로 계약을 체결합니다.</div>
+        <div class="agreement-box mb-3">본 신청서는 가입자 본인이 직접 작성하였음을 확인하며 해지 조건에 동의합니다.</div>
         <div class="mb-3"><label class="form-label">신청인 성함*</label><input type="text" id="signerName" class="form-control"></div>
         <div class="signature-wrapper"><canvas id="signature-pad"></canvas></div>
-        <div class="text-end mb-3"><button type="button" class="btn btn-sm btn-light border" onclick="signaturePad.clear()">다시 쓰기</button></div>
         <button type="button" class="btn-submit" onclick="submitToPage3()">다음 단계로 (3/5)</button>
     </div>
 
     <div id="divPage3" class="form-card page-hidden">
-        <div class="header"><h2>개인정보 활용 동의</h2></div>
-        <div id="agreementArea" style="max-height: 400px; overflow-y: auto; border: 1px solid #eee; padding: 10px; border-radius: 8px;">
+        <div class="header"><h2>개인정보 활용 동의</h2><p class="text-muted small">(3/5)</p></div>
+        <div id="agreementArea">
             <div class="mb-3 pb-2 border-bottom"><img src="개활용1.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 동의함</div></div>
             <div class="mb-3 pb-2 border-bottom"><img src="개활용2.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 동의함</div></div>
             <div class="mb-3 pb-2 border-bottom"><img src="개활용3.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 동의함</div></div>
@@ -135,44 +83,39 @@
     <div id="divPage4" class="form-card page-hidden">
         <div class="header"><h2>CCTV 해지 필수 체크</h2></div>
         <div class="mb-4">
-            <div class="form-check mb-3"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()"><label class="form-check-label fw-bold" for="cctvRequest">CCTV 철거를 요청합니다.</label></div>
-            <div class="form-check mb-3 pt-2 border-top"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()" checked><label class="form-check-label fw-bold text-primary" for="cctvNone">CCTV 서비스 이용자가 아닙니다.</label></div>
+            <div class="form-check mb-3"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()"><label class="form-check-label fw-bold">CCTV 철거를 요청합니다.</label></div>
+            <div class="form-check mb-3 pt-2 border-top"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()" checked><label class="form-check-label fw-bold text-primary">CCTV 서비스 이용자가 아니므로 해당 사항 없습니다.</label></div>
         </div>
         <div id="cctvPriceArea" style="display:none;">
-            <div class="table-responsive mb-3 small">
-                <table class="table table-bordered text-center bg-white">
+            <div class="table-responsive mb-3">
+                <table class="table table-sm table-bordered text-center small bg-white">
                     <thead class="table-light"><tr><th colspan="2">약정 도중 해지 시 발생 비용</th></tr></thead>
                     <tbody>
-                        <tr><td class="bg-light">신규설치비 반환금</td><td class="text-start ps-2">실내-94,600 / 실외-126,500</td></tr>
-                        <tr><td class="bg-light">철거비</td><td class="text-start ps-2">실내-22,000 / 실외-27,500</td></tr>
+                        <tr><td class="bg-light w-50">신규설치비 반환금</td><td class="text-start ps-2">실내-94,600원 / 실외-126,500원</td></tr>
+                        <tr><td class="bg-light">철거비</td><td class="text-start ps-2">실내-22,000원 / 실외-27,500원</td></tr>
                     </tbody>
                 </table>
             </div>
-            <div class="notice-box small mb-3"><input type="checkbox" id="cctvFinalConfirm"> 위 내용을 확인했습니다.*</div>
+            <div class="notice-box mb-3"><input type="checkbox" id="cctvFinalConfirm"> 위 비용 발생 내용을 확인하였습니다.*</div>
         </div>
         <button type="button" class="btn-submit" onclick="goToPage5()">내용 확인하기 (5/5)</button>
     </div>
 
     <div id="divPage5" class="form-card page-hidden">
-        <div id="captureArea">
-            <div class="header"><h2>신청서 최종 확인</h2></div>
-            <table class="table table-bordered small">
-                <tr><td class="bg-light w-30">신청일</td><td id="display_todayDate"></td></tr>
-                <tr><td class="bg-light">고객명</td><td id="display_custName"></td></tr>
-                <tr><td class="bg-light text-primary fw-bold">연락처</td><td id="display_custTel" class="fw-bold"></td></tr>
-                <tr><td class="bg-light">설치주소</td><td id="display_custAddr"></td></tr>
-                <tr><td class="bg-light">회수주소</td><td id="display_returnAddr"></td></tr>
-                <tr><td class="bg-light">CCTV</td><td id="display_cctv"></td></tr>
-            </table>
-        </div>
+        <div class="header"><h2>신청 내용 최종 확인</h2></div>
+        <table class="table table-bordered small">
+            <tr><td class="bg-light w-25">신청일</td><td id="display_todayDate"></td></tr>
+            <tr><td class="bg-light">고객명</td><td id="display_custName"></td></tr>
+            <tr><td class="bg-light">사업자/생년월일</td><td id="display_bizInfo"></td></tr>
+            <tr><td class="bg-light">설치주소</td><td id="display_custAddr"></td></tr>
+            <tr><td class="bg-light">회수주소</td><td id="display_returnAddr"></td></tr>
+        </table>
         <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
-        <button type="button" class="btn-download" onclick="downloadApplication()">신청내용 다운받기 (이미지)</button>
     </div>
 </div>
 
 <script>
-    // 1. URL 정확히 수정
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbziZaen7Go8I6ahaEOgI8hc362opbp-19jPQvNylDfEBY_varV-VKFwBQ2BeULiwr27/exec'; 
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbziZaen7Go8I6ahaEOgI8hc362opbp-19jPQvNylDfEBY_varV-VKFwBQ2BeULiwr27/exec';
     let signaturePad, finalSignaturePad;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -194,17 +137,20 @@
         document.getElementById('returnDetail').value = document.getElementById('custDetail').value;
     }
 
+    function toggleCCTVTable() {
+        document.getElementById('cctvPriceArea').style.display = document.getElementById('cctvRequest').checked ? 'block' : 'none';
+    }
+
     function validateAndNext() {
-        const req = ['custName', 'custTel', 'bizNum', 'bizReg', 'custAddr'];
-        for(let id of req) { if(!document.getElementById(id).value) { alert("필수 정보를 입력하세요."); return; } }
-        if(!document.getElementById('payConfirm').checked) { alert("요금 확인 사항에 동의해주세요."); return; }
+        const req = ['custName', 'custTel', 'bizNum', 'bizReg', 'custAddr', 'returnPerson', 'returnTel', 'returnAddr'];
+        for(let id of req) { if(!document.getElementById(id).value) { alert("필수 정보를 모두 입력하세요."); return; } }
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
         resizeCanvas(document.getElementById('signature-pad'), signaturePad);
     }
 
     function submitToPage3() {
-        if(!document.getElementById('signerName').value || signaturePad.isEmpty()) { alert("성함과 서명을 완료하세요."); return; }
+        if(!document.getElementById('signerName').value || signaturePad.isEmpty()) { alert("서명을 완료하세요."); return; }
         document.getElementById('divPage2').classList.add('page-hidden');
         document.getElementById('divPage3').classList.remove('page-hidden');
         finalSignaturePad = new SignaturePad(document.getElementById('final-signature-pad'), { backgroundColor: 'rgb(255, 255, 255)' });
@@ -213,69 +159,35 @@
 
     function submitFinalApplication() {
         const checks = document.querySelectorAll('.required-check');
-        let allChecked = true; checks.forEach(c => { if(!c.checked) allChecked = false; });
-        if(!allChecked || !document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) { alert("모든 동의 및 서명을 완료하세요."); return; }
+        let all = true; checks.forEach(c => { if(!c.checked) all = false; });
+        if(!all || !document.getElementById('finalSignerName').value || finalSignaturePad.isEmpty()) { alert("모든 동의 및 서명을 완료하세요."); return; }
         document.getElementById('divPage3').classList.add('page-hidden');
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
 
-    function toggleCCTVTable() { document.getElementById('cctvPriceArea').style.display = document.getElementById('cctvRequest').checked ? 'block' : 'none'; }
-
     function goToPage5() {
-        if(document.getElementById('cctvRequest').checked && !document.getElementById('cctvFinalConfirm').checked) { alert("CCTV 비용 확인을 체크해주세요."); return; }
+        if(document.getElementById('cctvRequest').checked && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크박스에 동의해 주세요."); return; }
         document.getElementById('display_todayDate').innerText = document.getElementById('todayDate').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-        document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
         document.getElementById('display_bizInfo').innerText = document.getElementById('bizNum').value + " / " + document.getElementById('bizReg').value;
         document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || "");
         document.getElementById('display_returnAddr').innerText = document.getElementById('returnAddr').value + " " + (document.getElementById('returnDetail').value || "");
-        document.getElementById('display_cctv').innerText = document.querySelector('input[name="cctvStatus"]:checked').value;
         document.getElementById('divPage4').classList.add('page-hidden');
         document.getElementById('divPage5').classList.remove('page-hidden');
     }
 
     function finalSubmitToGAS() {
-        const btn = document.querySelector('.btn-submit');
-        btn.disabled = true; btn.innerText = "전송 중...";
+        alert("제출 중입니다...");
         const allData = {
-            billNumber: document.getElementById('billNumber').value,
             submitDate: document.getElementById('todayDate').value,
             custName: document.getElementById('custName').value,
-            custTel: document.getElementById('custTel').value,
             bizNum: document.getElementById('bizNum').value,
             bizReg: document.getElementById('bizReg').value,
-            custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
-            returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
-            products: Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(','),
-            reasons: Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(','),
-            cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
+            custAddr: document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || ""),
             signature: finalSignaturePad.toDataURL()
         };
-
-        // fetch 옵션에서 no-cors 제거 및 헤더 수정
-        fetch(gasUrl, { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(allData) 
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('성공적으로 접수되었습니다!');
-            btn.innerText = "제출 완료";
-        })
-        .catch(err => {
-            // 구글 시트에 기록은 되었으나 응답 처리가 불안정할 때를 위한 처리
-            alert('전송이 완료되었습니다.'); 
-            btn.innerText = "제출 완료";
-        });
-    }
-
-    function downloadApplication() {
-        html2canvas(document.getElementById("captureArea")).then(canvas => {
-            const link = document.createElement('a');
-            link.download = '해지신청서_' + document.getElementById('custName').value + '.png';
-            link.href = canvas.toDataURL(); link.click();
-        });
+        fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
+        .then(r => r.json()).then(res => { if(res.result === "success") { alert('성공적으로 접수되었습니다!'); location.reload(); } });
     }
 
     function resizeCanvas(canvas, pad) {
@@ -284,8 +196,7 @@
         canvas.getContext("2d").scale(ratio, ratio); pad.clear();
     }
     
-    function prevPage(c, p) { 
-        document.getElementById('divPage'+c).classList.add('page-hidden'); 
-        document.getElementById('divPage'+p).classList.remove('page-hidden'); 
-    }
+    function prevPage(c, p) { document.getElementById('divPage'+c).classList.add('page-hidden'); document.getElementById('divPage'+p).classList.remove('page-hidden'); }
 </script>
+</body>
+</html>
