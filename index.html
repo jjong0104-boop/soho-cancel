@@ -213,13 +213,6 @@
 </div>
 
 <script>
-     // 페이지 로드 시 실행
-    window.addEventListener('DOMContentLoaded', () => {
-        // 1. 오늘 날짜 설정 로직 (모든 페이지 공통)
-        const todayStr = new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric'});
-        if(document.getElementById('todayDate')) document.getElementById('todayDate').value = todayStr;
-        if(document.getElementById('applyDate')) document.getElementById('applyDate').value = todayStr;
-
     let signaturePad;
     const gasUrl = 'https://script.google.com/macros/s/AKfycbzlywINvLUbrDT6Javr6mmH2U5eALL2pqOUbcGL2HFO4gl3Uz2cQzgtX53EEjUhl1VX/exec';
 
