@@ -60,8 +60,15 @@
                     // 데이터 매칭
                     document.getElementById('v-bill').innerText = data.billNumber || "-";
                     document.getElementById('v-name').innerText = data.custName || "-";
-                    document.getElementById('v-tel').innerText = data.custTel || "-";
-                    document.getElementById('v-addr').innerText = data.address || "-";
+let tel = String(data.custTel || ""); 
+// 만약 0이 빠져서 10자리(예: 1012345678)라면 앞에 0을 붙여줍니다.
+if (tel.length === 10 && tel.startsWith('1')) {
+    tel = '0' + tel;
+}
+// 하이픈(-)까지 자동으로 넣어주고 싶다면 아래 한 줄을 추가하세요 (선택사항)
+tel = tel.replace(/[^0-9]/g, "").replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+
+document.getElementById('v-tel').innerText = tel || "-";                    document.getElementById('v-addr').innerText = data.address || "-";
                     document.getElementById('v-products').innerText = data.products || "-";
                     document.getElementById('v-reasons').innerText = data.reasons || "-";
                     document.getElementById('v-cctv').innerText = data.cctvStatus || "-";
