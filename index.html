@@ -26,30 +26,15 @@
         .page-hidden { display: none; }
         .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
         .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
-        /* 2열 정렬을 위한 추가 스타일 */
-.row { 
-    margin-right: 0; 
-    margin-left: 0; 
-}
-.col-6 { 
-    padding: 5px;   /* 항목 간의 간격 */
-    font-size: 0.85rem; /* 모바일에서 글자가 넘치지 않게 살짝 줄임 */
-    display: flex; 
-    align-items: center; 
-}
-.col-6 input { 
-    margin-right: 8px; /* 체크박스와 글자 사이 간격 */
-    width: 18px; 
-    height: 18px; 
-}
-        /* 요금 확인 박스를 왼쪽으로 바짝 붙이는 스타일 */
-.full-width-box {
-    /* 부모인 .form-card의 padding(25px)만큼 당겨야 왼쪽 끝에 닿습니다 */
+        .full-width-box {
+    /* 카드 여백만큼 왼쪽/오른쪽으로 강제로 당기기 */
     margin-left: -25px !important; 
     margin-right: -25px !important;
-    padding: 15px 25px !important; /* 위아래 15px, 좌우 25px로 글자 위치 정렬 */
-    width: calc(100% + 50px) !important; /* 당겨진 만큼(25px+25px) 너비 확장 */
-    border-radius: 0 !important; /* 양 끝에 딱 붙도록 모서리 둥글기 제거 */
+    /* 박스 안쪽 글자 여백은 보기 좋게 유지 */
+    padding: 15px 25px !important; 
+    /* 전체 너비를 부모보다 넓게 확장 */
+    width: calc(100% + 50px) !important; 
+    border-radius: 0 !important;
     border-left: none !important;
     border-right: none !important;
 }
