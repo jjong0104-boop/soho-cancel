@@ -26,17 +26,9 @@
         .page-hidden { display: none; }
         .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
         .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
-        .full-width-box {
-    /* 카드 여백만큼 왼쪽/오른쪽으로 강제로 당기기 */
-    margin-left: -25px !important; 
-    margin-right: -25px !important;
-    /* 박스 안쪽 글자 여백은 보기 좋게 유지 */
-    padding: 15px 25px !important; 
-    /* 전체 너비를 부모보다 넓게 확장 */
-    width: calc(100% + 50px) !important; 
-    border-radius: 0 !important;
-    border-left: none !important;
-    border-right: none !important;
+  .pull-title {
+    margin-left: -25px !important; /* 카드 여백(25px)만큼 왼쪽으로 강제 이동 */
+    padding-left: 25px !important; /* 당겨진 만큼 안쪽 여백을 주어 세로줄 위치 조정 */
 }
     </style>
 </head>
