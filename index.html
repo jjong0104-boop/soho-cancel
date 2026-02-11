@@ -303,6 +303,16 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         // 3. 서명 패드 초기화
         const canvas = document.getElementById('signature-pad');
         signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
+
+        // 2. 고객명 자동 입력 (새로 추가할 부분)
+    const name = params.get('name');
+    if (name) {
+        document.getElementById('custName').value = name;
+        // 이름이 들어왔을 때 장비 회수 정보의 담당자 칸에도 같이 넣어주면 더 편합니다
+        if (document.getElementById('returnPerson')) {
+            document.getElementById('returnPerson').value = name;
+        }
+    }
     });
 
     // 주소 검색 함수
