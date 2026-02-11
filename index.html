@@ -107,32 +107,63 @@
 
     <div id="divPage2" class="form-card page-hidden">
         <div class="header"><h2>개인정보 활용 동의</h2><p class="text-muted small mb-0">(2/5)</p></div>
+        <div class="container">
+    <div id="divPage1" class="form-card">
+        <div class="header"><h2>해지신청 정보 입력</h2><p class="text-muted small mb-0">(1/5)</p></div>
+        <div class="mb-3"><label class="form-label">고객명*</label><input type="text" id="custName" class="form-control"></div>
+        <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/5)</button>
+    </div>
+
+    <div id="divPage2" class="form-card page-hidden">
+        <div class="header"><h2>개인정보 활용 동의</h2><p class="text-muted small mb-0">(2/5)</p></div>
+        
         <div id="agreementArea">
-            <div class="mb-4 pb-3 border-bottom"><div class="agreement-title">1. (필수) 고유식별 정보 수집, 이용 동의</div><img src="개활용1.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 필수 동의</div></div>
-            <div class="mb-4 pb-3 border-bottom"><div class="agreement-title">2. (필수) 개인정보 수집, 이용 동의</div><img src="개활용2.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 필수 동의</div></div>
-            <div class="mb-4 pb-3 border-bottom"><div class="agreement-title">3. (필수) 개인위치정보 수집, 이용 동의</div><img src="개활용3.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 필수 동의</div></div>
-            <div class="mb-4 pb-3 border-bottom"><div class="agreement-title">4. (필수) 개인정보 제3자 제공, 활용 및 개인신용정보 조회에 대한 이용 동의</div><img src="개활용4.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 필수 동의</div></div>
-            <div class="mb-4 pb-3 border-bottom"><div class="agreement-title">5. (필수) 개인신용정보 조회 동의</div><img src="개활용5.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 필수 동의</div></div>
-            <div class="mb-4 pb-3 border-bottom"><div class="agreement-title">6. (필수) 개인정보 취급위탁 동의</div><img src="개활용6.jpg" class="img-fluid mb-2"><div class="text-end small"><input type="checkbox" class="required-check"> 필수 동의</div></div>
-            
-            <div class="mb-4 pb-3 border-bottom">
-                <div class="agreement-title">7. (선택) 고객 혜택정보 / 광고 정보 제공을 위한 동의</div>
-                <img src="개활용7.jpg" class="img-fluid mb-2">
+            <div class="mb-4">
+                <div class="agreement-title">1. (필수) 고유식별정보 수집·이용 동의</div>
+                <div class="agreement-box">(1) 이용목적: 휴대폰 본인확인 서비스 제공, 본인확인, 보안인증, 미환급금 안내, 실명인증
+(2) 수집항목: 주민등록번호, 여권번호, 운전면허번호, 외국인등록번호
+(3) 이용기간: 서비스 가입기간 동안 이용 및 해지 후 요금완납 6개월까지
+(4) 동의거부권: 거부 가능하나 거부 시 서비스 가입 불가</div>
+                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+            </div>
+
+            <div class="mb-4">
+                <div class="agreement-title">2. (필수) 개인정보 수집·이용 동의</div>
+                <div class="agreement-box">(1) 이용목적: 요금정산, 신청 서비스 제공, 고객관계관리, 업무처리, 명의도용 방지 등
+(2) 수집항목: 명의자 성명, 연락처, 주소, CI/DI, 납부자 정보, 계좌/카드번호, 단말기 정보 등
+(3) 이용기간: 서비스 가입기간 및 해지 후 요금완납 6개월까지 보유</div>
+                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+            </div>
+
+            <div class="mb-4">
+                <div class="agreement-title">3. (필수) 개인위치정보 수집·이용 동의</div>
+                <div class="agreement-box">(1) 이용목적: 위치기반 서비스 및 위치정보 서비스 안내·제공·요금정산
+(2) 수집항목: 기지국, GPS, Wifi, RFID 태그 등을 통해 수집되는 위치정보
+(3) 이용기간: 서비스 가입기간 및 해지 후 요금완납 3개월까지</div>
+                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+            </div>
+
+            <div class="mb-4">
+                <div class="agreement-title">4. (필수) 제3자 제공·활용 및 개인신용정보 조회 동의</div>
+                <div class="agreement-box">(1) 제공대상: KB손해보험, 금융결제원, 에스원, 행정안전부, 한국정보통신진흥협회 등
+(2) 취급위탁: 고려신용정보, NICE평가정보 등 업무 위탁 관리
+(3) 신용조회: 한국정보통신진흥협회, NICE평가정보를 통한 신용도 판단 조회</div>
+                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+            </div>
+
+            <div class="mb-4">
+                <div class="agreement-title">7. (선택) 고객 혜택정보 / 광고 정보 제공 동의</div>
+                <div class="agreement-box">LG유플러스가 제공하는 상품/서비스(결합상품 포함)에 대한 소식 및 이벤트 혜택 정보를 카카오톡, 문자, 전화 등을 통해 받아보실 수 있습니다.</div>
                 <div class="d-flex justify-content-end gap-3 small">
                     <label><input type="radio" name="marketing" value="동의"> 동의</label>
                     <label><input type="radio" name="marketing" value="미동의" checked> 미동의</label>
                 </div>
             </div>
-
-            <div class="mb-4 pb-3">
-                <div class="agreement-title">8. (선택) 고객 혜택정보 / 광고 정보 제공을 위한 개인정보 처리위탁 동의</div>
-                <img src="개활용8.jpg" class="img-fluid mb-2">
-                <div class="d-flex justify-content-end gap-3 small">
-                    <label><input type="radio" name="marketing_trust" value="동의"> 동의</label>
-                    <label><input type="radio" name="marketing_trust" value="미동의" checked> 미동의</label>
-                </div>
-            </div>
         </div>
+        <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
+    </div>
+
+    </div>
         <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
     </div>
 
@@ -210,8 +241,13 @@
 
     function submitToPage3() {
         const checks = document.querySelectorAll('.required-check');
-        let allOk = true; checks.forEach(c => { if(!c.checked) allOk = false; });
-        if(!allOk) { alert("모든 필수 동의 항목에 체크해주세요."); return; }
+        let allOk = true; 
+        checks.forEach(c => { if(!c.checked) allOk = false; });
+        
+        if(!allOk) { 
+            alert("모든 필수 동의 항목에 체크해주세요."); 
+            return; 
+        }
         document.getElementById('divPage2').classList.add('page-hidden');
         document.getElementById('divPage3').classList.remove('page-hidden');
         resizeCanvas();
