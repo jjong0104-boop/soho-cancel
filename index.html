@@ -34,10 +34,9 @@
     <div id="divPage1" class="form-card">
         <div class="header"><h2>U+우리가게패키지 해지신청서</h2><p class="text-muted small mb-0">(1/5)</p></div>
         <div class="mb-3"><label class="form-label">청구서 번호</label><input type="text" id="billNumber" class="form-control bg-light" readonly></div>
-       <div class="mb-3">
-        <label class="form-label">신청일</label>
-        <input type="text" id="applyDateDisplay" class="form-control bg-light" readonly>
-    </div>
+      <div class="mb-3">
+    <label class="form-label text-primary fw-bold">신청일</label>
+    <input type="text" id="todayDate" class="form-control bg-light" readonly> </div>
         <div class="mb-3"><label class="form-label">고객명*</label><input type="text" id="custName" class="form-control"></div>
         <div class="mb-3"><label class="form-label">연락처*</label><input type="tel" id="custTel" class="form-control" placeholder="010-0000-0000"></div>
         <div class="mb-3">
@@ -215,16 +214,29 @@
     let signaturePad;
     const gasUrl = 'https://script.google.com/macros/s/AKfycbzlywINvLUbrDT6Javr6mmH2U5eALL2pqOUbcGL2HFO4gl3Uz2cQzgtX53EEjUhl1VX/exec';
 
+    // 페이지가 열릴 때 실행되는 함수 (하나로 통합)
     window.addEventListener('DOMContentLoaded', () => {
+        // 1. 오늘 날짜 생성 및 입력
+        const now = new Date();
+        const dateStr = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
+        const dateInput = document.getElementById('todayDate');
+        if (dateInput) dateInput.value = dateStr;
+
+        // 2. 청구서 번호 자동 입력
         const params = new URLSearchParams(window.location.search);
         document.getElementById('billNumber').value = params.get('bill') || "번호 없음";
-        signaturePad = new SignaturePad(document.getElementById('signature-pad'), { backgroundColor: 'rgb(255, 255, 255)' });
+
+        // 3. 서명 패드 초기화
+        const canvas = document.getElementById('signature-pad');
+        signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
     });
 
+    // 주소 검색 함수
     function execDaumPostcode(m, d) {
         new daum.Postcode({oncomplete: (data) => { document.getElementById(m).value = data.roadAddress; document.getElementById(d).focus(); }}).open();
     }
 
+    // 설치정보 복사 함수
     function copyInstallInfo() {
         document.getElementById('returnPerson').value = document.getElementById('custName').value;
         document.getElementById('returnTel').value = document.getElementById('custTel').value;
@@ -232,40 +244,50 @@
         document.getElementById('returnDetail').value = document.getElementById('custDetail').value;
     }
 
+    // CCTV 안내 테이블 토글
     function toggleCCTVTable() {
         const status = document.querySelector('input[name="cctvStatus"]:checked').value;
         document.getElementById('cctvPriceArea').style.display = (status === "해당없음") ? 'none' : 'block';
     }
 
+    // 1페이지 검증 및 이동
     function validateAndNext() {
-        if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { alert("고객명과 연락처를 입력해주세요."); return; }
+        if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { 
+            alert("고객명과 연락처를 입력해주세요."); 
+            return; 
+        }
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
     }
 
+    // 2페이지 동의 확인 및 이동
     function submitToPage3() {
         const checks = document.querySelectorAll('.required-check');
         let allOk = true; 
         checks.forEach(c => { if(!c.checked) allOk = false; });
-        
-        if(!allOk) { 
-            alert("모든 필수 동의 항목에 체크해주세요."); 
-            return; 
-        }
+        if(!allOk) { alert("모든 필수 동의 항목에 체크해주세요."); return; }
         document.getElementById('divPage2').classList.add('page-hidden');
         document.getElementById('divPage3').classList.remove('page-hidden');
         resizeCanvas();
     }
 
+    // 3페이지 서명 확인 및 이동
     function submitToPage4() {
-        if(signaturePad.isEmpty() || !document.getElementById('signerName').value) { alert("성함과 서명을 완료하세요."); return; }
+        if(signaturePad.isEmpty() || !document.getElementById('signerName').value) { 
+            alert("성함과 서명을 완료하세요."); 
+            return; 
+        }
         document.getElementById('divPage3').classList.add('page-hidden');
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
 
+    // 4페이지 CCTV 확인 및 5페이지 요약
     function goToPage5() {
         const status = document.querySelector('input[name="cctvStatus"]:checked').value;
-        if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크박스에 동의해주세요."); return; }
+        if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
+            alert("비용 확인 체크박스에 동의해주세요."); 
+            return; 
+        }
 
         document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
@@ -283,8 +305,12 @@
         window.scrollTo(0,0);
     }
 
+    // 최종 제출
     function finalSubmitToGAS() {
-        const btn = event.target; btn.disabled = true; btn.innerText = "전송 중...";
+        const btn = event.target; 
+        btn.disabled = true; 
+        btn.innerText = "전송 중...";
+        
         const allData = {
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
@@ -293,7 +319,7 @@
             returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
             products: document.getElementById('display_products').innerText,
             reasons: document.getElementById('display_reasons').innerText,
-            marketing: document.querySelector('input[name="marketing"]:checked').value,
+            marketing: document.querySelector('input[name="marketing"]:checked') ? document.querySelector('input[name="marketing"]:checked').value : "미동의",
             cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
             signature: signaturePad.toDataURL()
         };
@@ -304,32 +330,18 @@
                 alert('성공적으로 접수되었습니다!'); 
                 location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
             } 
-        }).catch(err => { alert("전송 오류"); btn.disabled = false; });
+        }).catch(err => { alert("전송 오류"); btn.disabled = false; btn.innerText = "최종 제출하기"; });
     }
 
+    // 캔버스 크기 조절
     function resizeCanvas() {
         const canvas = document.getElementById('signature-pad');
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio); signaturePad.clear();
+        canvas.width = canvas.offsetWidth * ratio; 
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio); 
+        signaturePad.clear();
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-    // 1. 오늘 날짜 생성
-    const now = new Date();
-    const dateStr = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
-    
-    // 2. 1페이지 날짜 칸에만 입력
-    const dateInput = document.getElementById('todayDate');
-    if (dateInput) {
-        dateInput.value = dateStr;
-    }
-
-    // 3. 청구서 번호 가져오기 및 사인패드 초기화
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById('billNumber').value = params.get('bill') || "번호 없음";
-    signaturePad = new SignaturePad(document.getElementById('signature-pad'), { backgroundColor: 'rgb(255, 255, 255)' });
-});
 </script>
 </body>
 </html>
