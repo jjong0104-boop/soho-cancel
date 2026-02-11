@@ -42,6 +42,14 @@
     width: 18px; 
     height: 18px; 
 }
+        /* 요금 확인 박스를 왼쪽으로 바짝 붙이는 스타일 */
+.full-width-box {
+    margin-left: -15px !important; /* 부트스트랩 기본 여백 상쇄 */
+    margin-right: -15px !important;
+    padding-left: 15px !important;  /* 안쪽 글자 여백은 유지 */
+    width: calc(100% + 30px) !important; /* 너비를 전체로 확장 */
+    border-radius: 0 !important; /* 필요 시 모서리 각지게 (선택사항) */
+}
     </style>
 </head>
 <body>
@@ -74,7 +82,7 @@
         <input type="text" id="returnDetail" class="form-control mb-3" placeholder="상세주소">
 
         <label class="form-label">해지 상품 (중복 선택 가능)<span class="required-star">*</span></label>
-            <div class="row g-2 mb-3 px-2">
+            <div class="notice-box mt-2 full-width-box">
                 <div class="col-4"><input type="checkbox" name="product" value="인터넷"> 인터넷</div>
                 <div class="col-4"><input type="checkbox" name="product" value="TV"> TV</div>
                 <div class="col-4"><input type="checkbox" name="product" value="CCTV"> CCTV</div>
@@ -122,7 +130,7 @@
             </div>
 
         <div class="section-title">요금 확인 사항</div>
-            <div class="notice-box mb-3">
+            <div class="notice-box mt-2 full-width-box">
                 통신요금은 후불방식으로 해지 시까지의 이용요금은 일할계산되어 해지 다음 달 청구됩니다.
             </div>
             <div class="form-check">
