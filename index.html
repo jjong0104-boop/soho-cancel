@@ -27,6 +27,36 @@
         .notice-box { background: #fff4f9; border: 1px solid #ffd1e3; border-radius: 8px; padding: 15px; font-size: 0.9rem; color: #d81b60; }
         .reason-group { background: #fdfdfd; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 10px; }
         .pull-title { margin-left: -25px !important; /* 카드 안쪽 여백(25px)만큼 왼쪽으로 강제 이동 */ padding-left: 25px !important; /* 분홍색 세로줄이 카드 끝에 닿도록 조정 */ justify-content: flex-start !important; /* 제목과 별표(*)를 왼쪽으로 밀착 */}
+        /* 개인정보 본문 텍스트 (더 작고 촘촘하게) */
+.agreement-box {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 10px;
+    height: 120px;       /* 높이 고정으로 페이지 길이 단축 */
+    overflow-y: scroll;  /* 내용이 많으면 박스 안에서 스크롤 */
+    font-size: 0.75rem;  /* 글씨 크기 축소 (기본보다 작게) */
+    line-height: 1.4;    /* 줄 간격 조절 */
+    color: #666;         /* 색상을 약간 흐리게 하여 피로도 감소 */
+    margin-bottom: 10px;
+}
+
+/* "필수 항목에 동의합니다" 문구 (더 크고 강조) */
+.agree-label {
+    font-size: 1rem;     /* 글씨 크기 확대 */
+    font-weight: bold;   /* 두껍게 */
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+/* 체크박스 크기 자체도 키우기 */
+.agree-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+}
     </style>
 </head>
 <body>
@@ -131,7 +161,7 @@
 (3) 이용기간: 서비스 가입기간 동안 이용 및 해지 후 요금완납 6개월까지
 (4) 동의거부권 및 불이익: 동의 거부 가능하나 거부 시 본인확인/인증 불가로 서비스 가입 불가
 관련 법령에 따라 보존이 필요한 경우 해당 법령에 따라 보유</div>
-                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+                <div class="agree-label"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
             </div>
 
             <div class="mb-4">
@@ -154,7 +184,7 @@
 서비스 가입 과정에서 신청이 완료되지 않은 경우: 사유 확인 및 구비서류 보완 등을 위해 작성일로부터 3개월까지 보유
 외국인 출국여부 확인: 체류기간까지
 상담내용(전화/챗봇/채팅/이메일 등) 분석: 3년</div>
-                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+                <div class="agree-label"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
             </div>
 
             <div class="mb-4">
@@ -163,7 +193,7 @@
 (2) 수집항목: 개인위치정보: 기지국, GPS, Wifi, RFID 태그 및 위치정보시스템을 통해 수집되는 위치정보
 2항의 개인정보 및 개인위치정보를 조합하여 생성되는 정보
 (3) 이용기간: 서비스 가입기간 동안 이용 및 분쟁대비를 위해 해지 후 요금완납 3개월까지</div>
-                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+                <div class="agree-label"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
             </div>
 
             <div class="mb-4">
@@ -201,17 +231,15 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 (개인정보 관리 책임자: 고객보호팀장)
 동의 거부 가능, 미동의 시 서비스 가입·이용 제약 가능, 미동의 시 정보 미제공. 위탁·제공 현황 및 변동사항은 홈페이지 개인정보취급방침에 공개
                 </div>
-                <div class="text-end small"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+                <div class="agree-label"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
             </div>
 
             <div class="mb-4">
                 <div class="agreement-title">5. (필수) 문서상 동의 체크 항목</div>
                 <div class="agreement-box">(1) 필수 개인신용정보 조회 동의: 본인은 하기 내용에 충분히 이해하고 동의합니다.
                 (2) 필수 개인정보 취급위탁 동의: 본인은 하기 내용에 충분히 이해하고 동의합니다.</div>
-                <div class="d-flex justify-content-end gap-3 small">
-                    <label><input type="radio" name="marketing" value="동의"> 동의</label>
-                </div>
-            </div>
+                <div class="agree-label"><label><input type="checkbox" class="required-check"> 필수 항목에 동의합니다.</label></div>
+               </div>
         </div>
         <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
     </div>
