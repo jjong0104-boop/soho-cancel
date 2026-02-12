@@ -255,10 +255,12 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
     </div>
 
-    <div class="signature-wrapper" style="position: relative; border: 1px solid #ddd; border-radius: 4px;">
-        <div id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccc; pointer-events: none; font-size: 1.2rem; font-weight: bold; z-index: 1;">
-            * 대표자 서명
-        </div>
+    <div class="signature-wrapper" style="position: relative; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+    <div id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccc; pointer-events: none; font-size: 1.2rem; font-weight: bold; z-index: 5;">
+        * 대표자 서명
+    </div>
+    <canvas id="signature-pad" style="position: relative; z-index: 10; background: transparent;"></canvas>
+</div>
         <canvas id="signature-pad" style="position: relative; z-index: 2; background: transparent;"></canvas>
     </div>
 
