@@ -245,12 +245,29 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     </div>
 
     <div id="divPage3" class="form-card page-hidden">
-        <div class="header"><h2>본인 확인 및 서명</h2><p class="text-muted small mb-0">(3/5)</p></div>
-        <div class="mb-3"><label class="form-label">신청인 성함*</label><input type="text" id="signerName" class="form-control"></div>
-        <div class="signature-wrapper"><canvas id="signature-pad"></canvas></div>
-        <div class="text-end"><button type="button" class="btn btn-sm btn-light" onclick="signaturePad.clear()">다시 쓰기</button></div>
-        <button type="button" class="btn-next" onclick="submitToPage4()">다음 단계로 (4/5)</button>
+    <div class="header">
+        <h2>본인 확인 및 서명</h2>
+        <p class="text-muted small mb-0">(3/5)</p>
     </div>
+    
+    <div class="mb-3">
+        <label class="form-label">신청인 성함*</label>
+        <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
+    </div>
+
+    <div class="signature-wrapper" style="position: relative; border: 1px solid #ddd; border-radius: 4px;">
+        <div id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccc; pointer-events: none; font-size: 1.2rem; font-weight: bold; z-index: 1;">
+            * 대표자 서명
+        </div>
+        <canvas id="signature-pad" style="position: relative; z-index: 2; background: transparent;"></canvas>
+    </div>
+
+    <div class="text-end mt-2">
+        <button type="button" class="btn btn-sm btn-light" onclick="clearSignature()">다시 쓰기</button>
+    </div>
+    
+    <button type="button" class="btn-next" onclick="submitToPage4()">다음 단계로 (4/5)</button>
+</div>
 
     <div id="divPage4" class="form-card page-hidden">
         <div class="header"><h2>CCTV 해지 확인</h2><p class="text-muted small mb-0">(4/5)</p></div>
@@ -346,16 +363,36 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         window.scrollTo(0, 0);
     }
 
-    // 2페이지 동의 확인 및 이동
     function submitToPage3() {
-        const checks = document.querySelectorAll('.required-check');
-        let allOk = true; 
-        checks.forEach(c => { if(!c.checked) allOk = false; });
-        if(!allOk) { alert("모든 필수 동의 항목에 체크해주세요."); return; }
-        document.getElementById('divPage2').classList.add('page-hidden');
-        document.getElementById('divPage3').classList.remove('page-hidden');
+    // 1. 통합 체크박스 확인 (allAgreeCheck는 이전 단계에서 추가한 ID입니다)
+    const allAgree = document.getElementById('allAgreeCheck');
+
+    if (!allAgree || !allAgree.checked) {
+        alert("위 모든 필수 항목에 동의하셔야 다음 단계로 진행할 수 있습니다.");
+        return;
+    }
+
+    // 2. 1페이지의 고객명을 3페이지 입력창으로 복사
+    // 1페이지 성함 입력란의 ID가 'customer_name' (또는 'userName')인지 꼭 확인하세요!
+    const nameInputFromPage1 = document.getElementById('customer_name'); 
+    const signerNameInput = document.getElementById('signerName');
+
+    if (nameInputFromPage1 && signerNameInput) {
+        signerNameInput.value = nameInputFromPage1.value;
+    }
+
+    // 3. 페이지 전환 (2페이지 숨기고 3페이지 보여주기)
+    document.getElementById('divPage2').classList.add('page-hidden');
+    document.getElementById('divPage3').classList.remove('page-hidden');
+
+    // 4. 서명 캔버스 크기 재설정 (서명판이 깨지지 않게 필수 실행)
+    if (typeof resizeCanvas === 'function') {
         resizeCanvas();
     }
+    
+    // 페이지 최상단으로 스크롤 이동
+    window.scrollTo(0, 0);
+}
 
     // 3페이지 서명 확인 및 이동
     function submitToPage4() {
