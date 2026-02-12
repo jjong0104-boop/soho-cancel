@@ -238,7 +238,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
                 <div class="agreement-title">5. (필수) 문서상 동의 체크 항목</div>
                 <div class="agreement-box">(1) 필수 개인신용정보 조회 동의: 본인은 하기 내용에 충분히 이해하고 동의합니다.
                 (2) 필수 개인정보 취급위탁 동의: 본인은 하기 내용에 충분히 이해하고 동의합니다.</div>
-                <div class="agree-label"><label><input type="checkbox" class="required-check"> 모든 필수 항목에 동의합니다.</label></div>
+                <div class="agree-label"><label><input type="checkbox" id="allAgreeCheck" class="required-check"> 모든 필수 항목에 동의합니다.</label></div>
                </div>
         </div>
         <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
@@ -364,38 +364,44 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
 
     function submitToPage3() {
-    // 1. 통합 체크박스 엘리먼트를 직접 가져옵니다.
+    // 1. 통합 체크박스 확인
     const allAgree = document.getElementById('allAgreeCheck');
 
-    // 2. 체크박스가 없거나 체크되지 않았을 경우
     if (!allAgree || !allAgree.checked) {
         alert("위 모든 필수 항목에 동의하셔야 다음 단계로 진행할 수 있습니다.");
         return;
     }
 
-    // 3. 1페이지 성함(customer_name)을 3페이지 성함(signerName)으로 복사
-    const nameFromPage1 = document.getElementById('customer_name');
+    // 2. 1페이지 성함(custName)을 3페이지 성함(signerName)으로 복사
+    // 수정 포인트: 'customer_name'을 'custName'으로 변경함
+    const nameFromPage1 = document.getElementById('custName'); 
     const nameOnPage3 = document.getElementById('signerName');
     
     if (nameFromPage1 && nameOnPage3) {
         nameOnPage3.value = nameFromPage1.value;
     }
 
-    // 4. 페이지 전환
+    // 3. 페이지 전환
     document.getElementById('divPage2').classList.add('page-hidden');
     document.getElementById('divPage3').classList.remove('page-hidden');
 
-    // 5. 캔버스 리사이즈 (서명판 깨짐 방지)
+    // 4. 캔버스 리사이즈
     if (typeof resizeCanvas === 'function') {
         resizeCanvas();
     }
     
-    window.scrollTo(0, 0);
-}
+    // 5. 서명 가이드 숨기기 로직 추가 (필요시)
+    const placeholder = document.getElementById('sig-placeholder');
+    const canvas = document.getElementById('signature-pad');
     
-    // 페이지 최상단으로 스크롤 이동
+    const hidePlaceholder = () => { if(placeholder) placeholder.style.display = 'none'; };
+    canvas.addEventListener('mousedown', hidePlaceholder);
+    canvas.addEventListener('touchstart', hidePlaceholder);
+
     window.scrollTo(0, 0);
 }
+
+// 주의: 기존 코드에 있던 중복된 'window.scrollTo'나 잘못된 '}'는 삭제하고 위 함수만 남기세요.
 
     // 3페이지 서명 확인 및 이동
     function submitToPage4() {
