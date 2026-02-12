@@ -244,7 +244,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
     </div>
 
-    <div id="divPage3" class="form-card page-hidden">
+   <div id="divPage3" class="form-card page-hidden">
     <div class="header">
         <h2>본인 확인 및 서명</h2>
         <p class="text-muted small mb-0">(3/5)</p>
@@ -255,13 +255,11 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <input type="text" id="signerName" class="form-control" placeholder="성함을 입력하세요">
     </div>
 
-    <div class="signature-wrapper" style="position: relative; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
-    <div id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccc; pointer-events: none; font-size: 1.2rem; font-weight: bold; z-index: 5;">
-        * 대표자 서명
-    </div>
-    <canvas id="signature-pad" style="position: relative; z-index: 10; background: transparent;"></canvas>
-</div>
-        <canvas id="signature-pad" style="position: relative; z-index: 2; background: transparent;"></canvas>
+    <div class="signature-wrapper" style="position: relative; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; height: 200px;">
+        <div id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccc; pointer-events: none; font-size: 1.2rem; font-weight: bold; z-index: 5;">
+            * 대표자 서명
+        </div>
+        <canvas id="signature-pad" style="position: relative; z-index: 10; background: transparent; width: 100%; height: 100%;"></canvas>
     </div>
 
     <div class="text-end mt-2">
@@ -271,6 +269,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     <button type="button" class="btn-next" onclick="submitToPage4()">다음 단계로 (4/5)</button>
 </div>
 
+    
     <div id="divPage4" class="form-card page-hidden">
         <div class="header"><h2>CCTV 해지 확인</h2><p class="text-muted small mb-0">(4/5)</p></div>
         <div class="mb-4">
@@ -334,6 +333,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
     });
 
+    
     // 주소 검색 함수
     function execDaumPostcode(m, d) {
         new daum.Postcode({oncomplete: (data) => { document.getElementById(m).value = data.roadAddress; document.getElementById(d).focus(); }}).open();
@@ -352,7 +352,36 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         const status = document.querySelector('input[name="cctvStatus"]:checked').value;
         document.getElementById('cctvPriceArea').style.display = (status === "해당없음") ? 'none' : 'block';
     }
+let signaturePad;
 
+    window.addEventListener('DOMContentLoaded', () => {
+        // ... 기존 날짜/청구번호 코드 ...
+
+        // [1] 서명 패드 초기화 (배경을 투명하게 설정하는 것이 핵심)
+        const canvas = document.getElementById('signature-pad');
+        signaturePad = new SignaturePad(canvas, { 
+            backgroundColor: 'rgba(255, 255, 255, 0)' // 투명 배경
+        });
+
+        // [2] 서명 시작 시 가이드 숨기기 로직 추가
+        const placeholder = document.getElementById('sig-placeholder');
+        const hidePlaceholder = () => { 
+            if (placeholder) placeholder.style.display = 'none'; 
+        };
+
+        canvas.addEventListener('mousedown', hidePlaceholder);
+        canvas.addEventListener('touchstart', hidePlaceholder);
+    });
+
+    // [3] 다시 쓰기 함수 (기존 위치에 추가하거나 교체)
+    function clearSignature() {
+        if (signaturePad) {
+            signaturePad.clear();
+            // 가이드 텍스트 다시 보이기
+            const placeholder = document.getElementById('sig-placeholder');
+            if (placeholder) placeholder.style.display = 'block';
+        }
+    }
     // 1페이지 검증 및 이동
     function validateAndNext() {
         if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { 
