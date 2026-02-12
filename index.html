@@ -364,31 +364,34 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
 
     function submitToPage3() {
-    // 1. 통합 체크박스 확인 (allAgreeCheck는 이전 단계에서 추가한 ID입니다)
+    // 1. 통합 체크박스 엘리먼트를 직접 가져옵니다.
     const allAgree = document.getElementById('allAgreeCheck');
 
+    // 2. 체크박스가 없거나 체크되지 않았을 경우
     if (!allAgree || !allAgree.checked) {
         alert("위 모든 필수 항목에 동의하셔야 다음 단계로 진행할 수 있습니다.");
         return;
     }
 
-    // 2. 1페이지의 고객명을 3페이지 입력창으로 복사
-    // 1페이지 성함 입력란의 ID가 'customer_name' (또는 'userName')인지 꼭 확인하세요!
-    const nameInputFromPage1 = document.getElementById('customer_name'); 
-    const signerNameInput = document.getElementById('signerName');
-
-    if (nameInputFromPage1 && signerNameInput) {
-        signerNameInput.value = nameInputFromPage1.value;
+    // 3. 1페이지 성함(customer_name)을 3페이지 성함(signerName)으로 복사
+    const nameFromPage1 = document.getElementById('customer_name');
+    const nameOnPage3 = document.getElementById('signerName');
+    
+    if (nameFromPage1 && nameOnPage3) {
+        nameOnPage3.value = nameFromPage1.value;
     }
 
-    // 3. 페이지 전환 (2페이지 숨기고 3페이지 보여주기)
+    // 4. 페이지 전환
     document.getElementById('divPage2').classList.add('page-hidden');
     document.getElementById('divPage3').classList.remove('page-hidden');
 
-    // 4. 서명 캔버스 크기 재설정 (서명판이 깨지지 않게 필수 실행)
+    // 5. 캔버스 리사이즈 (서명판 깨짐 방지)
     if (typeof resizeCanvas === 'function') {
         resizeCanvas();
     }
+    
+    window.scrollTo(0, 0);
+}
     
     // 페이지 최상단으로 스크롤 이동
     window.scrollTo(0, 0);
