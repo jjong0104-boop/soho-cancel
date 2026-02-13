@@ -446,31 +446,36 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
 
     function goToPage5() {
-        const status = document.querySelector('input[name="cctvStatus"]:checked').value;
+        // CCTV 선택 값 가져오기
+        const statusEl = document.querySelector('input[name="cctvStatus"]:checked');
+        const status = statusEl ? statusEl.value : "해당없음";
+
+        // CCTV 비용 확인 체크 (해당없음이 아닐 때만)
         if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
             alert("비용 확인 체크박스에 동의해주세요."); 
             return; 
         }
 
-        // 기본 정보 출력
+        // [핵심] 화면의 '-' 부분들을 실제 입력값으로 교체
         document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
         document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
         
-        // [수정] 설치 주소 합쳐서 출력
+        // 설치 주소 합치기
         const addr = document.getElementById('custAddr').value;
         const detail = document.getElementById('custDetail').value;
         document.getElementById('display_custAddr').innerText = (addr || "") + " " + (detail || "");
         
-        // [수정] CCTV 상태 출력
-        document.getElementById('display_cctv').innerText = (status === "해당없음") ? "해당없음" : status;
-
-        // [수정] 체크박스 상품 및 사유 수집 후 출력
+        // 해지 상품 수집
         const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
+        document.getElementById('display_products').innerText = products || "없음";
+
+        // 해지 사유 수집
         const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(', ');
-        
-        document.getElementById('display_products').innerText = products || "선택 없음";
-        document.getElementById('display_reasons').innerText = reasons || "선택 없음";
+        document.getElementById('display_reasons').innerText = reasons || "없음";
+
+        // CCTV 상태
+        document.getElementById('display_cctv').innerText = status;
 
         // 페이지 전환
         document.getElementById('divPage4').classList.add('page-hidden');
