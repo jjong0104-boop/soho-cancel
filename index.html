@@ -460,7 +460,13 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
             custTel: document.getElementById('custTel').value,
-            custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
+            // 추가된 항목들 (서버 코드와 매칭)
+            bizNum: document.getElementById('bizNum').value,
+            bizReg: document.getElementById('bizReg').value,
+            custAddr: document.getElementById('custAddr').value, // 기본주소
+            custDetail: document.getElementById('custDetail').value, // 상세주소
+            returnPerson: document.getElementById('returnPerson').value,
+            returnTel: document.getElementById('returnTel').value,
             returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
             products: document.getElementById('display_products').innerText,
             reasons: document.getElementById('display_reasons').innerText,
@@ -471,11 +477,18 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
         .then(r => r.json()).then(res => { 
             if(res.result === "success") { 
-                alert('성공적으로 접수되었습니다!'); 
+                alert('성공적으로 접수되었습니다! 생성된 PDF 신청서를 확인합니다.'); 
+                // 생성된 PDF URL을 새 창으로 엽니다.
+                if(res.url) window.open(res.url, '_blank');
+                // 기존 신청서 보기 페이지로 이동
                 location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
-            } 
+            } else {
+                alert("서버 오류: " + res.message);
+                btn.disabled = false;
+                btn.innerText = "최종 제출하기";
+            }
         }).catch(err => { 
-            alert("전송 오류"); 
+            alert("전송 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요."); 
             btn.disabled = false; 
             btn.innerText = "최종 제출하기"; 
         });
