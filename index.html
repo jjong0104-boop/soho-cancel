@@ -452,17 +452,27 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
             return; 
         }
 
+        // 기본 정보 출력
         document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
         document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
-        document.getElementById('display_custAddr').innerText = document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value;
-        document.getElementById('display_cctv').innerText = status;
+        
+        // [수정] 설치 주소 합쳐서 출력
+        const addr = document.getElementById('custAddr').value;
+        const detail = document.getElementById('custDetail').value;
+        document.getElementById('display_custAddr').innerText = (addr || "") + " " + (detail || "");
+        
+        // [수정] CCTV 상태 출력
+        document.getElementById('display_cctv').innerText = (status === "해당없음") ? "해당없음" : status;
 
+        // [수정] 체크박스 상품 및 사유 수집 후 출력
         const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
         const reasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value).join(', ');
-        document.getElementById('display_products').innerText = products || "없음";
-        document.getElementById('display_reasons').innerText = reasons || "없음";
+        
+        document.getElementById('display_products').innerText = products || "선택 없음";
+        document.getElementById('display_reasons').innerText = reasons || "선택 없음";
 
+        // 페이지 전환
         document.getElementById('divPage4').classList.add('page-hidden');
         document.getElementById('divPage5').classList.remove('page-hidden');
         window.scrollTo(0,0);
