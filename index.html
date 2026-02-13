@@ -270,20 +270,37 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 </div>
 
     
-    <div id="divPage4" class="form-card page-hidden">
+   <div id="divPage4" class="form-card page-hidden">
         <div class="header"><h2>CCTV 해지 확인</h2><p class="text-muted small mb-0">(4/5)</p></div>
         <div class="mb-4">
-            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvAlready" value="철거완료" onchange="toggleCCTVTable()"><label class="form-check-label">CCTV 철거가 되어 있습니다.</label></div>
-            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()"><label class="form-check-label">CCTV 철거를 요청합니다.</label></div>
-            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()" checked><label class="form-check-label text-primary">CCTV 해당 없음</label></div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvAlready" value="철거완료" onchange="toggleCCTVTable()">
+                <label class="form-check-label" for="cctvAlready">CCTV 철거가 되어 있습니다.</label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()">
+                <label class="form-check-label" for="cctvRequest">CCTV 철거를 요청합니다.</label>
+            </div>
+            <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="cctvStatus" id="cctvNone" value="해당없음" onchange="toggleCCTVTable()" checked>
+                <label class="form-check-label text-primary" for="cctvNone">CCTV 해당 없음</label>
+            </div>
         </div>
+
         <div id="cctvPriceArea" style="display:none;">
-            <table class="table table-sm table-bordered text-center small bg-white">
-                <tr><td class="bg-light">설치비반환</td><td>실내-94,600 / 실외-126,500</td></tr>
-                <tr><td class="bg-light">철거비</td><td>실내-22,000 / 실외-27,500</td></tr>
-            </table>
-            <div class="notice-box mt-2 mb-3"><input type="checkbox" id="cctvFinalConfirm"> 위 비용 내용을 확인했습니다.*</div>
+            <div class="notice-box mb-2" style="font-size: 0.85rem;">
+                <p class="mb-1"><strong>[CCTV 철거 관련 비용 안내]</strong></p>
+                <table class="table table-sm table-bordered text-center small bg-white mb-0">
+                    <tr><td class="bg-light" style="width:40%;">설치비반환</td><td>실내-94,600 / 실외-126,500</td></tr>
+                    <tr><td class="bg-light">철거비</td><td>실내-22,000 / 실외-27,500</td></tr>
+                </table>
+            </div>
+            <div class="form-check mt-2 mb-3">
+                <input class="form-check-input" type="checkbox" id="cctvFinalConfirm">
+                <label class="form-check-label small fw-bold" for="cctvFinalConfirm">위 비용 및 안내 내용을 확인했습니다.*</label>
+            </div>
         </div>
+        
         <button type="button" class="btn-submit" onclick="goToPage5()">최종 요약 확인 (5/5)</button>
     </div>
 
