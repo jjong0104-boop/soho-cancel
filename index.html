@@ -345,11 +345,14 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         }
 
         // [서명 패드 초기화] - 가이드 텍스트가 보이도록 배경을 투명하게 설정
-        const canvas = document.getElementById('signature-pad');
+       const canvas = document.getElementById('signature-pad');
         const placeholder = document.getElementById('sig-placeholder');
         
         signaturePad = new SignaturePad(canvas, { 
-            backgroundColor: 'rgba(255, 255, 255, 0)' 
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            // 아래 두 줄을 추가하여 굵기를 조절합니다.
+            minWidth: 2, // 최소 굵기 (기본값 약 0.5)
+            maxWidth: 5  // 최대 굵기 (기본값 약 2.5)
         });
 
         // [서명 시작 시 가이드 숨기기]
