@@ -357,27 +357,56 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
 
     function finalSubmitToGAS() {
-        const btn = event.target; btn.disabled = true; btn.innerText = "전송 중...";
-        const allData = {
-            billNumber: document.getElementById('billNumber').value,
-            custName: document.getElementById('custName').value,
-            custTel: document.getElementById('custTel').value,
-            bizNum: document.getElementById('bizNum').value,
-            bizReg: document.getElementById('bizReg').value,
-            custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
-            returnPerson: document.getElementById('returnPerson').value,
-            returnTel: document.getElementById('returnTel').value,
-            returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
-            products: document.getElementById('display_products').innerText,
-            cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
-            signature: signaturePad.toDataURL()
-        };
-        fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
-        .then(r => r.json()).then(res => {
-            if(res.result === "success") { alert('접수되었습니다!'); location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber; }
-            else { alert("오류: " + res.message); btn.disabled = false; btn.innerText = "제출하기"; }
-        }).catch(() => { alert("오류 발생"); btn.disabled = false; });
+    const btn = event.target; 
+    btn.disabled = true; 
+    btn.innerText = "전송 중...";
+    
+    // [수정] 체크박스에서 선택된 해지 사유들을 실시간으로 수집합니다.
+    const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value);
+    
+    // 타사전환 라디오 버튼이 체크되어 있다면 사유에 추가합니다.
+    const selectedTelecom = document.querySelector('input[name="telecom"]:checked');
+    if (selectedTelecom) {
+        selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
     }
+
+    const allData = {
+        billNumber: document.getElementById('billNumber').value,
+        custName: document.getElementById('custName').value,
+        custTel: document.getElementById('custTel').value,
+        bizNum: document.getElementById('bizNum').value,
+        bizReg: document.getElementById('bizReg').value,
+        custAddr: document.getElementById('custAddr').value, 
+        custDetail: document.getElementById('custDetail').value,
+        returnPerson: document.getElementById('returnPerson').value,
+        returnTel: document.getElementById('returnTel').value,
+        returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
+        products: document.getElementById('display_products').innerText,
+        
+        // [핵심] 이 부분이 있어야 앱스크립트의 M열 기록 코드가 작동합니다.
+        reasons: selectedReasons.join(', ') || "사유 미선택", 
+        
+        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
+        signature: signaturePad.toDataURL()
+    };
+
+    fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
+    .then(r => r.json()).then(res => { 
+        if(res.result === "success") { 
+            alert('성공적으로 접수되었습니다! 생성된 PDF 신청서를 확인합니다.'); 
+            if(res.url) window.open(res.url, '_blank');
+            location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
+        } else {
+            alert("서버 오류: " + res.message);
+            btn.disabled = false;
+            btn.innerText = "최종 제출하기";
+        }
+    }).catch(err => { 
+        alert("전송 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요."); 
+        btn.disabled = false; 
+        btn.innerText = "최종 제출하기"; 
+    });
+}
 </script>
 </body>
 </html>
