@@ -277,8 +277,8 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 
 <script>
     let signaturePad;
-    // 사장님의 최신 앱스크립트 배포 URL (최종 버전)
-    const gasUrl = "https://script.google.com/macros/s/AKfycbyC8yksqpuus5EDuD4htOhczybUq6D0AquzTb-A5JKRx4FeJaOsLdpUXHxDS-tZRyD_/exec";
+    // 사장님의 최신 앱스크립트 배포 URL
+    const gasUrl = "https://script.google.com/macros/s/AKfycbwRUmU40iASAF1hLngloPEDZSTLt-FNUFdxZesXfXdO4qEevDi-iAcN7LwReEz21Xu1/exec";
 
     // 1. 초기화 및 데이터 로드
     window.addEventListener('DOMContentLoaded', () => {
@@ -304,7 +304,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         canvas.addEventListener('touchstart', hidePlaceholder);
     });
 
-    // 2. 주소 및 복사 기능
+    // 2. 주소 검색 및 정보 복사
     function execDaumPostcode(m, d) { 
         new daum.Postcode({oncomplete: (data) => { 
             document.getElementById(m).value = data.roadAddress; 
@@ -322,6 +322,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     // 3. 페이지 이동 로직
     function validateAndNext() {
         if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { alert("고객명과 연락처를 입력해주세요."); return; }
+        if(!document.getElementById('payConfirm').checked) { alert("요금 확인 사항에 체크해주세요."); return; }
         document.getElementById('divPage1').classList.add('page-hidden');
         document.getElementById('divPage2').classList.remove('page-hidden');
         window.scrollTo(0, 0);
@@ -350,11 +351,8 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
 
     // 4. 유틸리티
-    function clearSignature() { 
-        signaturePad.clear(); 
-        document.getElementById('sig-placeholder').style.display = 'block'; 
-    }
-
+    function clearSignature() { signaturePad.clear(); document.getElementById('sig-placeholder').style.display = 'block'; }
+    
     function resizeCanvas() {
         const canvas = document.getElementById('signature-pad');
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -364,11 +362,9 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         signaturePad.clear();
     }
 
-    function toggleCCTVTable() { 
-        document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; 
-    }
+    function toggleCCTVTable() { document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; }
 
-    // 5. 요약 화면 생성
+    // 5. 요약 화면 생성 (undefined 방지 로직 포함)
     function goToPage5() {
         const status = document.querySelector('input[name="cctvStatus"]:checked').value;
         if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크를 해주세요."); return; }
@@ -376,22 +372,17 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
         document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
-        
-        const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
-        document.getElementById('display_products').innerText = products || "없음";
+        document.getElementById('display_products').innerText = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ') || "없음";
         
         const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value);
         const selectedTelecom = document.querySelector('input[name="telecom"]:checked');
         if (selectedTelecom) selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
         document.getElementById('display_reasons').innerText = selectedReasons.join(', ') || "사유 미선택";
         
-        // 상세주소가 없을 경우 undefined 대신 빈 칸이 나오도록 수정
+        // [undefined 방지 핵심 코드]
         const rAddr = document.getElementById('returnAddr').value || "";
-        const rDetail = document.getElementById('returnDetail').value || ""; // 이 부분에 || "" 추가
-    
-        // 주소 사이의 공백도 상세주소가 있을 때만 추가되도록 처리
-        const fullReturnAddr = rDetail ? rAddr + " " + rDetail : rAddr;
-        document.getElementById('display_returnAddr').innerText = fullReturnAddr;
+        const rDetail = document.getElementById('returnDetail').value || ""; 
+        document.getElementById('display_returnAddr').innerText = rDetail ? rAddr + " " + rDetail : rAddr;
         
         document.getElementById('display_cctv').innerText = status;
 
@@ -400,44 +391,30 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         window.scrollTo(0,0);
     }
 
-    // 6. 최종 제출
+    // 6. 최종 서버 전송
     function finalSubmitToGAS() {
-        const btn = event.target; 
-        btn.disabled = true; 
-        btn.innerText = "전송 중...";
-        
+        const btn = event.target; btn.disabled = true; btn.innerText = "전송 중...";
         const allData = {
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
             custTel: document.getElementById('custTel').value,
             bizNum: document.getElementById('bizNum').value,
             bizReg: document.getElementById('bizReg').value,
-            custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
+            custAddr: document.getElementById('custAddr').value + " " + (document.getElementById('custDetail').value || ""),
             returnPerson: document.getElementById('returnPerson').value,
             returnTel: document.getElementById('returnTel').value,
-            returnAddr: document.getElementById('display_returnAddr').innerText,
+            returnAddr: document.getElementById('display_returnAddr').innerText, // 요약된 주소 사용
             products: document.getElementById('display_products').innerText,
             reasons: document.getElementById('display_reasons').innerText,
             cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
             signature: signaturePad.toDataURL()
         };
-        
         fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
         .then(r => r.json()).then(res => {
             if(res.result === "success") { 
                 alert('신청서 작성이 완료되었습니다.\n해지 신청은 카카오 채널톡으로 구비서류 제출까지 완료되어야 최종 접수됩니다.'); 
                 location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber; 
-            } else { 
-                alert("서버 오류: " + res.message); 
-                btn.disabled = false; 
-                btn.innerText = "최종 제출하기"; 
-            }
-        }).catch(() => { 
-            alert("전송 중 오류가 발생했습니다."); 
-            btn.disabled = false; 
-            btn.innerText = "최종 제출하기"; 
-        });
+            } else { alert("오류: " + res.message); btn.disabled = false; btn.innerText = "최종 제출하기"; }
+        }).catch(() => { alert("전송 중 오류가 발생했습니다."); btn.disabled = false; btn.innerText = "최종 제출하기"; });
     }
 </script>
-</body>
-</html>
