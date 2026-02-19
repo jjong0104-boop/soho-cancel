@@ -44,48 +44,44 @@
     const gasUrl = "https://script.google.com/macros/s/AKfycbyC8yksqpuus5EDuD4htOhczybUq6D0AquzTb-A5JKRx4FeJaOsLdpUXHxDS-tZRyD_/exec";
 
 if (bill) {
-        fetch(`${gasUrl}?bill=${bill}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.result !== "error") {
-                    // 1. 기본 데이터 매칭
-                    document.getElementById('v-bill').innerText = data.billNumber || "-";
-                    document.getElementById('v-name').innerText = data.custName || "-";
+    fetch(`${gasUrl}?bill=${bill}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.result !== "error") {
+                // 1. 기본 데이터 매칭
+                document.getElementById('v-bill').innerText = data.billNumber || "-";
+                document.getElementById('v-name').innerText = data.custName || "-";
 
-                    // 2. 연락처(전화번호) 가공 로직
-                    let tel = String(data.custTel || ""); 
-                    tel = tel.replace(/[^0-9]/g, ""); // 숫자가 아닌 문자 제거
-
-                    // 0이 빠진 10자리(1012345678) 대응
-                    if (tel.length === 10 && tel.startsWith('1')) {
-                        tel = '0' + tel;
-                    }
-
-                    // 하이픈 추가 (010-0000-0000 또는 02-000-0000 등)
-                    if (tel.length === 11) {
-                        tel = tel.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-                    } else if (tel.length === 10) {
-                        tel = tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-                    }
-                    document.getElementById('v-tel').innerText = tel || "-";
-
-                    // 3. 항목 매칭 (설치주소 태그 v-addr에 회수주소 데이터 바인딩)
-                    document.getElementById('v-products').innerText = data.products || "-";
-                    document.getElementById('v-cctv').innerText = data.cctvStatus || "-";
-                    
-                    // 설치주소(v-addr) 자리에 회수주소(returnAddr)를 표시합니다.
-                    // 앱스크립트 doGet에서 returnAddr를 보내주어야 정상 출력됩니다.
-                    document.getElementById('v-returnAddr').innerText = data.returnAddr || "-";
-
-                } else {
-                    alert("데이터를 찾을 수 없습니다. 청구번호를 다시 확인해주세요.");
+                // 2. 연락처 가공 (하이픈 추가)
+                let tel = String(data.custTel || "").replace(/[^0-9]/g, "");
+                if (tel.length === 10 && tel.startsWith('1')) tel = '0' + tel;
+                if (tel.length === 11) {
+                    tel = tel.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                } else if (tel.length === 10) {
+                    tel = tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("데이터 로드 중 오류가 발생했습니다.");
-            });
-    }
+                document.getElementById('v-tel').innerText = tel || "-";
+
+                // 3. 상품 및 CCTV 상태
+                document.getElementById('v-products').innerText = data.products || "-";
+                document.getElementById('v-cctv').innerText = data.cctvStatus || "-";
+
+                // 4. [중요] 회수 주소 undefined 방지 처리
+                // 데이터 자체에 'undefined' 글자가 포함되어 올 경우를 대비해 replace로 삭제합니다.
+                let rawAddr = String(data.returnAddr || "-");
+                let cleanAddr = rawAddr.replace(/undefined/g, "").trim(); 
+                
+                document.getElementById('v-returnAddr').innerText = cleanAddr || "-";
+
+            } else {
+                alert("데이터를 찾을 수 없습니다. 청구번호를 다시 확인해주세요.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("데이터 로드 중 오류가 발생했습니다.");
+        });
+}
 
 function downloadImage() {
     const target = document.getElementById("printArea");
