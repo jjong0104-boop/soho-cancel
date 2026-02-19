@@ -262,16 +262,16 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <button type="button" class="btn-submit" onclick="goToPage5()">최종 요약 확인 (4/5)</button>
     </div>
 
-    <div id="divPage5" class="form-card page-hidden">
-        <div class="header"><h2>신청 내용 최종 확인</h2></div>
-        <table class="table table-bordered small">
-            <tr><td class="bg-light fw-bold">청구번호</td><td id="display_billNumber" class="text-danger fw-bold"></td></tr>
-            <tr><td class="bg-light fw-bold">고객명</td><td id="display_custName"></td></tr>
-            <tr><td class="bg-light fw-bold">해지상품</td><td id="display_products" class="text-primary fw-bold"></td></tr>
-            <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
-        </table>
-        <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
-    </div>
+<div id="divPage5" class="form-card page-hidden">
+    <div class="header"><h2>신청 내용 최종 확인</h2></div>
+    <table class="table table-bordered small">
+        <tr><td class="bg-light fw-bold">청구번호</td><td id="display_billNumber" class="text-danger fw-bold"></td></tr>
+        <tr><td class="bg-light fw-bold">고객명</td><td id="display_custName"></td></tr>
+        <tr><td class="bg-light fw-bold">연락처</td><td id="display_custTel" class="fw-bold"></td></tr> <tr><td class="bg-light fw-bold">해지상품</td><td id="display_products" class="text-primary fw-bold"></td></tr>
+        <tr><td class="bg-light fw-bold">해지사유</td><td id="display_reasons" class="text-success fw-bold"></td></tr> <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
+    </table>
+    <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
+</div>
 </div>
 
 <script>
@@ -345,16 +345,65 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 
     function toggleCCTVTable() { document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; }
 
-    function goToPage5() {
-        const status = document.querySelector('input[name="cctvStatus"]:checked').value;
-        if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크를 해주세요."); return; }
-        document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
-        document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-        document.getElementById('display_products').innerText = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ') || "없음";
-        document.getElementById('display_cctv').innerText = status;
-        document.getElementById('divPage4').classList.add('page-hidden');
-        document.getElementById('divPage5').classList.remove('page-hidden');
-    }
+   function goToPage5() {
+    const status = document.querySelector('input[name="cctvStatus"]:checked').value;
+    if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크를 해주세요."); return; }
+    
+    // 기본 정보 매칭
+    document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
+    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
+    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value; // 연락처 추가
+    
+    // 해지 상품 요약
+    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
+    document.getElementById('display_products').innerText = products || "없음";
+    
+    // 해지 사유 수집 (M열 데이터)
+    const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value);
+    const selectedTelecom = document.querySelector('input[name="telecom"]:checked');
+    if (selectedTelecom) selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
+    
+    const finalReasons = selectedReasons.join(', ') || "사유 미선택";
+    document.getElementById('display_reasons').innerText = finalReasons; // 해지사유 추가
+    
+    document.getElementById('display_cctv').innerText = status;
+    document.getElementById('divPage4').classList.add('page-hidden');
+    document.getElementById('divPage5').classList.remove('remove-hidden'); // 오타 수정: remove-hidden -> page-hidden 처리 확인 필요
+    document.getElementById('divPage5').classList.remove('page-hidden');
+    window.scrollTo(0,0);
+}
+
+// 최종 제출 함수 (M열 전송 로직 포함)
+function finalSubmitToGAS() {
+    const btn = event.target; btn.disabled = true; btn.innerText = "전송 중...";
+    
+    const allData = {
+        billNumber: document.getElementById('billNumber').value,
+        custName: document.getElementById('custName').value,
+        custTel: document.getElementById('custTel').value,
+        bizNum: document.getElementById('bizNum').value,
+        bizReg: document.getElementById('bizReg').value,
+        custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
+        returnPerson: document.getElementById('returnPerson').value,
+        returnTel: document.getElementById('returnTel').value,
+        returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
+        products: document.getElementById('display_products').innerText,
+        reasons: document.getElementById('display_reasons').innerText, // [핵심] M열 데이터 전송
+        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
+        signature: signaturePad.toDataURL()
+    };
+    
+    fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
+    .then(r => r.json()).then(res => {
+        if(res.result === "success") { 
+            alert('접수되었습니다!'); 
+            location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber; 
+        } else { 
+            alert("오류: " + res.message); 
+            btn.disabled = false; btn.innerText = "제출하기"; 
+        }
+    }).catch(() => { alert("오류 발생"); btn.disabled = false; });
+}
 
     function finalSubmitToGAS() {
     const btn = event.target; 
