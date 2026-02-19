@@ -277,194 +277,10 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 
 <script>
     let signaturePad;
-    const gasUrl = "https://script.google.com/macros/s/AKfycbwRUmU40iASAF1hLngloPEDZSTLt-FNUFdxZesXfXdO4qEevDi-iAcN7LwReEz21Xu1/exec";
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const now = new Date();
-        document.getElementById('todayDate').value = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
-        
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('bill')) document.getElementById('billNumber').value = params.get('bill');
-        if (params.get('name')) {
-            document.getElementById('custName').value = params.get('name');
-            document.getElementById('returnPerson').value = params.get('name');
-        }
-
-        const canvas = document.getElementById('signature-pad');
-        signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', minWidth: 2, maxWidth: 5 });
-        const hidePlaceholder = () => { document.getElementById('sig-placeholder').style.display = 'none'; };
-        canvas.addEventListener('mousedown', hidePlaceholder);
-        canvas.addEventListener('touchstart', hidePlaceholder);
-    });
-
-    function execDaumPostcode(m, d) { new daum.Postcode({oncomplete: (data) => { document.getElementById(m).value = data.roadAddress; document.getElementById(d).focus(); }}).open(); }
-    function copyInstallInfo() {
-        document.getElementById('returnPerson').value = document.getElementById('custName').value;
-        document.getElementById('returnTel').value = document.getElementById('custTel').value;
-        document.getElementById('returnAddr').value = document.getElementById('custAddr').value;
-        document.getElementById('returnDetail').value = document.getElementById('custDetail').value;
-    }
-
-    function validateAndNext() {
-        if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { alert("고객명과 연락처를 입력해주세요."); return; }
-        document.getElementById('divPage1').classList.add('page-hidden');
-        document.getElementById('divPage2').classList.remove('page-hidden');
-        window.scrollTo(0, 0);
-    }
-
-    function submitToPage3() {
-        if (!document.getElementById('allAgreeCheck').checked) { alert("모든 필수 항목에 동의해야 합니다."); return; }
-        document.getElementById('divPage2').classList.add('page-hidden');
-        document.getElementById('divPageInfo').classList.remove('page-hidden');
-        window.scrollTo(0, 0);
-    }
-
-    function submitToRealPage3() {
-        if (!document.getElementById('infoConfirmCheck').checked) { alert("안내 사항을 체크해 주세요."); return; }
-        document.getElementById('signerName').value = document.getElementById('custName').value;
-        document.getElementById('divPageInfo').classList.add('page-hidden');
-        document.getElementById('divPage3').classList.remove('page-hidden');
-        resizeCanvas();
-        window.scrollTo(0, 0);
-    }
-
-    function submitToPage4() {
-        if(signaturePad.isEmpty() || !document.getElementById('signerName').value) { alert("성함과 서명을 완료하세요."); return; }
-        document.getElementById('divPage3').classList.add('page-hidden');
-        document.getElementById('divPage4').classList.remove('page-hidden');
-    }
-
-    function clearSignature() { signaturePad.clear(); document.getElementById('sig-placeholder').style.display = 'block'; }
-    function resizeCanvas() {
-        const canvas = document.getElementById('signature-pad');
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        signaturePad.clear();
-    }
-
-    function toggleCCTVTable() { document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; }
-
-  function goToPage5() {
-    const status = document.querySelector('input[name="cctvStatus"]:checked').value;
-    if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
-        alert("비용 확인 체크를 해주세요."); 
-        return; 
-    }
-    
-    // 데이터 요약 화면 매칭
-    document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
-    document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-    document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
-    
-    // 해지 상품 수집
-    const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
-    document.getElementById('display_products').innerText = products || "없음";
-    
-    // 해지 사유 수집
-    const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value);
-    const selectedTelecom = document.querySelector('input[name="telecom"]:checked');
-    if (selectedTelecom) selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
-    document.getElementById('display_reasons').innerText = selectedReasons.join(', ') || "사유 미선택";
-    
-    // 회수 주소 합치기 (설치 주소 대신 표시)
-    const rAddr = document.getElementById('returnAddr').value;
-    const rDetail = document.getElementById('returnDetail').value;
-    document.getElementById('display_returnAddr').innerText = (rAddr || "") + " " + (rDetail || "");
-    
-    document.getElementById('display_cctv').innerText = status;
-
-    // 페이지 전환
-    document.getElementById('divPage4').classList.add('page-hidden');
-    document.getElementById('divPage5').classList.remove('page-hidden');
-    window.scrollTo(0,0);
-}
-
-function finalSubmitToGAS() {
-    const btn = event.target; 
-    btn.disabled = true; 
-    btn.innerText = "전송 중...";
-    
-    const allData = {
-        billNumber: document.getElementById('billNumber').value,
-        custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value,
-        bizNum: document.getElementById('bizNum').value,
-        bizReg: document.getElementById('bizReg').value,
-        custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
-        returnPerson: document.getElementById('returnPerson').value,
-        returnTel: document.getElementById('returnTel').value,
-        returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
-        products: document.getElementById('display_products').innerText,
-        reasons: document.getElementById('display_reasons').innerText,
-        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
-        signature: signaturePad.toDataURL()
-    };
-    
-    fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
-    .then(r => r.json()).then(res => {
-        if(res.result === "success") { 
-            // 요청하신 안내 문구로 알림창 표시
-            alert('신청서 작성이 완료되었습니다.\n해지 신청은 카카오 채널톡으로 구비서류 제출까지 완료되어야 최종 접수됩니다.'); 
-            
-            // 확인 후 결과 페이지로 이동
-            location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber; 
-        } else { 
-            alert("오류: " + res.message); 
-            btn.disabled = false; btn.innerText = "최종 제출하기"; 
-        }
-    }).catch(() => { 
-        alert("전송 중 오류가 발생했습니다."); 
-        btn.disabled = false; btn.innerText = "최종 제출하기"; 
-    });
-}
-
-    const allData = {
-        billNumber: document.getElementById('billNumber').value,
-        custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value,
-        bizNum: document.getElementById('bizNum').value,
-        bizReg: document.getElementById('bizReg').value,
-        custAddr: document.getElementById('custAddr').value, 
-        custDetail: document.getElementById('custDetail').value,
-        returnPerson: document.getElementById('returnPerson').value,
-        returnTel: document.getElementById('returnTel').value,
-        returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
-        products: document.getElementById('display_products').innerText,
-        
-        // [핵심] 이 부분이 있어야 앱스크립트의 M열 기록 코드가 작동합니다.
-        reasons: selectedReasons.join(', ') || "사유 미선택", 
-        
-        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
-        signature: signaturePad.toDataURL()
-    };
-
-    fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
-    .then(r => r.json()).then(res => { 
-        if(res.result === "success") { 
-            alert('성공적으로 접수되었습니다! 생성된 PDF 신청서를 확인합니다.'); 
-            if(res.url) window.open(res.url, '_blank');
-            location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
-        } else {
-            alert("서버 오류: " + res.message);
-            btn.disabled = false;
-            btn.innerText = "최종 제출하기";
-        }
-    }).catch(err => { 
-        alert("전송 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요."); 
-        btn.disabled = false; 
-        btn.innerText = "최종 제출하기"; 
-    });
-}
-</script>
-</body>
-</html>
-
-<script>
-    let signaturePad;
+    // 사장님의 최신 앱스크립트 배포 URL (최종 버전)
     const gasUrl = "https://script.google.com/macros/s/AKfycbyC8yksqpuus5EDuD4htOhczybUq6D0AquzTb-A5JKRx4FeJaOsLdpUXHxDS-tZRyD_/exec";
 
+    // 1. 초기화 및 데이터 로드
     window.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         document.getElementById('todayDate').value = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
@@ -472,18 +288,30 @@ function finalSubmitToGAS() {
         const params = new URLSearchParams(window.location.search);
         if (params.get('bill')) document.getElementById('billNumber').value = params.get('bill');
         if (params.get('name')) {
-            document.getElementById('custName').value = params.get('name');
-            document.getElementById('returnPerson').value = params.get('name');
+            const name = params.get('name');
+            document.getElementById('custName').value = name;
+            document.getElementById('returnPerson').value = name;
         }
 
         const canvas = document.getElementById('signature-pad');
         signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', minWidth: 2, maxWidth: 5 });
-        const hidePlaceholder = () => { document.getElementById('sig-placeholder').style.display = 'none'; };
+        
+        const hidePlaceholder = () => { 
+            const placeholder = document.getElementById('sig-placeholder');
+            if (placeholder) placeholder.style.display = 'none'; 
+        };
         canvas.addEventListener('mousedown', hidePlaceholder);
         canvas.addEventListener('touchstart', hidePlaceholder);
     });
 
-    function execDaumPostcode(m, d) { new daum.Postcode({oncomplete: (data) => { document.getElementById(m).value = data.roadAddress; document.getElementById(d).focus(); }}).open(); }
+    // 2. 주소 및 복사 기능
+    function execDaumPostcode(m, d) { 
+        new daum.Postcode({oncomplete: (data) => { 
+            document.getElementById(m).value = data.roadAddress; 
+            document.getElementById(d).focus(); 
+        }}).open(); 
+    }
+
     function copyInstallInfo() {
         document.getElementById('returnPerson').value = document.getElementById('custName').value;
         document.getElementById('returnTel').value = document.getElementById('custTel').value;
@@ -491,6 +319,7 @@ function finalSubmitToGAS() {
         document.getElementById('returnDetail').value = document.getElementById('custDetail').value;
     }
 
+    // 3. 페이지 이동 로직
     function validateAndNext() {
         if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { alert("고객명과 연락처를 입력해주세요."); return; }
         document.getElementById('divPage1').classList.add('page-hidden');
@@ -520,7 +349,12 @@ function finalSubmitToGAS() {
         document.getElementById('divPage4').classList.remove('page-hidden');
     }
 
-    function clearSignature() { signaturePad.clear(); document.getElementById('sig-placeholder').style.display = 'block'; }
+    // 4. 유틸리티
+    function clearSignature() { 
+        signaturePad.clear(); 
+        document.getElementById('sig-placeholder').style.display = 'block'; 
+    }
+
     function resizeCanvas() {
         const canvas = document.getElementById('signature-pad');
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -530,50 +364,44 @@ function finalSubmitToGAS() {
         signaturePad.clear();
     }
 
-    function toggleCCTVTable() { document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; }
+    function toggleCCTVTable() { 
+        document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; 
+    }
 
-  function goToPage5() {
+    // 5. 요약 화면 생성
+    function goToPage5() {
         const status = document.querySelector('input[name="cctvStatus"]:checked').value;
-        if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { 
-            alert("비용 확인 체크를 해주세요."); 
-            return; 
-        }
+        if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크를 해주세요."); return; }
         
-        // [수정] 최종 확인 화면에 데이터 매칭
         document.getElementById('display_billNumber').innerText = document.getElementById('billNumber').value;
         document.getElementById('display_custName').innerText = document.getElementById('custName').value;
-        document.getElementById('display_custTel').innerText = document.getElementById('custTel').value; // 연락처 표시
+        document.getElementById('display_custTel').innerText = document.getElementById('custTel').value;
         
-        // 해지 상품 요약
         const products = Array.from(document.querySelectorAll('input[name="product"]:checked')).map(e => e.value).join(', ');
         document.getElementById('display_products').innerText = products || "없음";
         
-        // [추가] 해지 사유 실시간 수집 및 요약 표시
         const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value);
         const selectedTelecom = document.querySelector('input[name="telecom"]:checked');
-        if (selectedTelecom) {
-            selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
-        }
+        if (selectedTelecom) selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
+        document.getElementById('display_reasons').innerText = selectedReasons.join(', ') || "사유 미선택";
         
-        const finalReasons = selectedReasons.join(', ') || "사유 미선택";
-        document.getElementById('display_reasons').innerText = finalReasons; // 해지사유 표시
+        const rAddr = document.getElementById('returnAddr').value;
+        const rDetail = document.getElementById('returnDetail').value;
+        document.getElementById('display_returnAddr').innerText = (rAddr || "") + " " + (rDetail || "");
         
         document.getElementById('display_cctv').innerText = status;
-        
-        // 페이지 전환
+
         document.getElementById('divPage4').classList.add('page-hidden');
         document.getElementById('divPage5').classList.remove('page-hidden');
         window.scrollTo(0,0);
     }
 
-    
-// 최종 제출 함수 (중복 제거된 단일 버전)
+    // 6. 최종 제출
     function finalSubmitToGAS() {
         const btn = event.target; 
         btn.disabled = true; 
         btn.innerText = "전송 중...";
         
-        // 전송용 최종 데이터 객체 생성
         const allData = {
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
@@ -583,82 +411,29 @@ function finalSubmitToGAS() {
             custAddr: document.getElementById('custAddr').value + " " + document.getElementById('custDetail').value,
             returnPerson: document.getElementById('returnPerson').value,
             returnTel: document.getElementById('returnTel').value,
-            returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
+            returnAddr: document.getElementById('display_returnAddr').innerText,
             products: document.getElementById('display_products').innerText,
-            reasons: document.getElementById('display_reasons').innerText, // [중요] 시트 M열(13번째 칸)로 전송됨
+            reasons: document.getElementById('display_reasons').innerText,
             cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
             signature: signaturePad.toDataURL()
         };
-
+        
         fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
         .then(r => r.json()).then(res => {
             if(res.result === "success") { 
-                alert('성공적으로 접수되었습니다! 생성된 PDF 신청서를 확인합니다.'); 
-                if(res.url) window.open(res.url, '_blank');
+                alert('신청서 작성이 완료되었습니다.\n해지 신청은 카카오 채널톡으로 구비서류 제출까지 완료되어야 최종 접수됩니다.'); 
                 location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber; 
             } else { 
                 alert("서버 오류: " + res.message); 
                 btn.disabled = false; 
                 btn.innerText = "최종 제출하기"; 
             }
-        }).catch(err => { 
-            alert("전송 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요."); 
+        }).catch(() => { 
+            alert("전송 중 오류가 발생했습니다."); 
             btn.disabled = false; 
             btn.innerText = "최종 제출하기"; 
         });
     }
-
-    function finalSubmitToGAS() {
-    const btn = event.target; 
-    btn.disabled = true; 
-    btn.innerText = "전송 중...";
-    
-    // [수정] 체크박스에서 선택된 해지 사유들을 실시간으로 수집합니다.
-    const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(e => e.value);
-    
-    // 타사전환 라디오 버튼이 체크되어 있다면 사유에 추가합니다.
-    const selectedTelecom = document.querySelector('input[name="telecom"]:checked');
-    if (selectedTelecom) {
-        selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
-    }
-
-    const allData = {
-        billNumber: document.getElementById('billNumber').value,
-        custName: document.getElementById('custName').value,
-        custTel: document.getElementById('custTel').value,
-        bizNum: document.getElementById('bizNum').value,
-        bizReg: document.getElementById('bizReg').value,
-        custAddr: document.getElementById('custAddr').value, 
-        custDetail: document.getElementById('custDetail').value,
-        returnPerson: document.getElementById('returnPerson').value,
-        returnTel: document.getElementById('returnTel').value,
-        returnAddr: document.getElementById('returnAddr').value + " " + document.getElementById('returnDetail').value,
-        products: document.getElementById('display_products').innerText,
-        
-        // [핵심] 이 부분이 있어야 앱스크립트의 M열 기록 코드가 작동합니다.
-        reasons: selectedReasons.join(', ') || "사유 미선택", 
-        
-        cctvStatus: document.querySelector('input[name="cctvStatus"]:checked').value,
-        signature: signaturePad.toDataURL()
-    };
-
-    fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
-    .then(r => r.json()).then(res => { 
-        if(res.result === "success") { 
-            alert('성공적으로 접수되었습니다! 생성된 PDF 신청서를 확인합니다.'); 
-            if(res.url) window.open(res.url, '_blank');
-            location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + allData.billNumber;
-        } else {
-            alert("서버 오류: " + res.message);
-            btn.disabled = false;
-            btn.innerText = "최종 제출하기";
-        }
-    }).catch(err => { 
-        alert("전송 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요."); 
-        btn.disabled = false; 
-        btn.innerText = "최종 제출하기"; 
-    });
-}
 </script>
 </body>
 </html>
