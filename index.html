@@ -244,6 +244,53 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
     </div>
 
+    <div id="divPageInfo" class="form-card page-hidden">
+    <div class="header">
+        <h2>접수 및 이용 안내</h2>
+        <p class="text-muted small mb-0">(안내 확인)</p>
+    </div>
+
+    <div class="mb-4">
+        <div class="agreement-title">< 접수 및 이용 관련 안내 ></div>
+        <div class="notice-box mb-3" style="color: #444; background: #fdfdfd; border-color: #eee;">
+            <p class="small mb-1">● 본 영업점은 신청서 접수처로, 방문/회수 일정 관련 문의는 안내가 어려운 점 양해 부탁드립니다.</p>
+            <p class="small mb-1">● 신청서 접수 후 방문(회수) 일정은 현장 사무실에서 배정하며, 평일 업무시간 외 회수는 불가합니다.</p>
+            <p class="small mb-1">● 영업점 가입 상품 외에는 고객센터(1544-0001)로 문의 바랍니다.</p>
+            <p class="small mb-1">● 서류 보완이 필요한 경우 영업점에서 연락을 드릴 수 있으며, 요건 미충족 시 접수가 불가합니다.</p>
+        </div>
+
+        <div class="agreement-title">< 구비서류 안내 ></div>
+        <div class="notice-box mb-3" style="color: #333;">
+            <ul class="mb-0 ps-3 small">
+                <li><b>개인(일반):</b> 신분증</li>
+                <li><b>개인사업자:</b> 신분증, 사업자등록증 (3개월 이내)</li>
+            </ul>
+        </div>
+
+        <div class="agreement-title">< 필수 확인 사항 ></div>
+        <div class="agreement-box" style="height: 250px; background: #fff5f8;">
+            <b class="text-danger">★ 예약해지 불가: 약정 만료 이후 접수 권장 ★</b><br><br>
+            - 약정 내 해지 시 위약금이 발생할 수 있습니다.<br>
+            - 모뎀, 와이파이, 셋탑, CCTV 등 임대장비는 회수 대상이며 분실 시 변상금이 발생합니다.<br>
+            - 전화 해지는 1일~1주일 내 자동 처리되며 번호 재사용이 불가합니다.<br>
+            - 폐업 시 '폐업사실증명원(3개월 이내)'으로 대체 가능합니다.<br>
+            - 결합 해지 시 남은 상품의 요금이 인상될 수 있습니다.<br>
+            - 통신요금은 후불제이며 위약금은 해지 다음 달에 청구됩니다.<br>
+            - 장비가 있는 경우 회수가 완료되어야 최종 해지 처리됩니다.<br>
+            - 잔여 단말기 할부금은 전액 합산 청구됩니다.<br>
+            - 작성한 상품 외 문의는 고객센터(SME 1544-0001 / SOHO 1800-8300)를 이용해 주세요.
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="infoConfirmCheck">
+        <label class="form-check-label fw-bold" for="infoConfirmCheck">위 안내 및 필수 확인 사항을 모두 숙지하였습니다.</label>
+    </div>
+
+    <button type="button" class="btn-next" onclick="submitToPage3()">확인하였으며 다음 단계로 (3/5)</button>
+</div>
+    
+
    <div id="divPage3" class="form-card page-hidden">
     <div class="header">
         <h2>본인 확인 및 서명</h2>
