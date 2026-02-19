@@ -477,26 +477,39 @@ LG U+ 정책상 신청서 및 구비서류 요건을 모두 충족해야 접수 
         window.scrollTo(0, 0);
     }
 
-    function submitToPage3() {
-        const allAgree = document.getElementById('allAgreeCheck');
-        if (!allAgree || !allAgree.checked) {
-            alert("위 모든 필수 항목에 동의하셔야 다음 단계로 진행할 수 있습니다.");
-            return;
-        }
-
-        // 이름 복사 (ID: custName -> signerName)
-        const nameFromPage1 = document.getElementById('custName'); 
-        const nameOnPage3 = document.getElementById('signerName');
-        if (nameFromPage1 && nameOnPage3) {
-            nameOnPage3.value = nameFromPage1.value;
-        }
-
-        document.getElementById('divPage2').classList.add('page-hidden');
-        document.getElementById('divPage3').classList.remove('page-hidden');
-
-        resizeCanvas(); // 페이지 전환 후 캔버스 크기 재설정 필수
-        window.scrollTo(0, 0);
+    // [기존 2페이지 버튼용] 개인정보 동의 후 안내 페이지로 이동
+function submitToPage3() {
+    const allAgree = document.getElementById('allAgreeCheck');
+    if (!allAgree || !allAgree.checked) {
+        alert("위 모든 필수 항목에 동의하셔야 다음 단계로 진행할 수 있습니다.");
+        return;
     }
+    document.getElementById('divPage2').classList.add('page-hidden');
+    document.getElementById('divPageInfo').classList.remove('page-hidden');
+    window.scrollTo(0, 0);
+}
+
+// [신규 안내 페이지 버튼용] 안내 확인 후 진짜 3페이지(서명)로 이동
+function submitToRealPage3() {
+    const infoCheck = document.getElementById('infoConfirmCheck');
+    if (!infoCheck || !infoCheck.checked) {
+        alert("안내 및 필수 확인 사항을 체크해 주세요.");
+        return;
+    }
+
+    // 이름 복사 (Page1의 고객명을 서명 페이지 성함 칸에 미리 입력)
+    const nameFromPage1 = document.getElementById('custName'); 
+    const nameOnPage3 = document.getElementById('signerName');
+    if (nameFromPage1 && nameOnPage3) {
+        nameOnPage3.value = nameFromPage1.value;
+    }
+
+    document.getElementById('divPageInfo').classList.add('page-hidden');
+    document.getElementById('divPage3').classList.remove('page-hidden');
+
+    resizeCanvas(); // 서명 패드 크기 재조정
+    window.scrollTo(0, 0);
+}
 
     function submitToPage4() {
         if(signaturePad.isEmpty() || !document.getElementById('signerName').value) { 
