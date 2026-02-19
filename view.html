@@ -44,52 +44,42 @@
     // 사장님의 최신 GAS 배포 URL
     const gasUrl = "https://script.google.com/macros/s/AKfycbytunS40kGPaQq39ZJZ_JAiqTbBCRPUNo_6yJhL-xwTFuJ0Kc7eaVEiv1dQcWHUWfEO/exec";
 
-    if (bill) {
+if (bill) {
         fetch(`${gasUrl}?bill=${bill}`)
             .then(res => res.json())
             .then(data => {
-                if(data) {
-                    // 데이터 매칭
+                if (data && data.result !== "error") {
+                    // 1. 기본 데이터 매칭
                     document.getElementById('v-bill').innerText = data.billNumber || "-";
                     document.getElementById('v-name').innerText = data.custName || "-";
-// 기존의 v-tel 라인을 아래 뭉치로 교체하세요
-let tel = String(data.custTel || ""); 
 
-// 1. 숫자가 아닌 문자는 모두 제거
-tel = tel.replace(/[^0-9]/g, "");
+                    // 2. 연락처(전화번호) 가공 로직
+                    let tel = String(data.custTel || ""); 
+                    tel = tel.replace(/[^0-9]/g, ""); // 숫자가 아닌 문자 제거
 
-// 2. 만약 0이 빠진 10자리라면(1012345678) 앞에 0을 강제로 추가
-if (tel.length === 10 && tel.startsWith('1')) {
-    tel = '0' + tel;
-}
+                    // 0이 빠진 10자리(1012345678) 대응
+                    if (tel.length === 10 && tel.startsWith('1')) {
+                        tel = '0' + tel;
+                    }
 
-// 3. 010-0000-0000 형식으로 하이픈 추가
-if (tel.length === 11) {
-    tel = tel.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-} else if (tel.length === 10) {
-    tel = tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-}
+                    // 하이픈 추가 (010-0000-0000 또는 02-000-0000 등)
+                    if (tel.length === 11) {
+                        tel = tel.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                    } else if (tel.length === 10) {
+                        tel = tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                    }
+                    document.getElementById('v-tel').innerText = tel || "-";
 
-document.getElementById('v-tel').innerText = tel || "-";
-                    document.getElementById('v-addr').innerText = data.address || "-";
+                    // 3. 항목 매칭 (설치주소 태그 v-addr에 회수주소 데이터 바인딩)
                     document.getElementById('v-products').innerText = data.products || "-";
-                    document.getElementById('v-reasons').innerText = data.reasons || "-";
                     document.getElementById('v-cctv').innerText = data.cctvStatus || "-";
                     
-                    const sigImg = document.getElementById('v-sig');
-                    const loadingMsg = document.getElementById('sig-loading');
-                    
-                    if (data.signature && data.signature.length > 100) {
-                        sigImg.src = data.signature;
-                        sigImg.onload = function() {
-                            loadingMsg.style.display = 'none';
-                            sigImg.style.display = 'block';
-                        };
-                    } else {
-                        loadingMsg.innerText = "등록된 서명 데이터가 없습니다.";
-                    }
+                    // 설치주소(v-addr) 자리에 회수주소(returnAddr)를 표시합니다.
+                    // 앱스크립트 doGet에서 returnAddr를 보내주어야 정상 출력됩니다.
+                    document.getElementById('v-returnAddr').innerText = data.returnAddr || "-";
+
                 } else {
-                    alert("데이터를 찾을 수 없습니다.");
+                    alert("데이터를 찾을 수 없습니다. 청구번호를 다시 확인해주세요.");
                 }
             })
             .catch(err => {
