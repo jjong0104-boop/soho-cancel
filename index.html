@@ -38,7 +38,7 @@
 
 <div class="container">
     <div id="divPage1" class="form-card">
-        <div class="header"><h2>U+우리가게패키지 해지신청서</h2><p class="text-muted small mb-0">(1/5)</p></div>
+        <div class="header"><h2>U+우리가게패키지 해지신청서</h2><p class="text-muted small mb-0">(1/6)</p></div>
         <div class="mb-3"><label class="form-label">청구서 번호</label><input type="text" id="billNumber" class="form-control bg-light" readonly></div>
         <div class="mb-3"><label class="form-label text-primary fw-bold">신청일</label><input type="text" id="todayDate" class="form-control bg-light" readonly> </div>
         <div class="mb-3"><label class="form-label">고객명*</label><input type="text" id="custName" class="form-control bg-light"></div>
@@ -108,11 +108,11 @@
             <input class="form-check-input" type="checkbox" id="payConfirm">
             <label class="form-check-label fw-bold" for="payConfirm">위 내용을 확인하였습니다.*</label>
         </div>
-        <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/5)</button>
+        <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
     </div>
 
    <div id="divPage2" class="form-card page-hidden">
-        <div class="header"><h2>개인정보 활용 동의</h2><p class="text-muted small mb-0">(2/5)</p></div>
+        <div class="header"><h2>개인정보 활용 동의</h2><p class="text-muted small mb-0">(2/6)</p></div>
         
         <div id="agreementArea">
             <div class="mb-4">
@@ -202,7 +202,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
                 <div class="agree-label"><label><input type="checkbox" id="allAgreeCheck" class="required-check"> 모든 필수 항목에 동의합니다.</label></div>
                </div>
         </div>
-        <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/5)</button>
+        <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/6)</button>
     </div>
 
 
@@ -236,22 +236,22 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
                 <input type="checkbox" id="infoConfirmCheck"> 위 안내 및 필수 확인 사항을 모두 확인하였습니다.
             </label>
         </div>
-        <button type="button" class="btn-next" onclick="submitToRealPage3()">확인하였으며 다음 단계로 (4/5)</button>
+        <button type="button" class="btn-next" onclick="submitToRealPage3()">확인하였으며 다음 단계로 (4/6)</button>
     </div>
 
     <div id="divPage3" class="form-card page-hidden">
-        <div class="header"><h2>본인 확인 및 서명</h2><p class="text-muted small mb-0">(4/5)</p></div>
+        <div class="header"><h2>본인 확인 및 서명</h2><p class="text-muted small mb-0">(4/6)</p></div>
         <div class="mb-3"><label class="form-label">신청인 성함*</label><input type="text" id="signerName" class="form-control"></div>
         <div class="signature-wrapper" style="position: relative;">
             <div id="sig-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ccc; pointer-events: none; font-size: 1.2rem; font-weight: bold; z-index: 5;">* 대표자 서명</div>
             <canvas id="signature-pad"></canvas>
         </div>
         <div class="text-end mt-2"><button type="button" class="btn btn-sm btn-light" onclick="clearSignature()">다시 쓰기</button></div>
-        <button type="button" class="btn-next" onclick="submitToPage4()">다음 단계로 (5/5)</button>
+        <button type="button" class="btn-next" onclick="submitToPage4()">다음 단계로 (5/6)</button>
     </div>
 
     <div id="divPage4" class="form-card page-hidden">
-        <div class="header"><h2>CCTV 해지 확인</h2><p class="text-muted small mb-0">(5/5)</p></div>
+        <div class="header"><h2>CCTV 해지 확인</h2><p class="text-muted small mb-0">(5/6)</p></div>
         <div class="mb-4">
             <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvAlready" value="철거완료" onchange="toggleCCTVTable()"><label class="form-check-label" for="cctvAlready">CCTV 철거가 되어 있습니다.</label></div>
             <div class="form-check mb-2"><input class="form-check-input" type="radio" name="cctvStatus" id="cctvRequest" value="철거요청" onchange="toggleCCTVTable()"><label class="form-check-label" for="cctvRequest">CCTV 철거를 요청합니다.</label></div>
@@ -261,7 +261,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
             <div class="notice-box mb-2"><strong>[CCTV 철거 관련 비용 안내]</strong><table class="table table-sm table-bordered text-center small bg-white mt-2"><tr><td class="bg-light">설치비반환</td><td>실내-94,600 / 실외-126,500</td></tr><tr><td class="bg-light">철거비</td><td>실내-22,000 / 실외-27,500</td></tr></table></div>
             <div class="form-check mt-2 mb-3"><input class="form-check-input" type="checkbox" id="cctvFinalConfirm"><label class="form-check-label small fw-bold" for="cctvFinalConfirm">위 비용 및 내용을 확인했습니다.*</label></div>
         </div>
-        <button type="button" class="btn-submit" onclick="goToPage5()">최종 요약 확인 (5/5)</button>
+        <button type="button" class="btn-submit" onclick="goToPage5()">최종 요약 확인 (6/6)</button>
     </div>
 
 <div id="divPage5" class="form-card page-hidden">
