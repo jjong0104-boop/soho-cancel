@@ -280,35 +280,47 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     // 사장님의 최신 앱스크립트 배포 URL
     const gasUrl = "https://script.google.com/macros/s/AKfycbwvc1b3w4VoQi8mxUQT4-EOH9bkvMiuRXwq2L5AWBQSb6AYf_KrnNBqLu8S62isC0i5/exec";
 
+    // 1. 페이지 로드 시 초기화 (하나의 리스너로 통합)
     window.addEventListener('DOMContentLoaded', () => {
-    // 1. 오늘 날짜 자동 입력
-    const now = new Date();
-    const formattedDate = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
-    const todayInput = document.getElementById('todayDate');
-    if (todayInput) todayInput.value = formattedDate;
-    
-    // 2. URL에서 파라미터 읽어오기 (bill, name)
-    const params = new URLSearchParams(window.location.search);
-    const billParam = params.get('bill');
-    const nameParam = params.get('name');
+        // [날짜 설정]
+        const now = new Date();
+        const dateStr = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
+        const dateInput = document.getElementById('todayDate');
+        if (dateInput) dateInput.value = dateStr;
 
-    // 3. 입력창에 자동 삽입
-    if (billParam) {
-        document.getElementById('billNumber').value = billParam;
-    }
-    if (nameParam) {
-        document.getElementById('custName').value = nameParam;
-        // 회수 담당자도 자동으로 채워지도록 설정
-        const returnPerson = document.getElementById('returnPerson');
-        if (returnPerson) returnPerson.value = nameParam;
-    }
+        // https://wordrow.kr/%EC%9E%90%EC%84%B8%ED%95%9C-%EC%9D%98%EB%AF%B8/%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0/2/
+        const params = new URLSearchParams(window.location.search);
+        const bill = params.get('bill');
+        const name = params.get('name');
+        
+        if (bill) document.getElementById('billNumber').value = bill;
+        if (name) {
+            document.getElementById('custName').value = name;
+            if (document.getElementById('returnPerson')) {
+                document.getElementById('returnPerson').value = name;
+            }
+        }
 
-    // 시그니처 패드 등 초기화 로직 (기존 유지)
-    const canvas = document.getElementById('signature-pad');
-    if (canvas) {
-        signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', minWidth: 2, maxWidth: 5 });
-    }
-});
+        // [서명 패드 초기화] - 가이드 텍스트가 보이도록 배경을 투명하게 설정
+       const canvas = document.getElementById('signature-pad');
+        const placeholder = document.getElementById('sig-placeholder');
+        
+        signaturePad = new SignaturePad(canvas, { 
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            // 아래 두 줄을 추가하여 굵기를 조절합니다.
+            minWidth: 2, // 최소 굵기 (기본값 약 0.5)
+            maxWidth: 5  // 최대 굵기 (기본값 약 2.5)
+        });
+
+        // [서명 시작 시 가이드 숨기기]
+        const hidePlaceholder = () => { 
+            if (placeholder) placeholder.style.display = 'none'; 
+        };
+        canvas.addEventListener('mousedown', hidePlaceholder);
+        canvas.addEventListener('touchstart', hidePlaceholder);
+    });
+
+
 
     // 2. 주소 검색 및 정보 복사
     function execDaumPostcode(m, d) { 
