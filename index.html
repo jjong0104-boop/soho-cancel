@@ -280,29 +280,35 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     // 사장님의 최신 앱스크립트 배포 URL
     const gasUrl = "https://script.google.com/macros/s/AKfycbwvc1b3w4VoQi8mxUQT4-EOH9bkvMiuRXwq2L5AWBQSb6AYf_KrnNBqLu8S62isC0i5/exec";
 
-    // 1. 초기화 및 데이터 로드
     window.addEventListener('DOMContentLoaded', () => {
-        const now = new Date();
-        document.getElementById('todayDate').value = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
-        
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('bill')) document.getElementById('billNumber').value = params.get('bill');
-        if (params.get('name')) {
-            const name = params.get('name');
-            document.getElementById('custName').value = name;
-            document.getElementById('returnPerson').value = name;
-        }
+    // 1. 오늘 날짜 자동 입력
+    const now = new Date();
+    const formattedDate = now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
+    const todayInput = document.getElementById('todayDate');
+    if (todayInput) todayInput.value = formattedDate;
+    
+    // 2. URL에서 파라미터 읽어오기 (bill, name)
+    const params = new URLSearchParams(window.location.search);
+    const billParam = params.get('bill');
+    const nameParam = params.get('name');
 
-        const canvas = document.getElementById('signature-pad');
+    // 3. 입력창에 자동 삽입
+    if (billParam) {
+        document.getElementById('billNumber').value = billParam;
+    }
+    if (nameParam) {
+        document.getElementById('custName').value = nameParam;
+        // 회수 담당자도 자동으로 채워지도록 설정
+        const returnPerson = document.getElementById('returnPerson');
+        if (returnPerson) returnPerson.value = nameParam;
+    }
+
+    // 시그니처 패드 등 초기화 로직 (기존 유지)
+    const canvas = document.getElementById('signature-pad');
+    if (canvas) {
         signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', minWidth: 2, maxWidth: 5 });
-        
-        const hidePlaceholder = () => { 
-            const placeholder = document.getElementById('sig-placeholder');
-            if (placeholder) placeholder.style.display = 'none'; 
-        };
-        canvas.addEventListener('mousedown', hidePlaceholder);
-        canvas.addEventListener('touchstart', hidePlaceholder);
-    });
+    }
+});
 
     // 2. 주소 검색 및 정보 복사
     function execDaumPostcode(m, d) { 
