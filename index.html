@@ -417,4 +417,14 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
             } else { alert("오류: " + res.message); btn.disabled = false; btn.innerText = "최종 제출하기"; }
         }).catch(() => { alert("전송 중 오류가 발생했습니다."); btn.disabled = false; btn.innerText = "최종 제출하기"; });
     }
+    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <p style="font-size:14px; color:#666; margin-bottom:10px;">신청서 작성이 완료되었습니다.</p>
+        <p style="font-size:18px; font-weight:800; color:#e60023; line-height:1.4; margin-bottom:25px; word-break:keep-all;">
+            해지 신청은 채널톡으로<br>구비서류 제출까지 완료되어야<br>최종 접수됩니다.
+        </p>
+        <button onclick="closeAndGo()" style="background:#e6007e; color:white; border:none; padding:12px 0; width:100%; border-radius:8px; font-weight:bold; font-size:16px;">확인하였습니다</button>
+    </div>
+</div>
+</body>
 </script>
