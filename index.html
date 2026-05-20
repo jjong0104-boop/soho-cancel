@@ -218,10 +218,10 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
                 - 신청서 접수 후 방문(회수) 일정은 회수 지역 현장 사무실에서 일정 배정 및 회수 처리를 진행합니다. 평일 업무시간 외 회수는 불가하며, 자세한 일정은 연락드리는 회수 담당자와 직접 조율해 주시기 바랍니다.<br><br>
                 - 당 영업점에서는 영업점 가입 상품에 한하여 처리 가능하며, 영업점 외 가입 상품은 고객센터(1544-0001) 로 문의 부탁드립니다.<br><br>
                 - 신청서 접수 처리 과정에서 서류/기재 내용 보완이 필요한 경우 영업점에서 보완 요청을 드릴 수 있습니다. LG U+ 정책상 신청서 및 구비서류 요건을 모두 충족해야 접수 처리 가능합니다. 고객님의 접수 누락/보완 누락으로 인한 미접수 건은 보상 불가하오니 유의 부탁드립니다.<br><br>
-                - < 구비서류 안내 ><br>
+                - &lt; 구비서류 안내 &gt;<br>
                 - 개인(일반) 명의 가입 고객: 신분증<br>
                 - 개인사업자 가입 고객: 신분증, 사업자등록증 (3개월 이내 발급본)<br><br>
-                - < 필수 확인 사항 ><br>
+                - &lt; 필수 확인 사항 &gt;<br>
                 예약해지 불가: 약정 만료 이후 해지 접수하셔야 위약금이 미발생합니다. 약정기간 내 해지 시 위약금이 발생할 수 있습니다. 임대장비는 회수 대상이며, 분실 시 장비 변상금이 발생할 수 있습니다. 전화 해지는 접수일로부터 1일~1주일 이내 자동 해지 처리되며 번호 재사용 불가합니다. 폐업 시 '폐업사실증명원'으로 대체 가능합니다. 결합 상품의 경우 단독 사용 시 요금이 인상될 수 있습니다. 통신요금은 후불 청구 방식으로 해지 다음달 청구됩니다. (SME 1544-0001 / SOHO 1800-8300)<br><br>
                 ★ 예약해지 불가, 약정만료 이후 해지접수하셔야 위약금 미발생 ★<br>
                 - 약정기간 내 해지시 가입기간동안 할인받은 금액에 대한 위약금 발생<br>
@@ -273,7 +273,8 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <tr><td class="bg-light fw-bold">해지상품</td><td id="display_products" class="text-primary fw-bold"></td></tr>
         <tr><td class="bg-light fw-bold">해지사유</td><td id="display_reasons" class="text-success fw-bold"></td></tr>
         <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
-        <tr><td class="bg-light fw-bold">회수주소</td><td id="display_returnAddr"></td></tr> </table>
+        <tr><td class="bg-light fw-bold">회수주소</td><td id="display_returnAddr"></td></tr>
+    </table>
     <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
 </div>
 
@@ -289,7 +290,8 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 
 <script>
     let signaturePad;
-    // 사장님의 최신 앱스크립트 배포 URL
+
+    // ✅ 통합 웹앱 URL (변경됨)
     const gasUrl = "https://script.google.com/macros/s/AKfycbze_qSxZA1ttum3AtoiP-8Vi7VOeqU6D43xmefglodiCY71in8jHBVCAEfS5MLr6aLi/exec";
 
     // 페이지 로드 시 초기화
@@ -423,6 +425,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         btn.innerText = "전송 중...";
 
         const allData = {
+            type: "termination",  // ✅ 통합 스크립트 분기용 (추가됨)
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
             custTel: document.getElementById('custTel').value,
@@ -460,3 +463,4 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
     }
 </script>
 </body>
+</html>
