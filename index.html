@@ -32,9 +32,7 @@
         .agree-label input[type="checkbox"] { width: 18px; height: 18px; margin-right: 8px; }
     </style>
 </head>
-
-    
-    <body>
+<body>
 
 <div class="container">
     <div id="divPage1" class="form-card">
@@ -80,27 +78,24 @@
         <div class="mb-3 reason-group">
             <label class="form-label text-danger">● 서비스 불만 </label>
             <div class="row g-2 small ps-1">
-                 <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="장애처리불만"> 장애처리 불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="속도불만"> 속도불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="불안정성"> 불안정성</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="비용부담"> 비용부담</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="개통지연"> 개통지연</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="기술지원불만"> 기술지원불만</div>
-                    <div class="col-6"><input type="checkbox" name="reason" value="영업관리불만"> 영업관리불만</div>
-
+                <div class="col-6"><input type="checkbox" name="reason" value="장애다발"> 장애다발</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="장애처리불만"> 장애처리 불만</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="속도불만"> 속도불만</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="불안정성"> 불안정성</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="비용부담"> 비용부담</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="개통지연"> 개통지연</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="기술지원불만"> 기술지원불만</div>
+                <div class="col-6"><input type="checkbox" name="reason" value="영업관리불만"> 영업관리불만</div>
             </div>
         </div>
-
-          <div class="mb-3 reason-group">
-                <label class="form-label text-success">● 타사전환 </label>
-                <div class="row g-2 small ps-1">
-                    <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
-                    <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
-                    <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타</div>
-                </div>
+        <div class="mb-3 reason-group">
+            <label class="form-label text-success">● 타사전환 </label>
+            <div class="row g-2 small ps-1">
+                <div class="col-4"><input type="radio" name="telecom" value="KT"> KT</div>
+                <div class="col-4"><input type="radio" name="telecom" value="SKB"> SKB</div>
+                <div class="col-4"><input type="radio" name="telecom" value="기타"> 기타</div>
             </div>
-
+        </div>
 
         <div class="section-title pull-title">요금 확인 사항</div>
         <div class="notice-box mb-3">통신요금은 후불방식으로 일할계산되어 해지 다음 달 청구됩니다.</div>
@@ -111,9 +106,8 @@
         <button type="button" class="btn-next" onclick="validateAndNext()">다음 페이지로 (2/6)</button>
     </div>
 
-   <div id="divPage2" class="form-card page-hidden">
+    <div id="divPage2" class="form-card page-hidden">
         <div class="header"><h2>개인정보 활용 동의</h2><p class="text-muted small mb-0">(2/6)</p></div>
-        
         <div id="agreementArea">
             <div class="mb-4">
                 <div class="agreement-title">1. (필수) 고유식별정보 수집·이용 동의</div>
@@ -122,9 +116,7 @@
 (3) 이용기간: 서비스 가입기간 동안 이용 및 해지 후 요금완납 6개월까지
 (4) 동의거부권 및 불이익: 동의 거부 가능하나 거부 시 본인확인/인증 불가로 서비스 가입 불가
 관련 법령에 따라 보존이 필요한 경우 해당 법령에 따라 보유</div>
-               
             </div>
-
             <div class="mb-4">
                 <div class="agreement-title">2. (필수) 개인정보 수집·이용 동의</div>
                 <div class="agreement-box">(1) 이용목적: 이용요금 연체정보 통지, 신용보험 가입, 신용도 판단
@@ -145,18 +137,14 @@
 서비스 가입 과정에서 신청이 완료되지 않은 경우: 사유 확인 및 구비서류 보완 등을 위해 작성일로부터 3개월까지 보유
 외국인 출국여부 확인: 체류기간까지
 상담내용(전화/챗봇/채팅/이메일 등) 분석: 3년</div>
-               
             </div>
-
             <div class="mb-4">
                 <div class="agreement-title">3. (필수) 개인위치정보 수집·이용 동의</div>
                 <div class="agreement-box">(1) 이용목적: 위치기반 서비스 및 위치정보 서비스 안내·제공·요금정산
 (2) 수집항목: 개인위치정보: 기지국, GPS, Wifi, RFID 태그 및 위치정보시스템을 통해 수집되는 위치정보
 2항의 개인정보 및 개인위치정보를 조합하여 생성되는 정보
 (3) 이용기간: 서비스 가입기간 동안 이용 및 분쟁대비를 위해 해지 후 요금완납 3개월까지</div>
-               
             </div>
-
             <div class="mb-4">
                 <div class="agreement-title">4. (필수) 개인정보 제3자 제공·활용 및 개인신용정보 조회 동의</div>
                 <div class="agreement-box">(1) 개인정보 제공 활용 (제3자 제공): KB손해보험
@@ -190,21 +178,17 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 (4) 기타: Msafer(명의도용 방지 서비스): 신규 가입 시 명의도용 방지를 위해 한국정보통신진흥협회 및 타 통신사업자에 제공하여 기존 사용 중인 전화로 개통사실 통보
 개인정보 침해신고: 1544-0010/0001, 101, privacy@lguplus.co.kr
 (개인정보 관리 책임자: 고객보호팀장)
-동의 거부 가능, 미동의 시 서비스 가입·이용 제약 가능, 미동의 시 정보 미제공. 위탁·제공 현황 및 변동사항은 홈페이지 개인정보취급방침에 공개
-                </div>
-               
+동의 거부 가능, 미동의 시 서비스 가입·이용 제약 가능, 미동의 시 정보 미제공. 위탁·제공 현황 및 변동사항은 홈페이지 개인정보취급방침에 공개</div>
             </div>
-
             <div class="mb-4">
                 <div class="agreement-title">5. (필수) 문서상 동의 체크 항목</div>
                 <div class="agreement-box">(1) 필수 개인신용정보 조회 동의: 본인은 하기 내용에 충분히 이해하고 동의합니다.
                 (2) 필수 개인정보 취급위탁 동의: 본인은 하기 내용에 충분히 이해하고 동의합니다.</div>
                 <div class="agree-label"><label><input type="checkbox" id="allAgreeCheck" class="required-check"> 모든 필수 항목에 동의합니다.</label></div>
-               </div>
+            </div>
         </div>
         <button type="button" class="btn-next" onclick="submitToPage3()">다음 단계로 (3/6)</button>
     </div>
-
 
     <div id="divPageInfo" class="form-card page-hidden">
         <div class="header">
@@ -212,7 +196,7 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
             <p class="text-muted small mb-0">(안내 확인)</p>
         </div>
         <div class="mb-4">
-            <div class="agreement-title">< 접수 및 이용 관련 안내 ></div>
+            <div class="agreement-title">&lt; 접수 및 이용 관련 안내 &gt;</div>
             <div class="agreement-box" style="height: 350px; background: #fff5f8; padding: 15px; border: 1px solid #ffd1e3; line-height: 1.6;">
                 <b class="text-danger" style="font-size: 0.95rem;">본 영업점은 신청서 접수처로, 방문/회수 일정 관련 문의는 안내가 어려운 점 양해 부탁드립니다.</b><br><br>
                 - 신청서 접수 후 방문(회수) 일정은 회수 지역 현장 사무실에서 일정 배정 및 회수 처리를 진행합니다. 평일 업무시간 외 회수는 불가하며, 자세한 일정은 연락드리는 회수 담당자와 직접 조율해 주시기 바랍니다.<br><br>
@@ -264,18 +248,20 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         <button type="button" class="btn-submit" onclick="goToPage5()">최종 요약 확인 (6/6)</button>
     </div>
 
-<div id="divPage5" class="form-card page-hidden">
-    <div class="header"><h2>신청 내용 최종 확인</h2></div>
-    <table class="table table-bordered small">
-        <tr><td class="bg-light fw-bold">청구번호</td><td id="display_billNumber" class="text-danger fw-bold"></td></tr>
-        <tr><td class="bg-light fw-bold">고객명</td><td id="display_custName"></td></tr>
-        <tr><td class="bg-light fw-bold">연락처</td><td id="display_custTel" class="fw-bold"></td></tr>
-        <tr><td class="bg-light fw-bold">해지상품</td><td id="display_products" class="text-primary fw-bold"></td></tr>
-        <tr><td class="bg-light fw-bold">해지사유</td><td id="display_reasons" class="text-success fw-bold"></td></tr>
-        <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
-        <tr><td class="bg-light fw-bold">회수주소</td><td id="display_returnAddr"></td></tr>
-    </table>
-    <button type="button" class="btn-submit" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
+    <div id="divPage5" class="form-card page-hidden">
+        <div class="header"><h2>신청 내용 최종 확인</h2></div>
+        <table class="table table-bordered small">
+            <tr><td class="bg-light fw-bold">청구번호</td><td id="display_billNumber" class="text-danger fw-bold"></td></tr>
+            <tr><td class="bg-light fw-bold">고객명</td><td id="display_custName"></td></tr>
+            <tr><td class="bg-light fw-bold">연락처</td><td id="display_custTel" class="fw-bold"></td></tr>
+            <tr><td class="bg-light fw-bold">해지상품</td><td id="display_products" class="text-primary fw-bold"></td></tr>
+            <tr><td class="bg-light fw-bold">해지사유</td><td id="display_reasons" class="text-success fw-bold"></td></tr>
+            <tr><td class="bg-light fw-bold">CCTV상태</td><td id="display_cctv"></td></tr>
+            <tr><td class="bg-light fw-bold">회수주소</td><td id="display_returnAddr"></td></tr>
+        </table>
+        <!-- ✅ id 추가로 이중 제출 방지 -->
+        <button type="button" class="btn-submit" id="finalSubmitBtn" onclick="finalSubmitToGAS()">신청서 최종 제출하기</button>
+    </div>
 </div>
 
 <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
@@ -291,10 +277,8 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 <script>
     let signaturePad;
 
-    // ✅ 통합 웹앱 URL (변경됨)
     const gasUrl = "https://script.google.com/macros/s/AKfycbwLLVpLe8aSDOHYfEyRY5FB2UiqZBsEWBOWsoL5BEkLGsCg1puGxaeD_-u2LAW-fBnx/exec";
 
-    // 페이지 로드 시 초기화
     window.addEventListener('DOMContentLoaded', () => {
         // 날짜 설정
         const now = new Date();
@@ -306,7 +290,8 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         const params = new URLSearchParams(window.location.search);
         const bill = params.get('bill');
         const name = params.get('name');
-        
+        const tel  = params.get('tel');
+
         if (bill) document.getElementById('billNumber').value = bill;
         if (name) {
             const decodedName = decodeURIComponent(name);
@@ -314,6 +299,10 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
             if (document.getElementById('returnPerson')) {
                 document.getElementById('returnPerson').value = decodedName;
             }
+        }
+        if (tel) {
+            document.getElementById('custTel').value = tel;
+            document.getElementById('returnTel').value = tel;
         }
 
         // 서명 패드 초기화
@@ -325,14 +314,12 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
                 minWidth: 2,
                 maxWidth: 5 
             });
-
             const hidePlaceholder = () => { if (placeholder) placeholder.style.display = 'none'; };
             canvas.addEventListener('mousedown', hidePlaceholder);
             canvas.addEventListener('touchstart', hidePlaceholder);
         }
     });
 
-    // 주소 검색 및 복사
     function execDaumPostcode(m, d) { 
         new daum.Postcode({oncomplete: (data) => { 
             document.getElementById(m).value = data.roadAddress; 
@@ -347,7 +334,6 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         document.getElementById('returnDetail').value = document.getElementById('custDetail').value;
     }
 
-    // 페이지 이동 로직
     function validateAndNext() {
         if(!document.getElementById('custName').value || !document.getElementById('custTel').value) { alert("고객명과 연락처를 입력해주세요."); return; }
         if(!document.getElementById('payConfirm').checked) { alert("요금 확인 사항에 체크해주세요."); return; }
@@ -391,7 +377,6 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
 
     function toggleCCTVTable() { document.getElementById('cctvPriceArea').style.display = (document.querySelector('input[name="cctvStatus"]:checked').value === "해당없음") ? 'none' : 'block'; }
 
-    // 요약 화면 생성 (undefined 방지)
     function goToPage5() {
         const status = document.querySelector('input[name="cctvStatus"]:checked').value;
         if(status !== "해당없음" && !document.getElementById('cctvFinalConfirm').checked) { alert("비용 확인 체크를 해주세요."); return; }
@@ -406,11 +391,9 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         if (selectedTelecom) selectedReasons.push("타사전환(" + selectedTelecom.value + ")");
         document.getElementById('display_reasons').innerText = selectedReasons.join(', ') || "사유 미선택";
         
-        // 상세주소 undefined 방지
         const rAddr = document.getElementById('returnAddr').value || "";
         const rDetail = document.getElementById('returnDetail').value || ""; 
         document.getElementById('display_returnAddr').innerText = rDetail ? rAddr + " " + rDetail : rAddr;
-        
         document.getElementById('display_cctv').innerText = status;
 
         document.getElementById('divPage4').classList.add('page-hidden');
@@ -418,14 +401,15 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         window.scrollTo(0,0);
     }
 
-    // 최종 서버 전송
+    // ✅ 이중 제출 방지 적용
     function finalSubmitToGAS() {
-        const btn = event.target; 
-        btn.disabled = true; 
+        const btn = document.getElementById('finalSubmitBtn');
+        if (btn.disabled) return;
+        btn.disabled = true;
         btn.innerText = "전송 중...";
 
         const allData = {
-            type: "termination",  // ✅ 통합 스크립트 분기용 (추가됨)
+            type: "termination",
             billNumber: document.getElementById('billNumber').value,
             custName: document.getElementById('custName').value,
             custTel: document.getElementById('custTel').value,
@@ -444,20 +428,20 @@ KIBNET, 토스페이먼츠, 자동인출 신청 은행
         fetch(gasUrl, { method: 'POST', body: JSON.stringify(allData) })
         .then(r => r.json()).then(res => {
             if(res.result === "success") { 
-                // 커스텀 팝업 띄우기
                 document.getElementById('customModal').style.display = 'flex';
                 window.finalBillNumber = allData.billNumber; 
             } else { 
                 alert("오류: " + res.message); 
-                btn.disabled = false; btn.innerText = "최종 제출하기"; 
+                btn.disabled = false;
+                btn.innerText = "신청서 최종 제출하기";
             }
         }).catch(err => {
             alert("전송 오류가 발생했습니다.");
-            btn.disabled = false; btn.innerText = "최종 제출하기";
+            btn.disabled = false;
+            btn.innerText = "신청서 최종 제출하기";
         });
     }
 
-    // 팝업 확인 버튼 클릭 시 페이지 이동
     function closeAndGo() {
         location.href = "https://jjong0104-boop.github.io/soho-cancel/view.html?bill=" + window.finalBillNumber;
     }
